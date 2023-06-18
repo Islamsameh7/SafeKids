@@ -1,9 +1,5 @@
 from django.shortcuts import render
 from django.urls import path
-from . import views
+from django.http import HttpResponse
 
 # Create your views here.
-
-urlpatterns = [
-
-]
