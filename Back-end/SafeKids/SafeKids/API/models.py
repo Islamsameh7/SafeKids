@@ -31,13 +31,16 @@ class Kid(models.Model):
     name = models.CharField(max_length=100)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     age = models.IntegerField()
+    
+   
 
 
 class FoundKid(Kid):
+
     location = models.CharField(max_length=255)
 
-
 class MissingKid(Kid):
+
     lost_date = models.DateField(null=False, blank=True)
     last_known_location = models.CharField(max_length=255)
     still_missing = models.BooleanField()
