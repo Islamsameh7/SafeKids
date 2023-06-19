@@ -34,3 +34,7 @@ def get_found_kid_details(request, kid_name):
     except FoundKid.DoesNotExist:
         # Handle the case when the found kid is not found
         return render(request, 'kid_not_found.html')
+# Create your views here.
+
+def Login():
+    return True
