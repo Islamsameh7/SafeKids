@@ -60,7 +60,9 @@ const MyKids = (props) => {
 
     return (
         <View>
-            <TouchableOpacity style={{ top: 70, left: 20, position: "absolute" }}
+            <TouchableOpacity
+                style={{ top: 70, left: 20, position: "absolute" }}
+                onPress={() => props.navigation.navigate('Home')}
             >
                 <Ionicons name={"left"} size={30} color={darkBlue} />
             </TouchableOpacity>
@@ -68,10 +70,6 @@ const MyKids = (props) => {
             <ScrollView></ScrollView>
             <View style={styles.container}>{renderData()}</View>
 
-            <TouchableOpacity style={styles.doneButton} onPress={() => props.navigation.navigate("Home")}
-            >
-                <Text style={styles.doneText}>Done</Text>
-            </TouchableOpacity>
         </View>
     );
 };

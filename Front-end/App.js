@@ -1,7 +1,6 @@
 // In App.js in a new project
 
 import React, { useContext } from "react";
-
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import GetStarted from "./src/components/GetStarted";
@@ -20,6 +19,7 @@ import Matching from "./src/components/Matching";
 import AboutUs from "./src/components/AboutUs";
 import MatchingProfiles from "./src/components/userFunctions/MatchingProfiles";
 import MyKids from "./src/components/userFunctions/MyKids";
+import Profile from "./src/components/Profile";
 const Stack = createNativeStackNavigator();
 
 function App(props) {
@@ -57,5 +57,4 @@ function App(props) {
     </Provider>
   );
 }
-
 export default App;
