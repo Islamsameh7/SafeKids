@@ -3,3 +3,6 @@ from django.urls import path
 from django.http import HttpResponse
 
 # Create your views here.
+
+def Login():
+    return True
