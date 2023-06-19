@@ -1,19 +1,24 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from django.urls import path
 from django.http import HttpResponse
 from .models import *
+from django.views.decorators.csrf import csrf_exempt
 from .forms import FoundKidForm
 
+@csrf_exempt
 def add_found_kid(request):
     if request.method == 'POST':
         form = FoundKidForm(request.POST)
         if form.is_valid():
             form.save()
-          
-      
+            return HttpResponse('Found kid added successfully', status=200)
+        else:
+            return HttpResponse(form.errors, status=400)
     else:
         form = FoundKidForm()
     
+    return HttpResponse('Method not allowed', status=405)
+
 def get_found_kid_details(request, kid_name):
     try:
         found_kid = FoundKid.objects.get(name=kid_name)
