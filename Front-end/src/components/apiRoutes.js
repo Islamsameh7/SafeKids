@@ -1,4 +1,4 @@
-const API_URL = "https://69a6-41-237-133-176.ngrok-free.app/";
+const API_URL = "https://a1e3-41-237-133-176.ngrok-free.app/";
 
 
 module.exports = {

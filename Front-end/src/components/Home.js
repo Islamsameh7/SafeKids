@@ -28,7 +28,9 @@ const Home = (props) => {
           <IonIcons name={"notifications"} size={40} color={darkBlue} />
         </TouchableOpacity>
         <TouchableOpacity style={{ marginLeft: "5%" }}>
-          <FontIcons name={"user"} size={40} color={darkBlue} />
+          <FontIcons name={"user"} size={40} color={darkBlue}
+          onPress={() => props.navigation.navigate("UserProfile")}
+          />
         </TouchableOpacity>
 
       </View>
@@ -56,7 +58,7 @@ const Home = (props) => {
           <Text style={styles.buttonDesc2}>Upload a photo for found kid.</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => props.navigation.navigate("MyKids")}
+          onPress={() => props.navigation.navigate("MissingKids")}
           style={styles.button}>
 
           <Image source={require("../assets/missing-kid.png")} style={styles.missing_kid} />

@@ -26,7 +26,8 @@ const UserProfile = (props) => {
                 <View style={{ alignItems: "center" }}>
                     <Image source={require("../../assets/user.png")} style={{
                         width: 80, height: 80, borderRadius: "200", backgroundColor: "white",
-                        marginTop: -50 }}></Image>
+                        marginTop: -50
+                    }}></Image>
                     <Text style={{ marginTop: 30, fontSize: 15, color: darkBlue }}>Name: {"\t"} {"\t"} Menna Adel </Text>
                     <Text style={{ marginTop: 30, fontSize: 15, color: darkBlue }}>Birth date: {"\t"} {"\t"} 3-2-1985</Text>
                     <Text style={{ marginTop: 30, fontSize: 15, color: darkBlue }}>Mobile No: {"\t"} 010 258 789 12</Text>
@@ -37,7 +38,7 @@ const UserProfile = (props) => {
                 </View>
 
                 <View>
-                <TouchableOpacity style={styles.MykidsButton} onPress={() => props.navigation.navigate("MyKids")}>
+                    <TouchableOpacity style={styles.MykidsButton} onPress={() => props.navigation.navigate("MyKids")}>
                         <Text style={styles.MykidsText}>My Kids </Text>
                     </TouchableOpacity>
 
@@ -60,14 +61,14 @@ const styles = StyleSheet.create({
         width: 200,
         paddingVertical: 15,
         marginLeft: "25%",
-        marginTop:70
-  
+        marginTop: 70
+
     },
     MykidsText: {
         color: darkBlue,
         fontSize: 18,
         fontWeight: "bold",
-        textDecorationLine:"underline"
+        textDecorationLine: "underline"
     },
     EditButton: {
         backgroundColor: darkBlue,
