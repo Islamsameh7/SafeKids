@@ -24,7 +24,7 @@ def login(request):
     return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-@api_view(['POST'])
+@api_view(['POST']) 
 def register(request):
     serializer = CustomUserSerializer(data=request.data)
     if serializer.is_valid():
@@ -32,7 +32,7 @@ def register(request):
         return Response(status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+#lazm a8yr el post hena tb2a zy el function ely fo2
 @csrf_exempt
 def add_found_kid(request):
     if request.method == 'POST':
