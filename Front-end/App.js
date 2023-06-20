@@ -23,7 +23,7 @@ import UserProfile from "./src/components/userFunctions/UserProfile";
 import KidProfile from "./src/components/userFunctions/KidProfile";
 import MyKids from "./src/components/userFunctions/MyKids";
 import MissingKids from "./src/components/userFunctions/MissingKids";
-import Notifications from "./src/components/AboutUs";
+import Notifications from "./src/components/Notifications";
 
 const Stack = createNativeStackNavigator();
 
