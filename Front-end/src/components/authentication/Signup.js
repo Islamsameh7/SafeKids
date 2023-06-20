@@ -36,43 +36,37 @@ const Signup = (props) => {
   const [gender, setGender] = useState("male");
   const [city, setCity] = useState("cairo");
   const [error, setError] = useState("")
-  const handleRequest = async () => {
-    setError("")
 
-    let body = JSON.stringify({
-      'name': name,
-      'email': email,
-      'password': password,
-      'birthDate': birthDate,
-      'mobileNumber': mobileNumber,
-      'gender':gender,
-      'city':city
-    })
+  
+  const register = async () => {
+    const formData = new FormData();
 
-    fetch(apiRoutes.register, {
+    formData.append('name', name);
+    formData.append('email', email);
+    formData.append('password', password);
+    formData.append('birthdate', birthDate);  
+    formData.append('phoneNumber', mobileNumber);
+    formData.append('city', city);
+    formData.append('username',email);
+    formData.append('gender', gender);
+
+    const response = await fetch(apiRoutes.register, {
       method: 'POST',
+      body: formData,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'multipart/form-data',
       },
-      body:body
-      })
-      .then(res => {
-        if (res.ok) {
-          return res.json()
-        } else {
-          setError("User already exists")
-          throw res.json()
-        }
-      })
-      .then(json => {
-       /* setUserObj(json)
-        setToken(json.token)
-        setIsLoggedIn(true)*/
-      })
-      .catch(error => {
-        console.log(error)
-      })
-  };
+    });
+  
+    if (response.ok) {
+      // Successful response
+      console.log('User Registered Successfully');
+    } else {
+      // Error response
+      const errorData = await response.text();
+      console.log('Failed to register user:', errorData);
+    }
+  }
 
   return (
     <View style={{ backgroundColor: darkBlue }}>
@@ -262,7 +256,7 @@ const Signup = (props) => {
 
           <TouchableOpacity
             onPress={() => {
-              handleRequest();
+              register();
               props.navigation.navigate("Login");
             }}
             style={{
