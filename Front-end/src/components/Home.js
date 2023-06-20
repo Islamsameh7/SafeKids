@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { View, StyleSheet, Text, TouchableOpacity,Image } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity, Image } from "react-native";
 import Background from "./Background";
 import { Context } from "../context/globalContext.js";
 import Btn from "./Btn";
@@ -35,9 +35,9 @@ const Home = (props) => {
       <Text style={styles.helloText}>Hello,</Text>
       <Text style={styles.userText}>User</Text>
       <View style={{ alignItems: "center", marginTop: "5%" }}>
-        <TouchableOpacity 
-        onPress={() => props.navigation.navigate("AddKidProfile")}
-        style={styles.button}>
+        <TouchableOpacity
+          onPress={() => props.navigation.navigate("AddKidProfile")}
+          style={styles.button}>
           <AntIcons
             name={"pluscircle"}
             size={40}
@@ -47,19 +47,19 @@ const Home = (props) => {
           <Text style={styles.buttonText}>Create a Kid profile</Text>
           <Text style={styles.buttonDesc1}>Upload missing kid information.</Text>
         </TouchableOpacity>
-        <TouchableOpacity 
-        onPress={() => props.navigation.navigate("UploadPhoto")}
-        style={styles.button}>
+        <TouchableOpacity
+          onPress={() => props.navigation.navigate("UploadPhoto")}
+          style={styles.button}>
           <Image source={require("../assets/upload.png")} style={styles.upload_photo_style} />
 
           <Text style={styles.buttonText}>Upload photo</Text>
           <Text style={styles.buttonDesc2}>Upload a photo for found kid.</Text>
         </TouchableOpacity>
-        <TouchableOpacity 
-        
-        style={styles.button}>
-         
-         <Image source={require("../assets/missing-kid.png")} style={styles.missing_kid} />
+        <TouchableOpacity
+          onPress={() => props.navigation.navigate("MyKids")}
+          style={styles.button}>
+
+          <Image source={require("../assets/missing-kid.png")} style={styles.missing_kid} />
           <Text style={styles.buttonText}>Lost Kids</Text>
           <Text style={styles.buttonDesc3}>Go through the list of the lost kids.</Text>
         </TouchableOpacity>
@@ -85,8 +85,8 @@ const styles = StyleSheet.create({
     backgroundColor: lightBlue,
     width: "80%",
     borderRadius: 20,
-    margin:"3%"
-    
+    margin: "3%"
+
   },
   buttonText: {
     color: darkBlue,
@@ -94,46 +94,46 @@ const styles = StyleSheet.create({
     paddingLeft: "5%",
     fontWeight: "bold",
   },
-  buttonDesc1:{
-    paddingBottom:"15%",
-    paddingLeft:"5%",
-    color:darkBlue,
+  buttonDesc1: {
+    paddingBottom: "15%",
+    paddingLeft: "5%",
+    color: darkBlue,
   },
-  buttonDesc2:{
-    paddingBottom:"15%",
-    paddingLeft:"5%",
-    color:darkBlue,
+  buttonDesc2: {
+    paddingBottom: "15%",
+    paddingLeft: "5%",
+    color: darkBlue,
   },
-  buttonDesc3:{
-    paddingBottom:"15%",
-    paddingLeft:"5%",
-    color:darkBlue,
+  buttonDesc3: {
+    paddingBottom: "15%",
+    paddingLeft: "5%",
+    color: darkBlue,
   },
   icon: {
     marginLeft: "10%",
     paddingTop: "5%",
     paddingBottom: "3%",
   },
-  upload_photo_style:{
-    height: 40, 
-    aspectRatio: 1, 
+  upload_photo_style: {
+    height: 40,
+    aspectRatio: 1,
     resizeMode: 'contain',
-    marginLeft:"10%",
-    borderWidth:4,
+    marginLeft: "10%",
+    borderWidth: 4,
     borderRadius: 100,
-    borderColor:darkBlue,
-    marginTop:'10%',
-    marginBottom:'2%'
+    borderColor: darkBlue,
+    marginTop: '10%',
+    marginBottom: '2%'
   },
-  missing_kid:{
-    height: 40, 
-    aspectRatio: 1, 
+  missing_kid: {
+    height: 40,
+    aspectRatio: 1,
     resizeMode: 'contain',
-    marginLeft:"10%",
+    marginLeft: "10%",
     borderRadius: 100,
-    borderColor:darkBlue,
-    marginTop:'10%',
-    marginBottom:'2%'
+    borderColor: darkBlue,
+    marginTop: '10%',
+    marginBottom: '2%'
   }
 });
 

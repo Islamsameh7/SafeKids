@@ -22,22 +22,32 @@ class CustomUser(AbstractUser):
     photo = models.ImageField(upload_to='user_photos', blank=True, null=True)
 
 
-class Kid(models.Model):
+class AbstractKid(models.Model):
     GENDER_CHOICES = (
-        ('M', 'Male'),
-        ('F', 'Female'),
+        ('male', 'male'),
+        ('female', 'female'),
     )
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    gender = models.CharField(max_length=6, choices=GENDER_CHOICES)
     age = models.IntegerField()
 
+    class Meta:
+        abstract = True
 
-class FoundKid(Kid):
+
+class Kid(AbstractKid):
+    pass
+
+
+class FoundKid(AbstractKid):
     location = models.CharField(max_length=255)
-
-
+    name = models.CharField(max_length=100, blank=True)
+    gender = models.CharField(max_length=6, choices=AbstractKid.GENDER_CHOICES, blank=True,null=True)
+    age = models.IntegerField(blank=True, null=True)
+        
 class MissingKid(Kid):
+
     lost_date = models.DateField(null=False, blank=True)
     last_known_location = models.CharField(max_length=255)
     still_missing = models.BooleanField()
