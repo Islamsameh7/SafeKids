@@ -28,7 +28,9 @@ const Home = (props) => {
           <IonIcons name={"notifications"} size={40} color={darkBlue} />
         </TouchableOpacity>
         <TouchableOpacity style={{ marginLeft: "5%" }}>
-          <FontIcons name={"user"} size={40} color={darkBlue} />
+          <FontIcons name={"user"} size={40} color={darkBlue}
+          onPress={() => props.navigation.navigate("UserProfile")}
+          />
         </TouchableOpacity>
 
       </View>
