@@ -12,6 +12,7 @@ import Ionicons from "react-native-vector-icons/AntDesign";
 import EntypoIcons from "react-native-vector-icons/Entypo";
 import { lightBlue, navyblue, lightGrey, darkBlue, grey } from "../Constants";
 import * as ImagePicker from "expo-image-picker";
+import apiRoutes from "../apiRoutes";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
@@ -52,14 +53,23 @@ const UploadPhoto = (props) => {
     formData.append('age', '10');
     formData.append('location', 'Some Location');
   
-    const photo = {
-      uri: 'file:///path/to/photo.jpg', // Replace with the actual path of the photo
-      name: 'photo.jpg',
-      type: 'image/jpeg',
-    };
-    formData.append('photo', photo);
+    if (image) {
+      const response = await fetch(image);
+      const blob = await response.blob();
   
-    const response = await fetch('http://your-api-endpoint/add_found_kid/', {
+      const fileName = image.split("/").pop(); // Extract the file name from the URI
+  
+      const fileType = blob.type; // Get the MIME type of the file
+  
+      if (fileType === "image/jpeg" || fileType === "image/png" || fileType === "image/jpg") {
+        formData.append("photo", { uri: image, name: fileName, type: fileType });
+      } else {
+        console.log("Invalid file type. Only JPG, PNG, and JPEG images are allowed.");
+        return;
+      }
+    }
+  
+    const response = await fetch(apiRoutes.addFoundKid, {
       method: 'POST',
       body: formData,
       headers: {
@@ -146,7 +156,10 @@ const UploadPhoto = (props) => {
         </TouchableOpacity>
       </View>
       <View style={styles.submitContainer}>
-        <TouchableOpacity style={styles.submitButton} onPress={() => props.navigation.navigate("Matching")}>
+        <TouchableOpacity style={styles.submitButton} onPress={() =>{ 
+          addFoundKid();
+          props.navigation.navigate("Matching")
+          } }>
           <Text style={styles.submitText}>Submit</Text>
         </TouchableOpacity>
       </View>

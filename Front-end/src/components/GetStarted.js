@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Text, ImageBackground,TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text, ImageBackground, TouchableOpacity, Dimensions } from "react-native";
 
 import Background from "./Background";
 import Btn from "./Btn";
@@ -8,18 +8,15 @@ import { blue, navyblue, darkBlue } from "./Constants";
 const GetStarted = (props) => {
 
   return (
-    
-    <View>
-     
-      
+    <View style={styles.container}>
       <ImageBackground
         source={require("../assets/getStartedImage.jpg")}
-        style={{ width: 380, height: 380, marginHorizontal: 25 }}
+        style={styles.imageBackground}
       />
 
-      <View style={Styles.buttonsStyle}>
-        <Text style={Styles.startText}>Let's get started</Text>
-        <Text style={Styles.infoText}>
+      <View style={styles.buttonsStyle}>
+        <Text style={styles.startText}>Let's get started</Text>
+        <Text style={styles.infoText}>
           safe kids app helps you keep{"\n"}your family safe and secure
         </Text>
         <Btn
@@ -39,30 +36,38 @@ const GetStarted = (props) => {
   );
 };
 
-const Styles = StyleSheet.create({
-  buttonsStyle:{
-    position: "absolute",
-    marginHorizontal: 50,
-    marginVertical: 250,
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
   },
-  startText:{
-    alignItems: "center",
+  imageBackground: {
+    width: '96%',
+    height: '72%',
+    marginHorizontal: '5%',
+
+  },
+  buttonsStyle: {
+    position: "absolute",
+    paddingHorizontal: Dimensions.get('window').width /20,
+    paddingVertical: Dimensions.get('window').height /15,
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+  },
+  startText: {
     color: darkBlue,
     fontWeight: "bold",
-    fontSize: 33,
-    marginTop: 100,
-    marginBottom: 30,
+    fontSize: Dimensions.get('window').width /11,
+    marginTop: Dimensions.get('window').height/2.6 ,
     textAlign: "center",
   },
-  infoText:{
-    alignItems: "center",
+  infoText: {
     color: darkBlue,
-    fontSize: 20,
-    marginBottom: 140,
+    fontSize: Dimensions.get('window').width /18,
+    marginTop: Dimensions.get('window').height/20 ,
+    marginBottom: Dimensions.get('window').height/9,
     textAlign: "center",
   },
- 
 });
-
 
 export default GetStarted;
