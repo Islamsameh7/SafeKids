@@ -22,6 +22,7 @@ import MatchingProfiles from "./src/components/userFunctions/MatchingProfiles";
 import UserProfile from "./src/components/userFunctions/UserProfile";
 import KidProfile from "./src/components/userFunctions/KidProfile";
 import MyKids from "./src/components/userFunctions/MyKids";
+import MissingKids from "./src/components/userFunctions/MissingKids";
 import Notifications from "./src/components/AboutUs";
 
 import MyKids from "./src/components/userFunctions/MyKids";
@@ -42,10 +43,8 @@ function App(props) {
           }}
         >
           <Stack.Screen name="KidProfile" component={KidProfile} />
-          <Stack.Screen name="MyKids" component={MyKids} />
           <Stack.Screen name="Notifications" component={Notifications} />
           <Stack.Screen name="UserProfile" component={UserProfile} />
-          {/* <Stack.Screen name="MyKids" component={MyKids} />      */}
           {/* <Stack.Screen name="UserProfile" component={UserProfile} /> */}
 
           <Stack.Screen name="GetStarted" component={GetStarted} />
@@ -63,6 +62,7 @@ function App(props) {
           <Stack.Screen name="NewPassword" component={NewPassword} />
           <Stack.Screen name="AboutUs" component={AboutUs} />
           <Stack.Screen name="MyKids" component={MyKids} />
+          <Stack.Screen name="MissingKids" component={MissingKids} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

@@ -56,7 +56,7 @@ const Home = (props) => {
           <Text style={styles.buttonDesc2}>Upload a photo for found kid.</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => props.navigation.navigate("MyKids")}
+          onPress={() => props.navigation.navigate("MissingKids")}
           style={styles.button}>
 
           <Image source={require("../assets/missing-kid.png")} style={styles.missing_kid} />
