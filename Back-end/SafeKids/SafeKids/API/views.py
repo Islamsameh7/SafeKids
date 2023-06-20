@@ -20,9 +20,6 @@ def login(request):
     email = request.data.get('email')
     password = request.data.get('password')
     user = authenticate(request, email=email, password=password)
-    print(email)
-    print(password)
-
     if user is not None:
         auth_login(request, user)
         return Response(status=status.HTTP_200_OK)
