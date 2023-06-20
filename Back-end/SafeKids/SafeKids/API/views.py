@@ -10,23 +10,17 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import *
 from rest_framework import status
-from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.hashers import make_password
+from django.middleware.csrf import get_token
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 # Create your views here.
 
-@api_view(['POST'])
-def login(request):
-    email = request.data.get('email')
-    password = request.data.get('password')
-    user = authenticate(request, email=email, password=password)
-    print(email)
-    print(password)
-
-    if user is not None:
-        auth_login(request, user)
-        return Response(status=status.HTTP_200_OK)
-    return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+@api_view(['GET'])
+@ensure_csrf_cookie
+def get_csrf_token(request):
+    return Response({"csrfToken": get_token(request)})
 
 
 @api_view(['POST']) 
@@ -39,6 +33,25 @@ def register(request):
         serializer.save()
         return Response(status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def login(request):
+    email = request.data.get('email')
+    password = request.data.get('password')
+    user = authenticate(request, email=email, password=password)
+    if user is not None:
+        auth_login(request, user)
+        return Response(status=status.HTTP_200_OK)
+    return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['POST'])
+def logout(request):
+    if request.user.is_authenticated:
+        logout(request)
+        return Response({"detail": "Logged out successfully."})
+    return Response({"detail": "User is not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
 
 #lazm a8yr el post hena tb2a zy el function ely fo2
 @csrf_exempt
