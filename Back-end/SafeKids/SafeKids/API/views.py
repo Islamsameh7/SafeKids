@@ -1,3 +1,4 @@
+from django.forms import ValidationError
 from django.shortcuts import render, redirect
 from django.urls import path
 from django.http import HttpResponse
@@ -10,6 +11,7 @@ from rest_framework.response import Response
 from .serializers import *
 from rest_framework import status
 from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth.hashers import make_password
 
 # Create your views here.
 
@@ -31,6 +33,9 @@ def login(request):
 def register(request):
     serializer = CustomUserSerializer(data=request.data)
     if serializer.is_valid():
+        password = serializer.validated_data['password']
+        hashed_password = make_password(password)
+        serializer.validated_data['password'] = hashed_password
         serializer.save()
         return Response(status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
