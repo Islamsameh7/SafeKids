@@ -24,12 +24,12 @@ const Home = (props) => {
         <TouchableOpacity style={{ marginLeft: "5%" }}>
           <IonIcons name={"menu"} size={40} color={darkBlue} />
         </TouchableOpacity>
-        <TouchableOpacity style={{ marginLeft: "55%" }}>
+        <TouchableOpacity onPress={() => props.navigation.navigate("Notifications")} style={{ marginLeft: "55%" }}>
           <IonIcons name={"notifications"} size={40} color={darkBlue} />
         </TouchableOpacity>
         <TouchableOpacity style={{ marginLeft: "5%" }}>
           <FontIcons name={"user"} size={40} color={darkBlue}
-          onPress={() => props.navigation.navigate("UserProfile")}
+            onPress={() => props.navigation.navigate("UserProfile")}
           />
         </TouchableOpacity>
 

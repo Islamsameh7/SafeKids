@@ -79,23 +79,24 @@ const styles = StyleSheet.create({
         color: darkBlue,
         fontWeight: "bold",
         textAlign: "center",
-        marginTop: Dimensions.get('window').height/7,
+        marginTop: Dimensions.get('window').height / 7,
     },
     scrollViewContent: {
         alignItems: "center",
-        paddingTop: Dimensions.get('window').height/14,
-        paddingBottom: Dimensions.get('window').height/10
+        paddingTop: Dimensions.get('window').height / 14,
+        paddingBottom: Dimensions.get('window').height / 10
     },
     row: {
         flexDirection: "row",
-        marginBottom: Dimensions.get('window').height/22,
+        marginBottom: Dimensions.get('window').height / 22,
     },
     card: {
         alignItems: "center",
         backgroundColor: lightBlue,
-        width: Dimensions.get('window').height/5,
+        width: Dimensions.get('window').width / 2.5,
         borderRadius: 20,
-        marginHorizontal: Dimensions.get('window').width/20,
+        marginHorizontal: Dimensions.get('window').width / 20,
+
     },
     cardImage: {
         width: "100%",
