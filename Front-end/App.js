@@ -19,7 +19,12 @@ import UploadPhoto from "./src/components/userFunctions/UploadPhoto";
 import Matching from "./src/components/Matching";
 import AboutUs from "./src/components/AboutUs";
 import MatchingProfiles from "./src/components/userFunctions/MatchingProfiles";
+import UserProfile from "./src/components/userFunctions/UserProfile";
+import KidProfile from "./src/components/userFunctions/KidProfile";
 import MyKids from "./src/components/userFunctions/MyKids";
+import MissingKids from "./src/components/userFunctions/MissingKids";
+import Notifications from "./src/components/AboutUs";
+
 const Stack = createNativeStackNavigator();
 
 function App(props) {
@@ -52,6 +57,10 @@ function App(props) {
           <Stack.Screen name="NewPassword" component={NewPassword} />
           <Stack.Screen name="AboutUs" component={AboutUs} />
           <Stack.Screen name="MyKids" component={MyKids} />
+          <Stack.Screen name="MissingKids" component={MissingKids} />
+          <Stack.Screen name="KidProfile" component={KidProfile} />
+          <Stack.Screen name="Notifications" component={Notifications} />
+          <Stack.Screen name="UserProfile" component={UserProfile} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

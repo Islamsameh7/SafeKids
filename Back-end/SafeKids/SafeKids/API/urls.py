@@ -6,5 +6,6 @@ urlpatterns = [
     path('add_missing_kid/', add_missing_kid, name='add_missing_kid'),
     path('get_found_kid_details/', get_found_kid_details, name='get_found_kid_details'),
     path('register/', register, name='register'),
+    path('login/', login, name='login'),
 
 ]

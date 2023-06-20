@@ -62,7 +62,7 @@ const MyKids = (props) => {
         <View>
             <TouchableOpacity
                 style={{ top: 70, left: 20, position: "absolute" }}
-                onPress={() => props.navigation.navigate('Home')}
+                onPress={() => props.navigation.navigate('UserProfile')}
             >
                 <Ionicons name={"left"} size={30} color={darkBlue} />
             </TouchableOpacity>
