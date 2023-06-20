@@ -7,9 +7,9 @@ from .forms import FoundKidForm
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import CustomUserSerializer
+from .serializers import *
 from rest_framework import status
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login as auth_login
 
 # Create your views here.
 
@@ -18,8 +18,11 @@ def login(request):
     email = request.data.get('email')
     password = request.data.get('password')
     user = authenticate(request, email=email, password=password)
+    print(email)
+    print(password)
+
     if user is not None:
-        login(request, user)
+        auth_login(request, user)
         return Response(status=status.HTTP_200_OK)
     return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
