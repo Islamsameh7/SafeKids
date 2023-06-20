@@ -17,6 +17,8 @@ const windowHeight = Dimensions.get("window").height;
 
 const UploadPhoto = (props) => {
   const [image, setImage] = useState(null);
+  const [name, setName] = useState("");
+  const [location, setLocaton] = useState("");
 
   const uploadPhoto = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
@@ -42,6 +44,39 @@ const UploadPhoto = (props) => {
       setImage(_image.uri);
     }
   };
+  const addFoundKid = async () => {
+    const formData = new FormData();
+    formData.append('user', '1'); // ID of the user for the found kid
+    formData.append('name', name);
+    formData.append('gender', 'male');
+    formData.append('age', '10');
+    formData.append('location', 'Some Location');
+  
+    const photo = {
+      uri: 'file:///path/to/photo.jpg', // Replace with the actual path of the photo
+      name: 'photo.jpg',
+      type: 'image/jpeg',
+    };
+    formData.append('photo', photo);
+  
+    const response = await fetch('http://your-api-endpoint/add_found_kid/', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  
+    if (response.ok) {
+      // Successful response
+      console.log('Found kid added successfully');
+    } else {
+      // Error response
+      const errorData = await response.text();
+      console.log('Failed to add found kid:', errorData);
+    }
+  };
+  
   return (
     <View>
       <TouchableOpacity onPress={() => props.navigation.navigate("Home")}>
@@ -56,12 +91,12 @@ const UploadPhoto = (props) => {
 
       <View style={styles.container}>
         <Text style={styles.nameText}>Name (Optional)</Text>
-        <TextInput style={styles.field}></TextInput>
+        <TextInput style={styles.field} onChangeText={(name) => setName(name)}></TextInput>
       </View>
 
       <View style={styles.container}>
         <Text style={styles.locationText}>Location</Text>
-        <TextInput style={styles.field}></TextInput>
+        <TextInput style={styles.field} onChangeText={(location) => setLocaton(location)}></TextInput>
       </View>
 
       <View style={styles.uploadedContainer}>

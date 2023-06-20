@@ -10,8 +10,6 @@ const GetStarted = (props) => {
   return (
     
     <View>
-     
-      
       <ImageBackground
         source={require("../assets/getStartedImage.jpg")}
         style={{ width: 380, height: 380, marginHorizontal: 25 }}
