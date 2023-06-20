@@ -23,7 +23,7 @@ import UserProfile from "./src/components/userFunctions/UserProfile";
 import KidProfile from "./src/components/userFunctions/KidProfile";
 import MyKids from "./src/components/userFunctions/MyKids";
 import MissingKids from "./src/components/userFunctions/MissingKids";
-import Notifications from "./src/components/Notifications";
+
 
 const Stack = createNativeStackNavigator();
 
@@ -42,6 +42,7 @@ function App(props) {
           }}
         >
 
+
           <Stack.Screen name="GetStarted" component={GetStarted} />
           <Stack.Screen name="Signup" component={Signup} />
           <Stack.Screen name="Login" component={Login} />
@@ -59,7 +60,6 @@ function App(props) {
           <Stack.Screen name="MyKids" component={MyKids} />
           <Stack.Screen name="MissingKids" component={MissingKids} />
           <Stack.Screen name="KidProfile" component={KidProfile} />
-          <Stack.Screen name="Notifications" component={Notifications} />
           <Stack.Screen name="UserProfile" component={UserProfile} />
         </Stack.Navigator>
       </NavigationContainer>
