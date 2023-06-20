@@ -14,7 +14,6 @@ class CustomUser(AbstractUser):
     )
     first_name = None
     last_name = None
-    USERNAME_FIELD = 'id'
     name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
     phoneNumber = models.CharField(max_length=20)
@@ -22,6 +21,9 @@ class CustomUser(AbstractUser):
     birthdate = models.DateField(null=False, blank=True)
     city = models.CharField(max_length=255)
     photo = models.ImageField(upload_to='user_photos', blank=True, null=True)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['name', 'phoneNumber', 'gender', 'birthdate', 'city']
 
 
 class AbstractKid(models.Model):
