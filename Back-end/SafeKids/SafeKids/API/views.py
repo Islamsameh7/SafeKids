@@ -23,7 +23,7 @@ def get_csrf_token(request):
     return Response({"csrfToken": get_token(request)})
 
 
-@api_view(['POST'])
+@api_view(['POST']) 
 def register(request):
     serializer = CustomUserSerializer(data=request.data)
     if serializer.is_valid():
@@ -53,6 +53,7 @@ def logout(request):
         return Response({"detail": "Logged out successfully."})
     return Response({"detail": "User is not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
 
+#lazm a8yr el post hena tb2a zy el function ely fo2
 @csrf_exempt
 def add_found_kid(request):
     if request.method == 'POST':
