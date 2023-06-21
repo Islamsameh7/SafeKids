@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Text, ImageBackground, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text, ImageBackground, TouchableOpacity, FlatList, Image } from "react-native";
 import Ionicons from "react-native-vector-icons/AntDesign";
 import { darkBlue, grey } from "./Constants";
 
@@ -7,58 +7,60 @@ import { darkBlue, grey } from "./Constants";
 const Notifications = (props) => {
 
     return (
-
         <View>
-
             <TouchableOpacity onPress={() => props.navigation.navigate("Home")}>
                 <Ionicons
                     name={"left"}
-                    size={30}
+                    size={25}
                     color={darkBlue}
-                    style={{ top: 70, left: 20 }}
+                    style={{ top: 50, left: 20 }}
                 />
             </TouchableOpacity>
-            <ImageBackground
-                source={require("../assets/aboutus.jpg")}
-                style={{ width: 300, height: 180, marginVertical: 130, alignSelf: "center" }}
-            />
 
-            <View style={Styles.buttonsStyle}>
-                <Text style={Styles.aboutusText}>About Us</Text>
-                <Text style={Styles.infoText}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                    Cras adipiscing enim eu turpis egestas. Tristique risus nec feugiat in fermentum. {"\n"}{"\n"}
-                    Lacinia at quis risus sed vulputate. Viverra ipsum nunc aliquet bibendum enim facilisis.
+            <TouchableOpacity onPress={() => props.navigation.navigate("UserProfile")}>
+                <Image source={require("../assets/user.png")} style={{
+                    width: 35, height: 35, borderRadius: "200", backgroundColor: "white", marginLeft: "82%", marginTop: "6%"
+                }}></Image>
+            </TouchableOpacity>
+
+            <View style={Styles.container}>
+
+                <Text style={{ color: darkBlue, fontSize: 22, fontWeight: "bold" }}>
+                    Notifications
                 </Text>
+                <TouchableOpacity>
+                    <Text style={{ color: grey, fontSize: 13, fontWeight: "normal", marginHorizontal: "40%", marginTop: "2%" }}>View All</Text>
+                </TouchableOpacity>
 
             </View>
+
+            <View style={Styles.content}>
+                <Image source={require("../assets/settings.png")} style={{width:35,height:35,marginLeft: "8%", borderRadius:"15%" }}></Image>
+                <View>
+                <Text style={{color: darkBlue, fontSize: 15, fontWeight: "bold", marginHorizontal:"2%",marginTop: "2%"}}>Safe Kids</Text>
+                <Text style={{color: darkBlue, fontSize: 15, fontWeight: "normal"}}>4 new kid's profiles were added today. {"\n"}Check them out!</Text>
+                <Text>2 minutes ago.</Text>
+                </View>
+                
+
+            </View>
+
         </View>
-    );
+
+
+
+
+    )
 };
 
 const Styles = StyleSheet.create({
-    buttonsStyle: {
-        position: "absolute",
-        marginHorizontal: 50,
-        marginVertical: 250,
+    container: {
+        padding: "8%",
+        flexDirection: "row",
     },
-    aboutusText: {
-        // alignItems: "flex-end",
-        color: darkBlue,
-        fontWeight: "bold",
-        fontSize: 22,
-        marginTop: 100,
-        marginBottom: 15,
-        textAlign: "left",
-        letterSpacing: 1,
-    },
-    infoText: {
-        alignItems: "center",
-        color: grey,
-        fontSize: 12,
-        textAlign: "left",
-    },
-
+    content: {
+        flexDirection: "row"
+    }
 });
 
 

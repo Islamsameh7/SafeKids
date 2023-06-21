@@ -39,8 +39,6 @@ const Signup = (props) => {
 
   
   const register = async () => {
-    console.log(gender)
-    console.log(city)
     const formData = new FormData();
 
     formData.append('name', name);
