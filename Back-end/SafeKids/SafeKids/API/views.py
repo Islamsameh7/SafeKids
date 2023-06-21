@@ -13,9 +13,10 @@ from rest_framework import status
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.hashers import make_password
 from django.middleware.csrf import get_token
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 
 # Create your views here.
+
 
 @api_view(['GET'])
 @ensure_csrf_cookie
@@ -23,7 +24,7 @@ def get_csrf_token(request):
     return Response({"csrfToken": get_token(request)})
 
 
-@api_view(['POST']) 
+@api_view(['POST'])
 def register(request):
     serializer = CustomUserSerializer(data=request.data)
     if serializer.is_valid():
@@ -39,10 +40,22 @@ def register(request):
 def login(request):
     email = request.data.get('email')
     password = request.data.get('password')
+
     user = authenticate(request, email=email, password=password)
     if user is not None:
         auth_login(request, user)
-        return Response(status=status.HTTP_200_OK)
+        user_data = {
+            'id': user.id,
+            'email': user.email,
+            'name':user.name,
+            'gender':user.gender,
+            'username': user.username,
+            'phonenumber': user.phoneNumber,
+            'birthdate': user.birthdate,
+            'city': user.city
+            # Include any other user attributes you want to return
+        }
+        return Response(user_data, status=status.HTTP_200_OK)
     return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
@@ -53,10 +66,12 @@ def logout(request):
         return Response({"detail": "Logged out successfully."})
     return Response({"detail": "User is not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
 
-#lazm a8yr el post hena tb2a zy el function ely fo2
-@csrf_exempt
+# lazm a8yr el post hena tb2a zy el function ely fo2
+
+
+@api_view(['POST'])
 def add_found_kid(request):
-    if request.method == 'POST':
+  
         form = FoundKidForm(request.POST, request.FILES)
         if form.is_valid():
             kid = form.save(commit=False)
@@ -78,15 +93,13 @@ def add_found_kid(request):
             return HttpResponse('Found kid added successfully', status=200)
         else:
             return HttpResponse(form.errors, status=400)
-    else:
-        form = FoundKidForm()
+   
 
-    return HttpResponse('Method not allowed', status=405)
+  
 
-
-@csrf_exempt
+@api_view(['POST'])
 def add_missing_kid(request):
-    if request.method == 'POST':
+    
         form = MissingKid(request.POST, request.FILES)
         if form.is_valid():
             kid = form.save(commit=False)
@@ -110,10 +123,6 @@ def add_missing_kid(request):
             return HttpResponse('Missing kid added successfully', status=200)
         else:
             return HttpResponse(form.errors, status=400)
-    else:
-        form = FoundKidForm()
-
-    return HttpResponse('Method not allowed', status=405)
 
 
 def get_found_kid_details(request, kid_name):
