@@ -19,8 +19,7 @@ const Notifications = (props) => {
 
             <TouchableOpacity onPress={() => props.navigation.navigate("UserProfile")}>
                 <Image source={require("../assets/user.png")} style={{
-                    width: 35, height: 35, borderRadius: "200", backgroundColor: "white", marginLeft: "82%", marginTop: "6%"
-                }}></Image>
+                    width: 30, height: 30, borderRadius: "100%", backgroundColor: "white", marginLeft: "82%", marginTop: "6%"}}></Image>
             </TouchableOpacity>
 
             <View style={Styles.container}>
@@ -34,12 +33,34 @@ const Notifications = (props) => {
 
             </View>
 
-            <View style={Styles.content}>
+            <View  style={{marginTop:"2%",flexDirection: "row"}}>
                 <Image source={require("../assets/settings.png")} style={{width:35,height:35,marginLeft: "8%", borderRadius:"15%" }}></Image>
-                <View>
-                <Text style={{color: darkBlue, fontSize: 15, fontWeight: "bold", marginHorizontal:"2%",marginTop: "2%"}}>Safe Kids</Text>
-                <Text style={{color: darkBlue, fontSize: 15, fontWeight: "normal"}}>4 new kid's profiles were added today. {"\n"}Check them out!</Text>
-                <Text>2 minutes ago.</Text>
+                <View style={{marginLeft:"2%", marginTop:"1%"}}>
+                <Text style={{color: darkBlue, fontSize: 14, fontWeight: "bold"}}>Safe Kids 
+                <Text style={{color: darkBlue, fontSize: 12, fontWeight: "normal"}}> 4 new kid's profiles were added today. {"\n"}Check them out!</Text></Text>
+                <Text style={{color: grey, fontSize: 12, fontWeight: "normal", marginLeft:"50%"}}>2 minutes ago.</Text>
+                </View>
+                
+
+            </View>
+
+            <View style={{marginTop:"4%",flexDirection: "row"}}>
+                <Image source={require("../assets/settings.png")} style={{width:35,height:35,marginLeft: "8%", borderRadius:"15%" }}></Image>
+                <View style={{marginLeft:"2%", marginTop:"1%"}}>
+                <Text style={{color: darkBlue, fontSize: 14, fontWeight: "bold"}}>Safe Kids 
+                <Text style={{color: darkBlue, fontSize: 12, fontWeight: "normal"}}> No match was found for your{"\n"} uploaded photo.</Text></Text>
+                <Text style={{color: grey, fontSize: 12, fontWeight: "normal", marginLeft:"55%"}}>2 days ago.</Text>
+                </View>
+                
+
+            </View>
+
+            <View style={{marginTop:"4%",flexDirection: "row"}}>
+                <Image source={require("../assets/settings.png")} style={{width:35,height:35,marginLeft: "8%", borderRadius:"15%" }}></Image>
+                <View style={{marginLeft:"2%", marginTop:"1%"}}>
+                <Text style={{color: darkBlue, fontSize: 14, fontWeight: "bold"}}>Safe Kids 
+                <Text style={{color: darkBlue, fontSize: 12, fontWeight: "normal"}}> There is a match found for your {"\n"}uploaded photo</Text></Text>
+                <Text style={{color: grey, fontSize: 12, fontWeight: "normal", marginLeft:"55%"}}>5 days ago.</Text>
                 </View>
                 
 
@@ -58,9 +79,7 @@ const Styles = StyleSheet.create({
         padding: "8%",
         flexDirection: "row",
     },
-    content: {
-        flexDirection: "row"
-    }
+  
 });
 
 
