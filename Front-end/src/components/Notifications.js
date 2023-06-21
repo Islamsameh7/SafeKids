@@ -19,8 +19,7 @@ const Notifications = (props) => {
 
             <TouchableOpacity onPress={() => props.navigation.navigate("UserProfile")}>
                 <Image source={require("../assets/user.png")} style={{
-                    width: 35, height: 35, borderRadius: "200", backgroundColor: "white", marginLeft: "82%", marginTop: "6%"
-                }}></Image>
+                    width: 30, height: 30, borderRadius: "100%", backgroundColor: "white", marginLeft: "82%", marginTop: "6%"}}></Image>
             </TouchableOpacity>
 
             <View style={Styles.container}>

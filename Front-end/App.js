@@ -23,6 +23,7 @@ import KidProfile from "./src/components/userFunctions/KidProfile";
 import MyKids from "./src/components/userFunctions/MyKids";
 import MissingKids from "./src/components/userFunctions/MissingKids";
 import Notifications from "./src/components/Notifications";
+import { AuthProvider } from "./src/components/authentication/AuthProvider";
 
 const Stack = createNativeStackNavigator();
 
@@ -30,7 +31,9 @@ function App(props) {
   const globalContext = useContext(Context);
   const isLoggedIn = globalContext;
   return (
+    <AuthProvider>
 
+      <Provider>
 
       <NavigationContainer>
         <Stack.Navigator
@@ -41,8 +44,6 @@ function App(props) {
             },
           }}
         >
-
-
           <Stack.Screen name="Notifications" component={Notifications} />
           <Stack.Screen name="GetStarted" component={GetStarted} />
           <Stack.Screen name="Signup" component={Signup} />
@@ -64,7 +65,10 @@ function App(props) {
           {/* <Stack.Screen name="Notifications" component={Notifications} /> */}
         </Stack.Navigator>
       </NavigationContainer>
+    </Provider>
+    </AuthProvider>
 
-)
-};
+  );
+}
+
 export default App;
