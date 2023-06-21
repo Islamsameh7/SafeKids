@@ -1,7 +1,5 @@
 import React from "react";
 import { View, StyleSheet, Text, ImageBackground, TouchableOpacity, Dimensions } from "react-native";
-
-import Background from "./Background";
 import Btn from "./Btn";
 import { blue, navyblue, darkBlue } from "./Constants";
 
@@ -71,3 +69,4 @@ const styles = StyleSheet.create({
 });
 
 export default GetStarted;
+
