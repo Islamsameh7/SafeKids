@@ -16,8 +16,8 @@ import DropdownComponent from "../DropdownComponent";
 import DatePicker from 'react-native-datepicker';
 
 const genderChoice = [
-  { label: "Female", value: "female" },
-  { label: "Male", value: "male" },
+  { label: "Female", value: "F" },
+  { label: "Male", value: "M" },
  
 ];
 const cityChoice =[
@@ -33,46 +33,47 @@ const Signup = (props) => {
   const [password, setPassword] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
-  const [gender, setGender] = useState("male");
-  const [city, setCity] = useState("cairo");
+  const [gender, setGender] = useState("");
+  const [city, setCity] = useState("");
   const [error, setError] = useState("")
-  const handleRequest = async () => {
-    setError("")
 
-    let body = JSON.stringify({
-      'name': name,
-      'email': email,
-      'password': password,
-      'birthDate': birthDate,
-      'mobileNumber': mobileNumber,
-      'gender':gender,
-      'city':city
-    })
+  
+  const register = async () => {
+    const formData = new FormData();
 
-    fetch(apiRoutes.register, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body:body
-      })
-      .then(res => {
-        if (res.ok) {
-          return res.json()
-        } else {
-          setError("User already exists")
-          throw res.json()
-        }
-      })
-      .then(json => {
-       /* setUserObj(json)
-        setToken(json.token)
-        setIsLoggedIn(true)*/
-      })
-      .catch(error => {
-        console.log(error)
-      })
-  };
+    formData.append('name', name);
+    formData.append('email', email);
+    formData.append('password', password);
+    formData.append('birthdate', birthDate);  
+    formData.append('phoneNumber', mobileNumber);
+    formData.append('city', city);
+    formData.append('username',email);
+    formData.append('gender', gender);
+
+    try {
+      const response = await fetch(apiRoutes.register, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+  
+      if (response.ok) {
+        // Successful response
+        const responseData = await response.json();
+        console.log('User Registered Successfully:', responseData);
+      } else {
+        // Error response
+        const errorData = await response.text();
+        console.log('Failed to register user:', errorData);
+      }
+    } catch (error) {
+      // Network or other error
+      console.log('Error:', error.message);
+    }
+
+  }
 
   return (
     <View style={{ backgroundColor: darkBlue }}>
@@ -236,7 +237,7 @@ const Signup = (props) => {
            <DropdownComponent
             data={genderChoice}
             onChange={(item) => {
-              setGender(item);
+              setGender(item.value);
             }}
           ></DropdownComponent>
          <Text
@@ -256,13 +257,13 @@ const Signup = (props) => {
            <DropdownComponent
             data={cityChoice}
             onChange={(item) => {
-              setCity(item);
+              setCity(item.value);
             }}
           ></DropdownComponent>
 
           <TouchableOpacity
             onPress={() => {
-              handleRequest();
+              register();
               props.navigation.navigate("Login");
             }}
             style={{

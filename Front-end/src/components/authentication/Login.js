@@ -14,44 +14,41 @@ import { post } from "../apiCalls";
 import Btn from "../Btn";
 import { darkBlue, navyblue,grey } from "../Constants";
 import { Context } from "../../context/globalContext";
+import { AuthContext } from "./AuthProvider";
 
 const Login = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const globalContext = useContext(Context);
-  const { setIsLoggedIn, domain, setUserName, setToken } = globalContext;
-  const [error, setError] = useState("");
+  const { loginContext } = useContext(AuthContext);
 
-  function tempLogin(){
-    props.navigation.navigate("Home");
-  }
-  const handleLogin = async () => {
-    try {
-      const response = await fetch(apiRoutes.login, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      });
-      console.log(body)
-      if (response.ok) {
-        // Login successful
-        const data = await response.json();
-        // Handle the successful login response, e.g., set user state, store token, etc.
-      } else {
-        console.log(response.json())
-        // Login failed
-        throw new Error('Invalid credentials');
-      }
-    } catch (error) {
-      // Handle the error
-      console.error(error);
+
+  const login = async () => {
+    const formData = new FormData();
+
+
+    formData.append('email', email);
+    formData.append('password', password);
+   
+
+    const response = await fetch(apiRoutes.login, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  
+    if (response.ok) {
+      const userData = await response.json();
+      loginContext(userData)
+      props.navigation.navigate("Home");
+      
+    } else {
+      // Error response
+      const errorData = await response.text();
+      console.log('Failed to Login:', errorData);
     }
-  };
+  }
   
   
 
@@ -144,7 +141,7 @@ const Login = (props) => {
             secureTextEntry={true}
           ></TextInput>
 
-          <TouchableOpacity style={styles.loginButton} onPress={tempLogin}> 
+          <TouchableOpacity style={styles.loginButton} onPress={login}> 
             <Text style={styles.loginText}>Log in</Text>
           </TouchableOpacity>
 
