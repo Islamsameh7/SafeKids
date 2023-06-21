@@ -34,12 +34,34 @@ const Notifications = (props) => {
 
             </View>
 
-            <View style={Styles.content}>
+            <View  style={{marginTop:"2%",flexDirection: "row"}}>
                 <Image source={require("../assets/settings.png")} style={{width:35,height:35,marginLeft: "8%", borderRadius:"15%" }}></Image>
-                <View>
-                <Text style={{color: darkBlue, fontSize: 15, fontWeight: "bold", marginHorizontal:"2%",marginTop: "2%"}}>Safe Kids</Text>
-                <Text style={{color: darkBlue, fontSize: 15, fontWeight: "normal"}}>4 new kid's profiles were added today. {"\n"}Check them out!</Text>
-                <Text>2 minutes ago.</Text>
+                <View style={{marginLeft:"2%", marginTop:"1%"}}>
+                <Text style={{color: darkBlue, fontSize: 14, fontWeight: "bold"}}>Safe Kids 
+                <Text style={{color: darkBlue, fontSize: 12, fontWeight: "normal"}}> 4 new kid's profiles were added today. {"\n"}Check them out!</Text></Text>
+                <Text style={{color: grey, fontSize: 12, fontWeight: "normal", marginLeft:"50%"}}>2 minutes ago.</Text>
+                </View>
+                
+
+            </View>
+
+            <View style={{marginTop:"4%",flexDirection: "row"}}>
+                <Image source={require("../assets/settings.png")} style={{width:35,height:35,marginLeft: "8%", borderRadius:"15%" }}></Image>
+                <View style={{marginLeft:"2%", marginTop:"1%"}}>
+                <Text style={{color: darkBlue, fontSize: 14, fontWeight: "bold"}}>Safe Kids 
+                <Text style={{color: darkBlue, fontSize: 12, fontWeight: "normal"}}> No match was found for your{"\n"} uploaded photo.</Text></Text>
+                <Text style={{color: grey, fontSize: 12, fontWeight: "normal", marginLeft:"55%"}}>2 days ago.</Text>
+                </View>
+                
+
+            </View>
+
+            <View style={{marginTop:"4%",flexDirection: "row"}}>
+                <Image source={require("../assets/settings.png")} style={{width:35,height:35,marginLeft: "8%", borderRadius:"15%" }}></Image>
+                <View style={{marginLeft:"2%", marginTop:"1%"}}>
+                <Text style={{color: darkBlue, fontSize: 14, fontWeight: "bold"}}>Safe Kids 
+                <Text style={{color: darkBlue, fontSize: 12, fontWeight: "normal"}}> There is a match found for your {"\n"}uploaded photo</Text></Text>
+                <Text style={{color: grey, fontSize: 12, fontWeight: "normal", marginLeft:"55%"}}>5 days ago.</Text>
                 </View>
                 
 
@@ -58,9 +80,7 @@ const Styles = StyleSheet.create({
         padding: "8%",
         flexDirection: "row",
     },
-    content: {
-        flexDirection: "row"
-    }
+  
 });
 
 

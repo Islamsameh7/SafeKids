@@ -23,32 +23,15 @@ import KidProfile from "./src/components/userFunctions/KidProfile";
 import MyKids from "./src/components/userFunctions/MyKids";
 import MissingKids from "./src/components/userFunctions/MissingKids";
 import Notifications from "./src/components/Notifications";
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-import { AuthProvider } from "./src/components/authentication/AuthContext";
 
-=======
-import { AuthProvider } from "./src/components/authentication/AuthProvider";
->>>>>>> Stashed changes
-=======
-import { AuthProvider } from "./src/components/authentication/AuthProvider";
->>>>>>> Stashed changes
 const Stack = createNativeStackNavigator();
 
 function App(props) {
   const globalContext = useContext(Context);
   const isLoggedIn = globalContext;
   return (
-    <AuthProvider>
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-       <Provider>
-=======
-      <Provider>
->>>>>>> Stashed changes
-=======
-       <Provider>
->>>>>>> Stashed changes
+
+
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
@@ -58,14 +41,10 @@ function App(props) {
             },
           }}
         >
-<<<<<<< Updated upstream
+
 
           <Stack.Screen name="Notifications" component={Notifications} />
-=======
->>>>>>> Stashed changes
           <Stack.Screen name="GetStarted" component={GetStarted} />
-          
-          
           <Stack.Screen name="Signup" component={Signup} />
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Home" component={Home} />
@@ -82,21 +61,10 @@ function App(props) {
           <Stack.Screen name="MissingKids" component={MissingKids} />
           <Stack.Screen name="KidProfile" component={KidProfile} />
           <Stack.Screen name="UserProfile" component={UserProfile} />
-          <Stack.Screen name="Notifications" component={Notifications} />
+          {/* <Stack.Screen name="Notifications" component={Notifications} /> */}
         </Stack.Navigator>
       </NavigationContainer>
-    </Provider>
-    </AuthProvider>
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-   
-=======
-    
->>>>>>> Stashed changes
-=======
-    
->>>>>>> Stashed changes
-  );
-}
 
+)
+};
 export default App;
