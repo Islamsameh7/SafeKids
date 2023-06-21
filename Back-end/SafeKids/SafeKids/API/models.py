@@ -33,8 +33,9 @@ class AbstractKid(models.Model):
     )
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
+    birthdate = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=6, choices=GENDER_CHOICES)
-    age = models.IntegerField()
+
 
     class Meta:
         abstract = True
@@ -55,8 +56,9 @@ class MissingKid(AbstractKid):
     lost_date = models.DateField(null=False, blank=True)
     last_known_location = models.CharField(max_length=255)
     still_missing = models.BooleanField()
+    birthdate = models.DateField(null=False, blank=False)
     notes = models.CharField(max_length=1000,blank=True, null = True)
-
+    contactNumber = models.CharField(max_length=20)
 
 class Photo(models.Model):
     found_kid = models.ForeignKey(FoundKid, on_delete=models.CASCADE, blank=True, null=True)

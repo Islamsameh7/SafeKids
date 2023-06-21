@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useContext } from "react";
 import {
   View,
   StyleSheet,
@@ -9,14 +9,17 @@ import {
 } from "react-native";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import * as ImagePicker from "expo-image-picker";
+import { useNavigation } from '@react-navigation/native';
 import EntypoIcons from "react-native-vector-icons/Entypo";
 import AntIcons from "react-native-vector-icons/AntDesign";
 import { darkBlue, lightBlue } from "../Constants";
+import { GlobalContext } from "../context/GlobalContext";
 import { Modal } from "react-native-paper";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const KidProfilePhotos = (props) => {
+  const { setKidImages,kidImages } = useContext(GlobalContext);
   const [image1, setImage1] = useState(null);
   const [image2, setImage2] = useState(null);
   const [image3, setImage3] = useState(null);
@@ -25,6 +28,12 @@ const KidProfilePhotos = (props) => {
   const [image6, setImage6] = useState(null);
   const [currentImg, setCurrentImg] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const navigation = useNavigation();
+
+  const addImageToList = (newImage) => {
+    const updatedList = [...kidImages, newImage];
+    setKidImages(updatedList);
+  };
   const pickImage = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -34,8 +43,9 @@ const KidProfilePhotos = (props) => {
     });
 
     if (!_image.cancelled) {
+      addImageToList(_image.uri);
       if(currentImg == 1){
-        setImage1(_image.uri);
+        setImage1(_image.uri); 
       }
       else if(currentImg == 2){
         setImage2(_image.uri);
@@ -52,7 +62,7 @@ const KidProfilePhotos = (props) => {
       else if(currentImg == 6){
         setImage6(_image.uri);
       }
-      
+  
     }
     setIsModalVisible(false);
   };
@@ -83,13 +93,16 @@ const KidProfilePhotos = (props) => {
       else if(currentImg == 6){
         setImage6(_image.uri);
       }
-      
+  
     }
     setIsModalVisible(false);
   };
   const changeCurrentImage = async (currentImg) => {
     setIsModalVisible(true);
     setCurrentImg(currentImg);
+  };
+  const goBack = () => {
+    navigation.goBack();
   };
 
   return (
@@ -193,7 +206,7 @@ const KidProfilePhotos = (props) => {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.doneButton}>
+      <TouchableOpacity style={styles.doneButton} onPress={() => goBack()}>
         <Text style={styles.doneText}>Done</Text>
       </TouchableOpacity>
 

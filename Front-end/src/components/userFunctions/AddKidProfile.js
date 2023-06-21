@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -12,13 +12,17 @@ import AntIcons from "react-native-vector-icons/AntDesign";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import EntypoIcons from "react-native-vector-icons/Entypo";
 import RadioGroup from "react-native-radio-buttons-group";
-import { RadioButton } from "react-native-paper";
+import { GlobalContext } from "../context/GlobalContext";
+import apiRoutes from "../apiRoutes";
 
 const AddKidProfile = (props) => {
   const [name, setName] = useState("");
   const [gender, setGender] = useState("");
-  const [age, setAge] = useState("");
+  const [birthdate, setBirthdate] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
   const [lastKnownLocation, setLastKnownLocation] = useState("");
+  const [lostDate, setLostDate] = useState("");
+  const [notes, setNotes] = useState("");
   const [radioButtons, setRadioButtons] = useState([
     {
       id: "1", // acts as primary key, should be unique and non-empty string
@@ -33,7 +37,7 @@ const AddKidProfile = (props) => {
           {"Male"}
         </Text>
       ),
-      value: "Male",
+      value: "male",
       size: 13,
     },
     {
@@ -49,25 +53,36 @@ const AddKidProfile = (props) => {
           {"Female"}
         </Text>
       ),
-      value: "Female",
+      value: "female",
       size: 13,
     },
   ]);
+  const { user, kidImages,emptyImages } = useContext(GlobalContext);
 
   function onPressRadioButton(radioButtonsArray) {
+    const selectedRadioButton = radioButtonsArray.find(
+      (button) => button.selected === true
+    );
+    if (selectedRadioButton) {
+      setGender(selectedRadioButton.value);
+    }
     setRadioButtons(radioButtonsArray);
   }
   const addMissingKid = async () => {
     const formData = new FormData();
-    formData.append("user", "1"); // ID of the user for the missing kid
-    formData.append("name", name);
-    formData.append("gender", "male");
-    formData.append("age", "10");
-    formData.append("location", "Some Location");
 
-    if (images.length > 0) {
-      for (let i = 0; i < images.length; i++) {
-        const image = images[i];
+    formData.append("user", user.id); // ID of the user for the missing kid
+    formData.append("name", name);
+    formData.append("gender", gender);
+    formData.append("birthdate", birthdate);
+    formData.append("last_known_location", lastKnownLocation);
+    formData.append("lost_date", lostDate);
+    formData.append("still_missing", true);
+    formData.append("contactNumber", contactNumber);
+
+    if (kidImages.length > 0) {
+      for (let i = 0; i < kidImages.length; i++) {
+        const image = kidImages[i];
         const response = await fetch(image);
         const blob = await response.blob();
         const fileName = image.split("/").pop(); // Extract the file name from the URI
@@ -91,15 +106,32 @@ const AddKidProfile = (props) => {
         }
       }
     }
-
-    const response = await fetch(apiRoutes.addMissingKid, {
-      method: "POST",
-      body: formData,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    try {
+      const response = await fetch(apiRoutes.addMissingKid, {
+        method: "POST",
+        body: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if (response.ok) {
+        // Successful response
+        emptyImages();
+        console.log(kidImages.length);
+        console.log("Missing Kid added successfully");
+      } else {
+        // Error response
+        const errorData = await response.text();
+        console.log("Failed to add missing kid:", errorData);
+      }
+    } catch (error) {
+      console.log("Error:", error.message);
+    }
   };
+  const showme = () => {
+    console.log(lostDate);
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <View>
@@ -129,6 +161,7 @@ const AddKidProfile = (props) => {
             style={styles.field}
             placeholderTextColor={grey}
             placeholder="Jiara Martins"
+            onChangeText={(name) => setName(name)}
           ></TextInput>
         </View>
 
@@ -146,6 +179,7 @@ const AddKidProfile = (props) => {
             style={styles.field}
             placeholderTextColor={grey}
             placeholder="DD/MM/YYYY"
+            onChangeText={(birthdate) => setBirthdate(birthdate)}
           ></TextInput>
         </View>
 
@@ -166,6 +200,7 @@ const AddKidProfile = (props) => {
             style={styles.field}
             placeholderTextColor={grey}
             placeholder="01234567891"
+            onChangeText={(number) => setContactNumber(number)}
           ></TextInput>
         </View>
 
@@ -175,6 +210,7 @@ const AddKidProfile = (props) => {
             style={styles.field}
             placeholderTextColor={grey}
             placeholder="cairo-hadayekElKobba"
+            onChangeText={(location) => setLastKnownLocation(location)}
           ></TextInput>
         </View>
 
@@ -184,21 +220,24 @@ const AddKidProfile = (props) => {
             style={styles.field}
             placeholderTextColor={grey}
             placeholder="DD/MM/YYYY"
-            //onChange={(date)=>(set)}
+            onChangeText={(date) => setLostDate(date)}
           ></TextInput>
         </View>
         <View style={styles.NotesField}>
           <Text style={styles.Text}>Notes</Text>
-          <TextInput style={styles.notesField}></TextInput>
+          <TextInput
+            style={styles.notesField}
+            onChangeText={(notes) => setNotes(notes)}
+          ></TextInput>
         </View>
         <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.submitButton}>
-          <Text style={styles.submitText}>Submit</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.submitButton}
+            onPress={() => addMissingKid()}
+          >
+            <Text style={styles.submitText}>Submit</Text>
+          </TouchableOpacity>
         </View>
-        
-       
-        
       </View>
     </ScrollView>
   );
@@ -228,10 +267,10 @@ const styles = StyleSheet.create({
     color: darkBlue,
     fontWeight: "bold",
     textAlign: "center",
-    marginTop: '3%',
+    marginTop: "3%",
   },
   nameField: {
-    marginTop: '15%',
+    marginTop: "15%",
     marginLeft: "10%",
   },
   Text: {
@@ -241,7 +280,7 @@ const styles = StyleSheet.create({
   },
   addPhotoButton: {
     marginLeft: "10%",
-    marginTop: '5%',
+    marginTop: "5%",
     width: "68%",
     borderColor: lightGrey2,
     borderWidth: 2,
@@ -257,27 +296,27 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   birthField: {
-    marginTop: '7%',
+    marginTop: "7%",
     marginLeft: "10%",
   },
   genderField: {
-    marginTop: '5%',
+    marginTop: "5%",
     marginLeft: "10%",
   },
   mobileField: {
-    marginTop: '3%',
+    marginTop: "3%",
     marginLeft: "10%",
   },
   lastKnownLocationField: {
-    marginTop: '3%',
+    marginTop: "3%",
     marginLeft: "10%",
   },
   lostDateField: {
-    marginTop: '3%',
+    marginTop: "3%",
     marginLeft: "10%",
   },
   NotesField: {
-    marginTop: '5%',
+    marginTop: "5%",
     marginLeft: "10%",
   },
   submitButton: {
@@ -288,19 +327,16 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     marginLeft: "19%",
     position: "absolute",
-   
-    
   },
-  buttonContainer:{
- 
-    marginBottom:'70%',
+  buttonContainer: {
+    marginBottom: "70%",
   },
   submitText: {
     color: "#FFFFFF",
     fontSize: 25,
     fontWeight: "bold",
   },
- 
+
   genderOption: {
     color: darkBlue,
     fontWeight: "bold",
@@ -308,11 +344,10 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     flexGrow: 1,
-    paddingBottom: '40%',
+    paddingBottom: "40%",
   },
   container: {
     flex: 1,
-   
   },
 });
 
