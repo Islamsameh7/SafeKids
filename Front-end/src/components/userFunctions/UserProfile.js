@@ -9,11 +9,11 @@ import {
     
 } from "react-native";
 import { darkBlue, lightGrey } from "../Constants";
-import { AuthContext } from "../authentication/AuthProvider";
+import { GlobalContext } from "../context/GlobalContext";
 
 
 const UserProfile = (props) => {
-    const { user } = useContext(AuthContext);
+    const { user } = useContext(GlobalContext);
     return (
         <View>
             <ScrollView>

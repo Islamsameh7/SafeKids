@@ -64,7 +64,7 @@ const MatchingProfiles = (props) => {
   return (
     <View>
       <TouchableOpacity
-        onPress={() => props.navigation.navigate("UploadPhoto")}
+        onPress={() => props.navigation.navigate("Home")}
         style={{ top: 70, left: 20, position: "absolute" }}
       >
         <Ionicons name={"left"} size={30} color={darkBlue} />
