@@ -9,7 +9,6 @@ import Signup from "./src/components/authentication/Signup";
 import Login from "./src/components/authentication/Login";
 import { Context, Provider } from "./src/context/globalContext.js";
 import Home from "./src/components/Home";
-import MainContainer from "./src/components/navigation/MainContainer";
 import ForgotPassword from "./src/components/authentication/ForgotPassword";
 import Verification from "./src/components/authentication/Verification";
 import NewPassword from "./src/components/authentication/NewPassword";
@@ -24,8 +23,12 @@ import KidProfile from "./src/components/userFunctions/KidProfile";
 import MyKids from "./src/components/userFunctions/MyKids";
 import MissingKids from "./src/components/userFunctions/MissingKids";
 import Notifications from "./src/components/Notifications";
+<<<<<<< Updated upstream
 import { AuthProvider } from "./src/components/authentication/AuthContext";
 
+=======
+import { AuthProvider } from "./src/components/authentication/AuthProvider";
+>>>>>>> Stashed changes
 const Stack = createNativeStackNavigator();
 
 function App(props) {
@@ -33,7 +36,11 @@ function App(props) {
   const isLoggedIn = globalContext;
   return (
     <AuthProvider>
+<<<<<<< Updated upstream
        <Provider>
+=======
+      <Provider>
+>>>>>>> Stashed changes
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
@@ -53,7 +60,6 @@ function App(props) {
           <Stack.Screen name="UploadPhoto" component={UploadPhoto} />
           <Stack.Screen name="Matching" component={Matching} />
           <Stack.Screen name="MatchingProfiles" component={MatchingProfiles} />
-          <Stack.Screen name="MainContainer" component={MainContainer} />
           <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
           <Stack.Screen name="Verification" component={Verification} />
           <Stack.Screen name="NewPassword" component={NewPassword} />
@@ -67,7 +73,11 @@ function App(props) {
       </NavigationContainer>
     </Provider>
     </AuthProvider>
+<<<<<<< Updated upstream
    
+=======
+    
+>>>>>>> Stashed changes
   );
 }
 

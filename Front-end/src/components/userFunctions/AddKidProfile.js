@@ -184,16 +184,19 @@ const AddKidProfile = (props) => {
             style={styles.field}
             placeholderTextColor={grey}
             placeholder="DD/MM/YYYY"
+            //onChange={(date)=>(set)}
           ></TextInput>
         </View>
         <View style={styles.NotesField}>
           <Text style={styles.Text}>Notes</Text>
           <TextInput style={styles.notesField}></TextInput>
         </View>
-        
+        <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.submitButton}>
           <Text style={styles.submitText}>Submit</Text>
         </TouchableOpacity>
+        </View>
+        
        
         
       </View>
@@ -285,8 +288,12 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     marginLeft: "19%",
     position: "absolute",
-    marginBottom: '0%',
+   
     
+  },
+  buttonContainer:{
+ 
+    marginBottom:'70%',
   },
   submitText: {
     color: "#FFFFFF",
@@ -301,7 +308,7 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     flexGrow: 1,
-    paddingBottom: '20%',
+    paddingBottom: '40%',
   },
   container: {
     flex: 1,
