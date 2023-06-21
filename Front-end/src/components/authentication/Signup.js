@@ -16,8 +16,8 @@ import DropdownComponent from "../DropdownComponent";
 import DatePicker from 'react-native-datepicker';
 
 const genderChoice = [
-  { label: "Female", value: "female" },
-  { label: "Male", value: "male" },
+  { label: "Female", value: "F" },
+  { label: "Male", value: "M" },
  
 ];
 const cityChoice =[
@@ -33,8 +33,8 @@ const Signup = (props) => {
   const [password, setPassword] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
-  const [gender, setGender] = useState("male");
-  const [city, setCity] = useState("cairo");
+  const [gender, setGender] = useState("");
+  const [city, setCity] = useState("");
   const [error, setError] = useState("")
 
   
@@ -50,22 +50,29 @@ const Signup = (props) => {
     formData.append('username',email);
     formData.append('gender', gender);
 
-    const response = await fetch(apiRoutes.register, {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    try {
+      const response = await fetch(apiRoutes.register, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
   
-    if (response.ok) {
-      // Successful response
-      console.log('User Registered Successfully');
-    } else {
-      // Error response
-      const errorData = await response.text();
-      console.log('Failed to register user:', errorData);
+      if (response.ok) {
+        // Successful response
+        const responseData = await response.json();
+        console.log('User Registered Successfully:', responseData);
+      } else {
+        // Error response
+        const errorData = await response.text();
+        console.log('Failed to register user:', errorData);
+      }
+    } catch (error) {
+      // Network or other error
+      console.log('Error:', error.message);
     }
+
   }
 
   return (
@@ -230,7 +237,7 @@ const Signup = (props) => {
            <DropdownComponent
             data={genderChoice}
             onChange={(item) => {
-              setGender(item);
+              setGender(item.value);
             }}
           ></DropdownComponent>
          <Text
@@ -250,7 +257,7 @@ const Signup = (props) => {
            <DropdownComponent
             data={cityChoice}
             onChange={(item) => {
-              setCity(item);
+              setCity(item.value);
             }}
           ></DropdownComponent>
 
