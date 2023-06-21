@@ -13,13 +13,12 @@ import apiRoutes from "../apiRoutes";
 import { post } from "../apiCalls";
 import Btn from "../Btn";
 import { darkBlue, navyblue,grey } from "../Constants";
-import { Context } from "../../context/globalContext";
-import { AuthContext } from "./AuthProvider";
+import { GlobalContext } from "../context/GlobalContext";
 
 const Login = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { loginContext } = useContext(AuthContext);
+  const { loginContext } = useContext(GlobalContext);
 
 
   const login = async () => {

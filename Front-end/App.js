@@ -1,13 +1,11 @@
 // In App.js in a new project
 
 import React, { useContext } from "react";
-
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import GetStarted from "./src/components/GetStarted";
 import Signup from "./src/components/authentication/Signup";
 import Login from "./src/components/authentication/Login";
-import { Context, Provider } from "./src/context/globalContext.js";
 import Home from "./src/components/Home";
 import ForgotPassword from "./src/components/authentication/ForgotPassword";
 import Verification from "./src/components/authentication/Verification";
@@ -23,14 +21,14 @@ import KidProfile from "./src/components/userFunctions/KidProfile";
 import MyKids from "./src/components/userFunctions/MyKids";
 import MissingKids from "./src/components/userFunctions/MissingKids";
 import Notifications from "./src/components/Notifications";
+import { GlobalProvider } from "./src/components/context/GlobalContext.js";
 import { AuthProvider } from "./src/components/authentication/AuthProvider";
 
 const Stack = createNativeStackNavigator();
 
 function App(props) {
-  const globalContext = useContext(Context);
-  const isLoggedIn = globalContext;
   return (
+    <GlobalProvider>
     <AuthProvider>
 
       <Provider>
@@ -44,6 +42,8 @@ function App(props) {
             },
           }}
         >
+          <Stack.Screen name="GetStarted" component={GetStarted} />
+
           <Stack.Screen name="Notifications" component={Notifications} />
           <Stack.Screen name="GetStarted" component={GetStarted} />
           <Stack.Screen name="Signup" component={Signup} />
@@ -65,6 +65,7 @@ function App(props) {
           {/* <Stack.Screen name="Notifications" component={Notifications} /> */}
         </Stack.Navigator>
       </NavigationContainer>
+    </GlobalProvider>
     </Provider>
     </AuthProvider>
 

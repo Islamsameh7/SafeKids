@@ -47,10 +47,10 @@ const Signup = (props) => {
     formData.append('birthdate', birthDate);  
     formData.append('phoneNumber', mobileNumber);
     formData.append('city', city);
-    formData.append('username',email);
+    formData.append('username','ahmed');
     formData.append('gender', gender);
 
-    try {
+
       const response = await fetch(apiRoutes.register, {
         method: 'POST',
         body: formData,
@@ -58,20 +58,17 @@ const Signup = (props) => {
           'Content-Type': 'multipart/form-data',
         },
       });
-  
+
       if (response.ok) {
         // Successful response
-        const responseData = await response.json();
+        const responseData = await response.text();
         console.log('User Registered Successfully:', responseData);
       } else {
         // Error response
         const errorData = await response.text();
         console.log('Failed to register user:', errorData);
       }
-    } catch (error) {
-      // Network or other error
-      console.log('Error:', error.message);
-    }
+    
 
   }
 

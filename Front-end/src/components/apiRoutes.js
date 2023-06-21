@@ -5,4 +5,5 @@ module.exports = {
     register: API_URL+"register/",
     login: API_URL+"login/",
     addFoundKid: API_URL+"add_found_kid/",
+    addMissingKid:API_URL+"add_missing_kid/",
 }
