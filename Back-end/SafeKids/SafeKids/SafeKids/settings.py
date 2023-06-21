@@ -25,11 +25,7 @@ SECRET_KEY = 'django-insecure-7th(q9xqxpf64s&t0d1=cx=!1!dinz=hq822rz)w6yml8#$0$x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-<<<<<<< Updated upstream
-ALLOWED_HOSTS = ['a1e3-41-237-133-176.ngrok-free.app', '127.0.0.1', 'localhost']
-=======
-ALLOWED_HOSTS = ['9883-41-237-133-176.ngrok-free.app']
->>>>>>> Stashed changes
+ALLOWED_HOSTS = ['9883-41-237-133-176.ngrok-free.app', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -48,6 +44,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'API.disablecsrfmiddleware.DisableCSRFMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
