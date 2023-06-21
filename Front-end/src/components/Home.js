@@ -1,7 +1,6 @@
 import React, { useState, useContext } from "react";
 import { View, StyleSheet, Text, TouchableOpacity, Image } from "react-native";
 import Background from "./Background";
-import { Context } from "../context/globalContext.js";
 import Btn from "./Btn";
 import { darkBlue, lightBlue } from "./Constants";
 import IonIcons from "react-native-vector-icons/Ionicons";
@@ -9,8 +8,8 @@ import FontIcons from "react-native-vector-icons/FontAwesome";
 import AntIcons from "react-native-vector-icons/AntDesign";
 
 const Home = (props) => {
-  const globalContext = useContext(Context);
-  const { isLoggedIn, userName } = globalContext;
+
+
   return (
     <View>
       <View

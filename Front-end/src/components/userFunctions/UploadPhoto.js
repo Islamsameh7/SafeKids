@@ -13,13 +13,18 @@ import EntypoIcons from "react-native-vector-icons/Entypo";
 import { lightBlue, navyblue, lightGrey, darkBlue, grey } from "../Constants";
 import * as ImagePicker from "expo-image-picker";
 import apiRoutes from "../apiRoutes";
+import { GlobalContext } from "../context/GlobalContext";
+
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
+
 
 const UploadPhoto = (props) => {
   const [image, setImage] = useState(null);
   const [name, setName] = useState("");
-  const [location, setLocaton] = useState("");
+  const [location, setLocation] = useState("");
+  const { user } = useContext(GlobalContext);
+
 
   const uploadPhoto = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
@@ -47,11 +52,11 @@ const UploadPhoto = (props) => {
   };
   const addFoundKid = async () => {
     const formData = new FormData();
-    formData.append('user', '1'); // ID of the user for the found kid
+    formData.append('user', user.id); // ID of the user for the found kid
     formData.append('name', name);
-    formData.append('gender', 'male');
-    formData.append('age', '10');
-    formData.append('location', 'Some Location');
+    formData.append('gender', '');
+    formData.append('birthdate', '');
+    formData.append('location', location);
   
     if (image) {
       const response = await fetch(image);
@@ -106,7 +111,7 @@ const UploadPhoto = (props) => {
 
       <View style={styles.container}>
         <Text style={styles.locationText}>Location</Text>
-        <TextInput style={styles.field} onChangeText={(location) => setLocaton(location)}></TextInput>
+        <TextInput style={styles.field} onChangeText={(location) => setLocation(location)}></TextInput>
       </View>
 
       <View style={styles.uploadedContainer}>

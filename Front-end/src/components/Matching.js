@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/AntDesign";
 import { darkBlue } from "./Constants";
 import Background from "./Background";
-import { Context } from "../context/globalContext.js";
+import { Context } from "./context/GlobalContext.js";
 
 const Matching = (props) => {
   const navigation = useNavigation();

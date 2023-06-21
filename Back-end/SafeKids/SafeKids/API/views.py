@@ -4,14 +4,14 @@ from django.urls import path
 from django.http import HttpResponse
 from .models import *
 from django.views.decorators.csrf import csrf_exempt
-from .forms import FoundKidForm
+from .forms import *
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import *
 from rest_framework import status
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password,check_password
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 
@@ -32,16 +32,19 @@ def register(request):
         hashed_password = make_password(password)
         serializer.validated_data['password'] = hashed_password
         serializer.save()
-        return Response(status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return HttpResponse('user registered successfully', status=200)
+   
+    return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-@api_view(['POST'])
+    """
+    @api_view(['POST'])
 def login(request):
     email = request.data.get('email')
     password = request.data.get('password')
-
+    print(email)
+    print(password)
     user = authenticate(request, email=email, password=password)
+    print(user)
     if user is not None:
         auth_login(request, user)
         user_data = {
@@ -57,7 +60,37 @@ def login(request):
         }
         return Response(user_data, status=status.HTTP_200_OK)
     return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+    """
 
+
+@api_view(['POST'])
+def login(request):
+    email = request.data.get('email')
+    password = request.data.get('password')
+    User = get_user_model()
+    try:
+        user = User.objects.get(email=email)
+        if check_password(password, user.password):
+            # Password matches, proceed with authentication
+            auth_login(request, user)
+            user_data = {
+            'id': user.id,
+            'email': user.email,
+            'name':user.name,
+            'gender':user.gender,
+            'username': user.username,
+            'phonenumber': user.phoneNumber,
+            'birthdate': user.birthdate,
+            'city': user.city
+            # Include any other user attributes you want to return
+        }
+            return Response(user_data,status=status.HTTP_200_OK)
+        else:
+            # Password does not match
+            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+    except User.DoesNotExist:
+        # User does not exist
+        return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['POST'])
 def logout(request):
@@ -75,8 +108,10 @@ def add_found_kid(request):
         form = FoundKidForm(request.POST, request.FILES)
         if form.is_valid():
             kid = form.save(commit=False)
-
+            kid.save()
+            
             # Handle photo upload
+
             photo_file = request.FILES.get('photo')
             if photo_file:
                 try:
@@ -100,10 +135,11 @@ def add_found_kid(request):
 @api_view(['POST'])
 def add_missing_kid(request):
     
-        form = MissingKid(request.POST, request.FILES)
+        form = MissingKidForm(request.POST, request.FILES)
+       
         if form.is_valid():
             kid = form.save(commit=False)
-
+            
             # Handle photo upload
             photo_files = request.FILES.getlist('photos')
             if photo_files:
@@ -115,13 +151,15 @@ def add_missing_kid(request):
                         photo.missing_kid = kid
 
                         photo.save()
+                    return HttpResponse('Missing kid added successfully', status=200)    
                 except ValidationError as e:
                     return HttpResponse(str(e), status=400)
             else:
                 kid.save()
 
-            return HttpResponse('Missing kid added successfully', status=200)
+            
         else:
+            print(form.errors)
             return HttpResponse(form.errors, status=400)
 
 
