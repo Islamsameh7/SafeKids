@@ -11,6 +11,7 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('login/', login, name='login'),
     path('logout/', logout, name='logout'),
+    path('similarity/', similarity, name='similarity'),
     
     path('get_csrf_token/', get_csrf_token, name='get_csrf_token'),
 
