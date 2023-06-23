@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext,useEffect } from "react";
 import {
     View,
     StyleSheet,
@@ -11,11 +11,12 @@ import {
 
 import Ionicons from "react-native-vector-icons/AntDesign";
 import { darkBlue, lightBlue } from "../Constants";
-
+import apiRoutes from "../apiRoutes";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const MissingKids = (props) => {
+    const [missingKids, setMissingKids] = useState([]);
     const names = ["malak", "mona", "john", "emma"];
     const lostDates = ["19-9-2022", "20-1-2023", "10-5-2022", "15-2-2023"];
     const images = [
@@ -25,47 +26,55 @@ const MissingKids = (props) => {
         require("../../assets/salma.jpg"),
     ];
 
-    return (
-        <View style={styles.container}>
-            <TouchableOpacity
-                style={{ top: 70, left: 20, position: "absolute" }}
-                onPress={() => props.navigation.navigate("Home")}
-            >
-                <Ionicons name={"left"} size={30} color={darkBlue} />
-            </TouchableOpacity>
-            <Text style={styles.matchingText}>Missing Kids</Text>
-            <ScrollView contentContainerStyle={styles.scrollViewContent}>
-                {chunkArray(names, 2).map((chunk, index) => (
-                    <View style={styles.row} key={index}>
-                        {chunk.map((name, innerIndex) => (
-                            <View style={styles.card} key={innerIndex}>
-                                <Image
-                                    source={images[index * 2 + innerIndex]}
-                                    style={styles.cardImage}
-                                />
-                                <View style={styles.cardInfo}>
-                                    <Text style={styles.dataText}>Name: {name}</Text>
-                                    <Text style={styles.dataText}>
-                                        Lost Date: {lostDates[index * 2 + innerIndex]}
-                                    </Text>
-                                </View>
-                            </View>
-                        ))}
-                    </View>
-                ))}
-            </ScrollView>
-        </View>
-    );
-};
+    useEffect(() => {
+        fetch(apiRoutes.getMissingKIds)
+          .then(response => response.json())
+          .then(data => setMissingKids(data))
+          .catch(error => console.error(error));
+      }, []);
+      const chunks = chunkArray(missingKids, 2);
 
-// Function to split an array into chunks
-const chunkArray = (array, chunkSize) => {
-    const chunks = [];
-    for (let i = 0; i < array.length; i += chunkSize) {
-        chunks.push(array.slice(i, i + chunkSize));
-    }
-    return chunks;
-};
+      return (
+          <View style={styles.container}>
+              <TouchableOpacity
+                  style={{ top: 70, left: 20, position: "absolute" }}
+                  onPress={() => props.navigation.navigate("Home")}
+              >
+                  <Ionicons name={"left"} size={30} color={darkBlue} />
+              </TouchableOpacity>
+              <Text style={styles.matchingText}>Missing Kids</Text>
+              <ScrollView contentContainerStyle={styles.scrollViewContent}>
+                  {chunks.map((chunk, index) => (
+                      <View style={styles.row} key={index}>
+                          {chunk.map((kid, innerIndex) => (
+                              <View style={styles.card} key={innerIndex}>
+                                  <Image
+                                      source={{uri:apiRoutes.mainUrl+kid.photo_url}}
+                                      style={styles.cardImage}
+                                  />
+                                  <View style={styles.cardInfo}>
+                                      <Text style={styles.dataText}>Name: {kid.name}</Text>
+                                      <Text style={styles.dataText}>
+                                          Lost Date: {kid.lost_date}
+                                      </Text>
+                                  </View>
+                              </View>
+                          ))}
+                      </View>
+                  ))}
+              </ScrollView>
+          </View>
+      );
+  };
+  
+  // Function to split an array into chunks
+  const chunkArray = (array, chunkSize) => {
+      const chunks = [];
+      for (let i = 0; i < array.length; i += chunkSize) {
+          chunks.push(array.slice(i, i + chunkSize));
+      }
+      return chunks;
+  };
 
 const styles = StyleSheet.create({
     container: {
