@@ -10,7 +10,9 @@ export const GlobalProvider = ({ children }) => {
   const loginContext = (userData) => {
     setUser(userData);
   };
-
+  const updateUserContext = (userData) => {
+    setUser(userData);
+  };
   const logoutContext = () => {
     setUser(null);
   };
@@ -22,7 +24,7 @@ export const GlobalProvider = ({ children }) => {
 
 
   return (
-    <GlobalContext.Provider value={{ user, loginContext, logoutContext,kidImages,setKidImages,emptyImages }}>
+    <GlobalContext.Provider value={{ user, loginContext, logoutContext,updateUserContext,kidImages,setKidImages,emptyImages }}>
       {children}
     </GlobalContext.Provider>
   );
