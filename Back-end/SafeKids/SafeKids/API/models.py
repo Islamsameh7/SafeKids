@@ -59,11 +59,15 @@ class MissingKid(AbstractKid):
     birthdate = models.DateField(null=False, blank=False)
     notes = models.CharField(max_length=1000,blank=True, null = True)
     contactNumber = models.CharField(max_length=20)
+    
+def upload_to(instance, filename):
+    # Construct the file path within the 'media' folder
+    return 'user_photos/{0}'.format(filename)  
 
 class Photo(models.Model):
     found_kid = models.ForeignKey(FoundKid, on_delete=models.CASCADE, blank=True, null=True)
     missing_kid = models.ForeignKey(MissingKid, on_delete=models.CASCADE, blank=True, null=True)
-    photo = models.ImageField(upload_to='user_photos', blank=True, null=True)
+    photo = models.ImageField(upload_to=upload_to, blank=True, null=True)
 
     # vector = ArrayField(VectorField(), null=True)
 
@@ -71,3 +75,5 @@ class Photo(models.Model):
 class Notification(models.Model):
     message = models.CharField(max_length=1000)
     time = models.TimeField(auto_now_add=True)
+    
+  

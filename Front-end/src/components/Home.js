@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { View, StyleSheet, Text, TouchableOpacity, Image } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity, Image,Dimensions } from "react-native";
 import Background from "./Background";
 import Btn from "./Btn";
 import { darkBlue, lightBlue } from "./Constants";
@@ -73,14 +73,14 @@ const styles = StyleSheet.create({
   helloText: {
     color: darkBlue,
     fontWeight: "bold",
-    fontSize: 25,
-    marginLeft: "5%",
-    marginTop: "7%",
+    fontSize: Dimensions.get('window').width /14,
+    marginLeft: Dimensions.get('window').width/15,
+    marginTop: Dimensions.get('window').height/40,
   },
   userText: {
     color: darkBlue,
-    fontSize: 32,
-    marginLeft: "5%",
+    fontSize: Dimensions.get('window').width /15,
+    marginLeft: Dimensions.get('window').width/15,
   },
   button: {
     backgroundColor: lightBlue,
@@ -91,50 +91,50 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: darkBlue,
-    fontSize: 25,
-    paddingLeft: "5%",
+    fontSize: Dimensions.get('window').width/18,
+    paddingLeft: Dimensions.get('window').width/25,
     fontWeight: "bold",
   },
   buttonDesc1: {
-    paddingBottom: "15%",
-    paddingLeft: "5%",
+    paddingBottom: Dimensions.get('window').height/18,
+    paddingLeft: Dimensions.get('window').width/23,
     color: darkBlue,
   },
   buttonDesc2: {
-    paddingBottom: "15%",
-    paddingLeft: "5%",
+    paddingBottom: Dimensions.get('window').height/18,
+    paddingLeft: Dimensions.get('window').width/23,
     color: darkBlue,
   },
   buttonDesc3: {
-    paddingBottom: "15%",
-    paddingLeft: "5%",
+    paddingBottom: Dimensions.get('window').height/18,
+    paddingLeft: Dimensions.get('window').width/23,
     color: darkBlue,
   },
   icon: {
-    marginLeft: "10%",
-    paddingTop: "5%",
-    paddingBottom: "3%",
+    marginLeft: Dimensions.get('window').width/20,
+    paddingTop: Dimensions.get('window').height/40,
+    paddingBottom: Dimensions.get('window').width/40,
   },
   upload_photo_style: {
-    height: 40,
+    height: Dimensions.get('window').height/22,
     aspectRatio: 1,
     resizeMode: 'contain',
-    marginLeft: "10%",
-    borderWidth: 4,
-    borderRadius: 100,
+    marginLeft: Dimensions.get('window').width/20,
+    borderWidth: 1,
+    borderRadius:100,
     borderColor: darkBlue,
-    marginTop: '10%',
-    marginBottom: '2%'
+    marginTop: Dimensions.get('window').height/40,
+    marginBottom: Dimensions.get('window').height/45
   },
   missing_kid: {
-    height: 40,
+    height: Dimensions.get('window').height/20,
     aspectRatio: 1,
     resizeMode: 'contain',
-    marginLeft: "10%",
+    marginLeft: Dimensions.get('window').width/20,
     borderRadius: 100,
     borderColor: darkBlue,
-    marginTop: '10%',
-    marginBottom: '2%'
+    marginTop: Dimensions.get('window').height/40,
+    marginBottom: Dimensions.get('window').height/45
   }
 });
 
