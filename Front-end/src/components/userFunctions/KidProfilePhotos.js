@@ -206,7 +206,7 @@ const KidProfilePhotos = (props) => {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.doneButton} onPress={() => goBack()}>
+      <TouchableOpacity style={styles.doneButton} onPress={() => goBack()} visi>
         <Text style={styles.doneText}>Done</Text>
       </TouchableOpacity>
 
