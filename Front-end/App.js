@@ -29,7 +29,7 @@ const Stack = createNativeStackNavigator();
 function App(props) {
   return (
     <GlobalProvider>
-   
+
 
       <NavigationContainer>
         <Stack.Navigator
@@ -41,9 +41,7 @@ function App(props) {
           }}
         >
           <Stack.Screen name="GetStarted" component={GetStarted} />
-
           <Stack.Screen name="Notifications" component={Notifications} />
-          <Stack.Screen name="GetStarted" component={GetStarted} />
           <Stack.Screen name="Signup" component={Signup} />
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Home" component={Home} />
@@ -64,7 +62,7 @@ function App(props) {
         </Stack.Navigator>
       </NavigationContainer>
     </GlobalProvider>
-   
+
 
   );
 }
