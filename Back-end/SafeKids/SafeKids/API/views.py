@@ -14,7 +14,7 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.contrib.auth.hashers import make_password,check_password
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
-
+from django.http import JsonResponse
 # Create your views here.
 
 
@@ -162,6 +162,38 @@ def add_missing_kid(request):
             print(form.errors)
             return HttpResponse(form.errors, status=400)
 
+
+@api_view(['GET'])
+def get_missing_kids(request):
+    missing_kids = MissingKid.objects.all()
+    data = []
+
+    for kid in missing_kids:
+      
+        kid_data = {
+            'name': kid.name,
+            'birthdate': kid.birthdate,
+            'gender': kid.gender,
+            'lost_date': kid.lost_date,
+            'last_known_location': kid.last_known_location,
+            'still_missing': kid.still_missing,
+            'notes': kid.notes,
+            'contactNumber': kid.contactNumber,
+         
+        }
+        
+        # Get the associated photo for the missing kid, if it exists
+        photo = Photo.objects.filter(missing_kid=kid).first()
+        if photo:
+            print(photo.photo.url)
+            kid_data['photo_url'] = photo.photo.url
+        else:
+            
+            kid_data['photo_url'] = None
+
+        data.append(kid_data)
+
+    return JsonResponse(data, safe=False)
 
 def get_found_kid_details(request, kid_name):
     try:
