@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import { darkBlue, grey, lightGrey, lightGrey2 } from "../Constants";
 import AntIcons from "react-native-vector-icons/AntDesign";
@@ -247,40 +248,40 @@ const styles = StyleSheet.create({
   field: {
     borderRadius: 100,
     backgroundColor: lightGrey,
-    paddingVertical: 6,
-    paddingHorizontal: 8,
-    width: "75%",
-    fontSize: 17,
-    marginVertical: 10,
+    paddingVertical: Dimensions.get('window').height/60,
+    paddingHorizontal: Dimensions.get('window').width/18,
+    width: "85%",
+    fontSize: Dimensions.get('window').width/25,
+    marginVertical: Dimensions.get('window').height/40,
   },
   notesField: {
     borderWidth: 2,
     borderColor: lightGrey2,
-    paddingVertical: 6,
-    paddingHorizontal: 8,
+    paddingVertical: Dimensions.get('window').height/22,
+    paddingHorizontal: Dimensions.get('window').width/22,
     width: "75%",
     height: "30%",
-    fontSize: 10,
+    fontSize: Dimensions.get('window').width/22,
   },
   addKid: {
-    fontSize: 25,
+    fontSize: Dimensions.get('window').width/15,
     color: darkBlue,
     fontWeight: "bold",
     textAlign: "center",
-    marginTop: "3%",
+    marginTop: Dimensions.get('window').height/40,
   },
   nameField: {
-    marginTop: "15%",
-    marginLeft: "10%",
+    marginTop: Dimensions.get('window').height/22,
+    marginLeft: Dimensions.get('window').width/12,
   },
   Text: {
-    fontSize: 20,
+    fontSize: Dimensions.get('window').width/20,
     fontWeight: "bold",
     color: darkBlue,
   },
   addPhotoButton: {
-    marginLeft: "10%",
-    marginTop: "5%",
+    marginLeft: Dimensions.get('window').width/8,
+    marginTop: Dimensions.get('window').height/60,
     width: "68%",
     borderColor: lightGrey2,
     borderWidth: 2,
@@ -292,62 +293,66 @@ const styles = StyleSheet.create({
   addPhotoText: {
     color: darkBlue,
     fontWeight: "bold",
-    fontSize: 20,
-    padding: 10,
+    fontSize: Dimensions.get('window').width/20,
+    padding: Dimensions.get('window').width/40,
   },
   birthField: {
-    marginTop: "7%",
-    marginLeft: "10%",
+    marginTop: Dimensions.get('window').height/38,
+    marginLeft: Dimensions.get('window').width/16,
   },
   genderField: {
-    marginTop: "5%",
-    marginLeft: "10%",
+    marginTop: Dimensions.get('window').height/60,
+    marginLeft: Dimensions.get('window').width/15,
   },
   mobileField: {
-    marginTop: "3%",
-    marginLeft: "10%",
+    marginTop: Dimensions.get('window').height/60,
+    marginLeft: Dimensions.get('window').width/15,
   },
   lastKnownLocationField: {
-    marginTop: "3%",
-    marginLeft: "10%",
+    marginTop: Dimensions.get('window').height/70,
+    marginLeft: Dimensions.get('window').width/15,
   },
   lostDateField: {
-    marginTop: "3%",
-    marginLeft: "10%",
+    marginTop: Dimensions.get('window').height/70,
+    marginLeft: Dimensions.get('window').width/15,
   },
   NotesField: {
-    marginTop: "5%",
-    marginLeft: "10%",
+    marginTop: Dimensions.get('window').height/70,
+    marginLeft: Dimensions.get('window').width/15,
   },
   submitButton: {
     backgroundColor: darkBlue,
     borderRadius: 100,
     alignItems: "center",
-    width: 230,
-    paddingVertical: 5,
-    marginLeft: "19%",
-    position: "absolute",
+    width: "50%",
+    paddingVertical: Dimensions.get('window').height/60,
+    marginLeft: Dimensions.get('window').width/4,
+    marginBottom:Dimensions.get('window').height/100,
+   
+    
   },
-  buttonContainer: {
-    marginBottom: "70%",
-  },
+  // buttonContainer:{
+ 
+  //   marginBottom:'7%',
+  // },
   submitText: {
     color: "#FFFFFF",
-    fontSize: 25,
+    fontSize: Dimensions.get('window').width/22,
     fontWeight: "bold",
   },
-
+ 
   genderOption: {
     color: darkBlue,
     fontWeight: "bold",
-    fontSize: 5,
+    fontSize: Dimensions.get('window').width/22,
   },
   scrollViewContent: {
     flexGrow: 1,
-    paddingBottom: "40%",
+    paddingBottom: Dimensions.get('window').height/2,
   },
   container: {
     flex: 1,
+   
   },
 });
 

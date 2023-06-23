@@ -22,16 +22,14 @@ import MyKids from "./src/components/userFunctions/MyKids";
 import MissingKids from "./src/components/userFunctions/MissingKids";
 import Notifications from "./src/components/Notifications";
 import { GlobalProvider } from "./src/components/context/GlobalContext.js";
-import { AuthProvider } from "./src/components/authentication/AuthProvider";
+
 
 const Stack = createNativeStackNavigator();
 
 function App(props) {
   return (
     <GlobalProvider>
-    <AuthProvider>
-
-      <Provider>
+   
 
       <NavigationContainer>
         <Stack.Navigator
@@ -66,8 +64,7 @@ function App(props) {
         </Stack.Navigator>
       </NavigationContainer>
     </GlobalProvider>
-    </Provider>
-    </AuthProvider>
+   
 
   );
 }
