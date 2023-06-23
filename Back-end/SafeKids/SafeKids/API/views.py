@@ -41,33 +41,6 @@ def register(request):
 
     return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    """
-    @api_view(['POST'])
-def login(request):
-    email = request.data.get('email')
-    password = request.data.get('password')
-    print(email)
-    print(password)
-    user = authenticate(request, email=email, password=password)
-    print(user)
-    if user is not None:
-        auth_login(request, user)
-        user_data = {
-            'id': user.id,
-            'email': user.email,
-            'name':user.name,
-            'gender':user.gender,
-            'username': user.username,
-            'phonenumber': user.phoneNumber,
-            'birthdate': user.birthdate,
-            'city': user.city
-            # Include any other user attributes you want to return
-        }
-        return Response(user_data, status=status.HTTP_200_OK)
-    return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-    """
-
-
 @api_view(['POST'])
 def login(request):
     email = request.data.get('email')
@@ -76,7 +49,6 @@ def login(request):
     try:
         user = User.objects.get(email=email)
         if check_password(password, user.password):
-            # Password matches, proceed with authentication
             auth_login(request, user)
             user_data = {
                 'id': user.id,
@@ -89,14 +61,11 @@ def login(request):
                 'phonenumber': user.phoneNumber,
                 'birthdate': user.birthdate,
                 'city': user.city
-            # Include any other user attributes you want to return
         }
             return Response(user_data, status=status.HTTP_200_OK)
         else:
-            # Password does not match
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
     except User.DoesNotExist:
-        # User does not exist
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
@@ -114,7 +83,6 @@ def edit_user(request):
     if request.POST.get('city'):
         user.city = request.POST.get('city')
 
-    # Save the changes
     user.save()
     user_data = {
                 'id': user.id,
@@ -125,7 +93,6 @@ def edit_user(request):
                 'phonenumber': user.phoneNumber,
                 'birthdate': user.birthdate,
                 'city': user.city
-                # Include any other user attributes you want to return
             }
     return Response(user_data, status=200)
 
@@ -136,9 +103,6 @@ def logout(request):
         logout(request)
         return Response({"detail": "Logged out successfully."})
     return Response({"detail": "User is not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
-
-# lazm a8yr el post hena tb2a zy el function ely fo2
-
 
 @api_view(['POST'])
 def add_found_kid(request):
@@ -176,7 +140,6 @@ def add_missing_kid(request):
     if form.is_valid():
         kid = form.save(commit=False)
 
-        # Handle photo upload
         photo_files = request.FILES.getlist('photos')
         if photo_files:
             try:
@@ -217,7 +180,6 @@ def get_missing_kids(request):
 
         }
 
-        # Get the associated photo for the missing kid, if it exists
         photo = Photo.objects.filter(missing_kid=kid).first()
         if photo:
             print(photo.photo.url)
@@ -234,13 +196,11 @@ def get_missing_kids(request):
 def get_found_kid_details(request, kid_name):
     try:
         found_kid = FoundKid.objects.get(name=kid_name)
-        # Access the attributes of the found kid
         user = found_kid.user
         gender = found_kid.gender
         age = found_kid.age
         location = found_kid.location
 
-        # Pass the attributes to the template or do something with them
         context = {
             'user': user,
             'gender': gender,
@@ -249,7 +209,6 @@ def get_found_kid_details(request, kid_name):
         }
         return render(request, 'found_kid_details.html', context)
     except FoundKid.DoesNotExist:
-        # Handle the case when the found kid is not found
         return render(request, 'kid_not_found.html')
 
 
@@ -262,14 +221,17 @@ def similarity(request):
     resnet = model_data['resnet']
 
     image1 = Image.open(request.FILES['image1'])
-    image2 = Image.open(request.FILES['image2'])
-
     image1_cropped = mtcnn(image1)
-    image2_cropped = mtcnn(image2)
-
     image1_embedding = resnet(image1_cropped.unsqueeze(0)).flatten().detach().numpy()
-    image2_embedding = resnet(image2_cropped.unsqueeze(0)).flatten().detach().numpy()
-    
-    similarity = 1 - spatial.distance.cosine(image1_embedding, image2_embedding)
+
+    profiles = []
+    for x in models.Photo:
+        image2 = Image.open(x)
+        image2_cropped = mtcnn(image2)
+        image2_embedding = resnet(image2_cropped.unsqueeze(0)).flatten().detach().numpy()
+        similarity = 1 - spatial.distance.cosine(image1_embedding, image2_embedding)
+
+        # if similarity > 0.8:
+        #     profiles.append(Profile())
 
     return JsonResponse({'similarity': similarity})
