@@ -15,17 +15,23 @@ import Ionicons from "react-native-vector-icons/AntDesign";
 import apiRoutes from "../apiRoutes";
 
 const UserProfile = (props) => {
-  const { user,updateUserContext } = useContext(GlobalContext);
+  const { user, updateUserContext } = useContext(GlobalContext);
   const [isNameVisible, setIsNameVisible] = useState(true);
   const [isDateVisible, setIsDateVisible] = useState(true);
   const [isMobileVisible, setIsMobileVisible] = useState(true);
   const [isCityVisible, setIsCityVisible] = useState(true);
+  const [isEditIconVisible, setEditIconVisible] = useState(false);
+  const [isEditProfileVisible, setIsEditProfileVisible] = useState(true);
 
   const [name, setName] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [city, setCity] = useState("");
 
+  const handleEditProfile = () => {
+    setEditIconVisible(!isEditIconVisible);
+    setIsEditProfileVisible(!isEditProfileVisible);
+  };
   const editUser = async () => {
     const formData = new FormData();
     formData.append("user_id", user.id);
@@ -46,8 +52,8 @@ const UserProfile = (props) => {
       //const responseData = await response.text();
       console.log("User Updated Successfully");
       const userData = await response.json();
-      updateUserContext(userData)
-      props.navigation.replace('UserProfile');
+      updateUserContext(userData);
+      props.navigation.replace("UserProfile");
     } else {
       // Error response
       const errorData = await response.text();
@@ -67,6 +73,7 @@ const UserProfile = (props) => {
             borderBottomRightRadius: 500,
           }}
         ></View>
+
         <View style={{ alignItems: "center", justifyContent: "center" }}>
           <Image
             source={require("../../assets/user.png")}
@@ -93,11 +100,11 @@ const UserProfile = (props) => {
                   style={styles.field}
                   placeholderTextColor={grey}
                   // placeholder="Jiara Martins"
-                   onChangeText={(name) => setName(name)}
+                  onChangeText={(name) => setName(name)}
                 ></TextInput>
               </View>
             )}
-            {
+            {isEditIconVisible && (
               <TouchableOpacity
                 onPress={() => setIsNameVisible(!isNameVisible)}
               >
@@ -108,7 +115,7 @@ const UserProfile = (props) => {
                   style={styles.editIcon}
                 />
               </TouchableOpacity>
-            }
+            )}
           </View>
 
           {/* DATE FIELD */}
@@ -125,11 +132,11 @@ const UserProfile = (props) => {
                   style={styles.field}
                   placeholderTextColor={grey}
                   // placeholder="Jiara Martins"
-                   onChangeText={(date) => setBirthDate(date)}
+                  onChangeText={(date) => setBirthDate(date)}
                 ></TextInput>
               </View>
             )}
-            {
+            {isEditIconVisible && (
               <TouchableOpacity
                 onPress={() => setIsDateVisible(!isDateVisible)}
               >
@@ -140,7 +147,7 @@ const UserProfile = (props) => {
                   style={styles.editIcon}
                 />
               </TouchableOpacity>
-            }
+            )}
           </View>
 
           {/* MOBILE FIELD */}
@@ -157,11 +164,11 @@ const UserProfile = (props) => {
                   style={styles.field}
                   placeholderTextColor={grey}
                   // placeholder="Jiara Martins"
-                   onChangeText={(mobile) => setPhoneNumber(mobile)}
+                  onChangeText={(mobile) => setPhoneNumber(mobile)}
                 ></TextInput>
               </View>
             )}
-            {
+            {isEditIconVisible && (
               <TouchableOpacity
                 onPress={() => setIsMobileVisible(!isMobileVisible)}
               >
@@ -172,7 +179,7 @@ const UserProfile = (props) => {
                   style={styles.editIcon}
                 />
               </TouchableOpacity>
-            }
+            )}
           </View>
 
           {/* CITY FIELD */}
@@ -189,11 +196,11 @@ const UserProfile = (props) => {
                   style={styles.field}
                   placeholderTextColor={grey}
                   // placeholder="Jiara Martins"
-                   onChangeText={(city) => setCity(city)}
+                  onChangeText={(city) => setCity(city)}
                 ></TextInput>
               </View>
             )}
-            {
+            {isEditIconVisible && (
               <TouchableOpacity
                 onPress={() => setIsCityVisible(!isCityVisible)}
               >
@@ -204,7 +211,7 @@ const UserProfile = (props) => {
                   style={styles.editIcon}
                 />
               </TouchableOpacity>
-            }
+            )}
           </View>
         </View>
 
@@ -215,13 +222,30 @@ const UserProfile = (props) => {
           >
             <Text style={styles.MykidsText}>My Kids </Text>
           </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.EditButton}
-            onPress={() => editUser()}
-          >
-            <Text style={styles.EditText}>Edit Profile</Text>
-          </TouchableOpacity>
+          {isEditProfileVisible && (
+            <TouchableOpacity
+              style={styles.EditButton}
+              onPress={() => handleEditProfile()}
+            >
+              <Text style={styles.EditText}>Edit Profile</Text>
+            </TouchableOpacity>
+          )}
+          {!isEditProfileVisible && (
+            <TouchableOpacity
+              style={styles.EditButton}
+              onPress={() => editUser()}
+            >
+              <Text style={styles.EditText}>Submit</Text>
+            </TouchableOpacity>
+          )}
+          {!isEditProfileVisible && (
+            <TouchableOpacity
+              style={styles.discardChanges}
+              onPress={() => props.navigation.replace("UserProfile")}
+            >
+              <Text style={styles.discardText}>Discard Changes</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </ScrollView>
     </View>
@@ -229,6 +253,13 @@ const UserProfile = (props) => {
 };
 
 const styles = StyleSheet.create({
+  discardChanges: {
+    marginLeft: Dimensions.get("window").width / 2.6,
+    marginTop: Dimensions.get("window").height / 35,
+  },
+  discardText: {
+    textDecorationLine: "underline",
+  },
   MykidsButton: {
     alignItems: "center",
     width: 200,
@@ -241,7 +272,7 @@ const styles = StyleSheet.create({
     backgroundColor: lightGrey,
     width: Dimensions.get("window").width / 2,
     height: Dimensions.get("window").height / 20,
-    paddingLeft:20,
+    paddingLeft: 20,
     fontSize: Dimensions.get("window").width / 30,
     marginVertical: Dimensions.get("window").height / 100,
   },
