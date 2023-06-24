@@ -6,19 +6,22 @@ import {
   StyleSheet,
   Touchable,
   TouchableOpacity,
+  Dimensions,
   ImageBackground,
+  Image
 } from "react-native";
 import Background from "../Background";
 import apiRoutes from "../apiRoutes";
 import { post } from "../apiCalls";
 import Btn from "../Btn";
 import { darkBlue, navyblue,grey } from "../Constants";
-import { GlobalContext } from "../context/GlobalContext";
+import { Context } from "../../context/globalContext";
+import { AuthContext } from "./AuthProvider";
 
 const Login = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { loginContext } = useContext(GlobalContext);
+  const { loginContext } = useContext(AuthContext);
 
 
   const login = async () => {
@@ -52,17 +55,16 @@ const Login = (props) => {
   
 
   return (
- 
+
+   // style={{ alignItems: "center", width: "100%" }}
       
-      
-      <View style={{ alignItems: "center", width: 460 }}>
-        <View><ImageBackground
+      <View >
+        <View><Image
         source={require("../../assets/loginImage.jpg")}
         style={{
-          width: 420,
-          height: 450,
+          width: "100%",
+          height: "65%",
           
-          marginRight:40,
         }}
         blurRadius={5}
       />
@@ -70,21 +72,24 @@ const Login = (props) => {
       
         <View
           style={{
-            backgroundColor: "white",
-            height: 400,
-            width: 460,
-            borderTopRightRadius: 140,
-            paddingTop: 50,
+            //backgroundColor: "white",
+            height: "18%",
+            width: "100%",
+            //borderTopRightRadius: "20%",
+           // paddingTop: Dimensions.get('window').height /20,
+            paddingVertical: Dimensions.get('window').height /100,
+            paddingHorizontal:Dimensions.get('window').height /40,
             alignItems: "center",
-            bottom:125,
+            paddingBottom:Dimensions.get('window').height /60,
           }}
         >
           <Text
             style={{
-              fontSize: 60,
+              fontSize: Dimensions.get('window').width /8,
               color: darkBlue,
               fontWeight: "bold",
-              marginRight: 40,
+              marginRight: Dimensions.get('window').width/250,
+             
             }}
           >
             Login
@@ -92,9 +97,9 @@ const Login = (props) => {
           <Text
             style={{
               color: darkBlue,
-              fontSize: 13,
-              marginBottom: 20,
-              marginRight: 40,
+              fontSize: Dimensions.get('window').width /30,
+              marginBottom: Dimensions.get('window').height/30,
+              marginRight: Dimensions.get('window').width/50,
             }}
           >
             Sign in to continue
@@ -102,8 +107,8 @@ const Login = (props) => {
           <Text
             style={{
               color: darkBlue,
-              marginRight: 300,
-              fontSize: 15,
+              marginRight: Dimensions.get('window').width/1.5,
+              fontSize: Dimensions.get('window').width /24,
               fontWeight: "bold",
               letterSpacing: 2,
             }}
@@ -122,8 +127,8 @@ const Login = (props) => {
           <Text
             style={{
               color: darkBlue,
-              marginRight: 260,
-              fontSize: 15,
+              marginRight: Dimensions.get('window').width/1.8,
+              fontSize: Dimensions.get('window').width /24,
               fontWeight: "bold",
               letterSpacing: 2,
             }}
@@ -145,13 +150,12 @@ const Login = (props) => {
           </TouchableOpacity>
 
           
-
-         
             
             <TouchableOpacity
               onPress={() => props.navigation.navigate("ForgotPassword")}
             >
-              <Text style={{ fontSize: 16, fontWeight: "bold",marginTop:25,marginRight:50,color:darkBlue }}>
+              <Text style={{ fontSize: Dimensions.get('window').width /25, fontWeight: "bold",marginTop:Dimensions.get('window').height /60,
+              marginRight:Dimensions.get('window').width /30,color:darkBlue }}>
               Forgot Password?
             </Text>
             </TouchableOpacity>
@@ -160,7 +164,8 @@ const Login = (props) => {
               onPress={() => props.navigation.navigate("Signup")}
             >
               <Text
-                style={{ fontSize: 16, fontWeight: "bold",marginTop:5,marginRight:50,color:darkBlue }}
+                style={{ fontSize: Dimensions.get('window').width /28, 
+                fontWeight: "bold",marginRight:Dimensions.get('window').width /30,color:darkBlue }}
               >
                 Signup
               </Text>
@@ -174,27 +179,28 @@ const Login = (props) => {
 
 const styles = StyleSheet.create({
   field: {
-    borderRadius: 100,
+    borderRadius: "100%",
     color: navyblue,
-    paddingVertical: 13,
-    paddingHorizontal: 8,
-    width: "69%",
+    paddingVertical: Dimensions.get('window').height /60,
+    paddingHorizontal: Dimensions.get('window').width /25,
+    width: "85%",
     backgroundColor: "rgb(220,220, 220)",
-    marginVertical: 10,
-    marginRight: 50,
+    marginVertical: Dimensions.get('window').height /50,
+    marginRight: Dimensions.get('window').width /22,
   },
   loginButton: {
     backgroundColor: darkBlue,
-    borderRadius: 100,
+    borderRadius: "100%",
     alignItems: "center",
-    width: 260,
-    paddingVertical: 11,
-    marginTop: 25,
-    marginRight:60,
+    width: "55%",
+    height:"55%",
+    paddingVertical: Dimensions.get('window').height /80,
+    marginTop: Dimensions.get('window').height /40,
+    marginRight:Dimensions.get('window').width /70,
   },
   loginText: {
     color: "#FFFFFF",
-    fontSize: 25,
+    fontSize: Dimensions.get('window').width /20,
     fontWeight: "bold",
   },
 });

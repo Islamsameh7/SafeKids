@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import {
   View,
   StyleSheet,
@@ -6,24 +6,20 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
-  Dimensions,
+  Dimensions
 } from "react-native";
 import { darkBlue, grey, lightGrey, lightGrey2 } from "../Constants";
 import AntIcons from "react-native-vector-icons/AntDesign";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import EntypoIcons from "react-native-vector-icons/Entypo";
 import RadioGroup from "react-native-radio-buttons-group";
-import { GlobalContext } from "../context/GlobalContext";
-import apiRoutes from "../apiRoutes";
+import { RadioButton } from "react-native-paper";
 
 const AddKidProfile = (props) => {
   const [name, setName] = useState("");
   const [gender, setGender] = useState("");
-  const [birthdate, setBirthdate] = useState("");
-  const [contactNumber, setContactNumber] = useState("");
+  const [age, setAge] = useState("");
   const [lastKnownLocation, setLastKnownLocation] = useState("");
-  const [lostDate, setLostDate] = useState("");
-  const [notes, setNotes] = useState("");
   const [radioButtons, setRadioButtons] = useState([
     {
       id: "1", // acts as primary key, should be unique and non-empty string
@@ -38,7 +34,7 @@ const AddKidProfile = (props) => {
           {"Male"}
         </Text>
       ),
-      value: "male",
+      value: "Male",
       size: 13,
     },
     {
@@ -54,36 +50,25 @@ const AddKidProfile = (props) => {
           {"Female"}
         </Text>
       ),
-      value: "female",
+      value: "Female",
       size: 13,
     },
   ]);
-  const { user, kidImages,emptyImages } = useContext(GlobalContext);
 
   function onPressRadioButton(radioButtonsArray) {
-    const selectedRadioButton = radioButtonsArray.find(
-      (button) => button.selected === true
-    );
-    if (selectedRadioButton) {
-      setGender(selectedRadioButton.value);
-    }
     setRadioButtons(radioButtonsArray);
   }
   const addMissingKid = async () => {
     const formData = new FormData();
-
-    formData.append("user", user.id); // ID of the user for the missing kid
+    formData.append("user", "1"); // ID of the user for the missing kid
     formData.append("name", name);
-    formData.append("gender", gender);
-    formData.append("birthdate", birthdate);
-    formData.append("last_known_location", lastKnownLocation);
-    formData.append("lost_date", lostDate);
-    formData.append("still_missing", true);
-    formData.append("contactNumber", contactNumber);
+    formData.append("gender", "male");
+    formData.append("age", "10");
+    formData.append("location", "Some Location");
 
-    if (kidImages.length > 0) {
-      for (let i = 0; i < kidImages.length; i++) {
-        const image = kidImages[i];
+    if (images.length > 0) {
+      for (let i = 0; i < images.length; i++) {
+        const image = images[i];
         const response = await fetch(image);
         const blob = await response.blob();
         const fileName = image.split("/").pop(); // Extract the file name from the URI
@@ -107,50 +92,33 @@ const AddKidProfile = (props) => {
         }
       }
     }
-    try {
-      const response = await fetch(apiRoutes.addMissingKid, {
-        method: "POST",
-        body: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      if (response.ok) {
-        // Successful response
-        emptyImages();
-        console.log(kidImages.length);
-        console.log("Missing Kid added successfully");
-      } else {
-        // Error response
-        const errorData = await response.text();
-        console.log("Failed to add missing kid:", errorData);
-      }
-    } catch (error) {
-      console.log("Error:", error.message);
-    }
-  };
-  const showme = () => {
-    console.log(lostDate);
-  };
 
+    const response = await fetch(apiRoutes.addMissingKid, {
+      method: "POST",
+      body: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  };
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <View>
         <TouchableOpacity onPress={() => props.navigation.navigate("Home")}>
           <AntIcons
             name={"left"}
-            size={30}
+            size={"27%"}
             color={darkBlue}
-            style={{ top: 70, left: 20 }}
+            style={{ top: "200%", left: "5%" }}
           />
         </TouchableOpacity>
 
         <TouchableOpacity>
           <IonIcons
             name={"menu"}
-            size={40}
+            size={"35%"}
             color={darkBlue}
-            style={{ top: 33, left: "83%" }}
+            style={{ top: "62%", left: "85%" }}
           />
         </TouchableOpacity>
 
@@ -162,7 +130,6 @@ const AddKidProfile = (props) => {
             style={styles.field}
             placeholderTextColor={grey}
             placeholder="Jiara Martins"
-            onChangeText={(name) => setName(name)}
           ></TextInput>
         </View>
 
@@ -170,7 +137,7 @@ const AddKidProfile = (props) => {
           style={styles.addPhotoButton}
           onPress={() => props.navigation.navigate("KidProfilePhotos")}
         >
-          <EntypoIcons name={"plus"} size={30} color={darkBlue} />
+          <EntypoIcons name={"plus"} size={"25%"} color={darkBlue} />
           <Text style={styles.addPhotoText}>ADD PHOTOS</Text>
         </TouchableOpacity>
 
@@ -180,7 +147,6 @@ const AddKidProfile = (props) => {
             style={styles.field}
             placeholderTextColor={grey}
             placeholder="DD/MM/YYYY"
-            onChangeText={(birthdate) => setBirthdate(birthdate)}
           ></TextInput>
         </View>
 
@@ -201,7 +167,6 @@ const AddKidProfile = (props) => {
             style={styles.field}
             placeholderTextColor={grey}
             placeholder="01234567891"
-            onChangeText={(number) => setContactNumber(number)}
           ></TextInput>
         </View>
 
@@ -211,7 +176,6 @@ const AddKidProfile = (props) => {
             style={styles.field}
             placeholderTextColor={grey}
             placeholder="cairo-hadayekElKobba"
-            onChangeText={(location) => setLastKnownLocation(location)}
           ></TextInput>
         </View>
 
@@ -221,24 +185,21 @@ const AddKidProfile = (props) => {
             style={styles.field}
             placeholderTextColor={grey}
             placeholder="DD/MM/YYYY"
-            onChangeText={(date) => setLostDate(date)}
+            //onChange={(date)=>(set)}
           ></TextInput>
         </View>
         <View style={styles.NotesField}>
           <Text style={styles.Text}>Notes</Text>
-          <TextInput
-            style={styles.notesField}
-            onChangeText={(notes) => setNotes(notes)}
-          ></TextInput>
+          <TextInput style={styles.notesField}></TextInput>
         </View>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.submitButton}
-            onPress={() => addMissingKid()}
-          >
-            <Text style={styles.submitText}>Submit</Text>
-          </TouchableOpacity>
+        <TouchableOpacity style={styles.submitButton}>
+          <Text style={styles.submitText}>Submit</Text>
+        </TouchableOpacity>
         </View>
+        
+       
+        
       </View>
     </ScrollView>
   );
@@ -246,7 +207,7 @@ const AddKidProfile = (props) => {
 
 const styles = StyleSheet.create({
   field: {
-    borderRadius: 100,
+    borderRadius: "100%",
     backgroundColor: lightGrey,
     paddingVertical: Dimensions.get('window').height/60,
     paddingHorizontal: Dimensions.get('window').width/18,
@@ -255,7 +216,7 @@ const styles = StyleSheet.create({
     marginVertical: Dimensions.get('window').height/40,
   },
   notesField: {
-    borderWidth: 2,
+    borderWidth: "2%",
     borderColor: lightGrey2,
     paddingVertical: Dimensions.get('window').height/22,
     paddingHorizontal: Dimensions.get('window').width/22,
@@ -284,7 +245,7 @@ const styles = StyleSheet.create({
     marginTop: Dimensions.get('window').height/60,
     width: "68%",
     borderColor: lightGrey2,
-    borderWidth: 2,
+    borderWidth: "2%",
     alignItems: "center",
     display: "flex",
     flexDirection: "row",
@@ -322,12 +283,12 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     backgroundColor: darkBlue,
-    borderRadius: 100,
+    borderRadius: "100%",
     alignItems: "center",
     width: "50%",
-    paddingVertical: Dimensions.get('window').height/60,
+    paddingVertical: Dimensions.get('window').height/50,
     marginLeft: Dimensions.get('window').width/4,
-    marginBottom:Dimensions.get('window').height/100,
+    position: "absolute",
    
     
   },

@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
-import { View, StyleSheet, Text, TouchableOpacity, Image,Dimensions } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity, Image, Dimensions } from "react-native";
 import Background from "./Background";
+import { Context } from "../context/globalContext.js";
 import Btn from "./Btn";
 import { darkBlue, lightBlue } from "./Constants";
 import IonIcons from "react-native-vector-icons/Ionicons";
@@ -8,26 +9,26 @@ import FontIcons from "react-native-vector-icons/FontAwesome";
 import AntIcons from "react-native-vector-icons/AntDesign";
 
 const Home = (props) => {
-
-
+  const globalContext = useContext(Context);
+  const { isLoggedIn, userName } = globalContext;
   return (
     <View>
       <View
         style={{
           display: "flex",
           flexDirection: "row",
-          marginTop: "15%",
+          marginTop: Dimensions.get('window').height/18,
           alignItems: "center",
         }}
       >
         <TouchableOpacity style={{ marginLeft: "5%" }}>
-          <IonIcons name={"menu"} size={40} color={darkBlue} />
+          <IonIcons name={"menu"} size={"35%"} color={darkBlue} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => props.navigation.navigate("Notifications")} style={{ marginLeft: "55%" }}>
-          <IonIcons name={"notifications"} size={40} color={darkBlue} />
+        <TouchableOpacity onPress={() => props.navigation.navigate("Notifications")} style={{ marginLeft: "58%" }}>
+          <IonIcons name={"notifications"} size={"30%"} color={darkBlue} />
         </TouchableOpacity>
         <TouchableOpacity style={{ marginLeft: "5%" }}>
-          <FontIcons name={"user"} size={40} color={darkBlue}
+          <FontIcons name={"user"} size={"30%"} color={darkBlue}
             onPress={() => props.navigation.navigate("UserProfile")}
           />
         </TouchableOpacity>
@@ -35,13 +36,13 @@ const Home = (props) => {
       </View>
       <Text style={styles.helloText}>Hello,</Text>
       <Text style={styles.userText}>User</Text>
-      <View style={{ alignItems: "center", marginTop: "5%" }}>
+      <View style={{ alignItems: "center", marginTop: Dimensions.get('window').height/90 }}>
         <TouchableOpacity
           onPress={() => props.navigation.navigate("AddKidProfile")}
           style={styles.button}>
           <AntIcons
             name={"pluscircle"}
-            size={40}
+            size={35}
             color={darkBlue}
             style={styles.icon}
           />
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: lightBlue,
     width: "80%",
-    borderRadius: 20,
+    borderRadius: "20%",
     margin: "3%"
 
   },
@@ -120,8 +121,8 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     resizeMode: 'contain',
     marginLeft: Dimensions.get('window').width/20,
-    borderWidth: 1,
-    borderRadius:100,
+    borderWidth: "4%",
+    borderRadius: "100%",
     borderColor: darkBlue,
     marginTop: Dimensions.get('window').height/40,
     marginBottom: Dimensions.get('window').height/45
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     resizeMode: 'contain',
     marginLeft: Dimensions.get('window').width/20,
-    borderRadius: 100,
+    borderRadius: "100%",
     borderColor: darkBlue,
     marginTop: Dimensions.get('window').height/40,
     marginBottom: Dimensions.get('window').height/45

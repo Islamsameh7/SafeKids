@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useContext } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -9,17 +9,14 @@ import {
 } from "react-native";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import * as ImagePicker from "expo-image-picker";
-import { useNavigation } from '@react-navigation/native';
 import EntypoIcons from "react-native-vector-icons/Entypo";
 import AntIcons from "react-native-vector-icons/AntDesign";
 import { darkBlue, lightBlue } from "../Constants";
-import { GlobalContext } from "../context/GlobalContext";
 import { Modal } from "react-native-paper";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const KidProfilePhotos = (props) => {
-  const { setKidImages,kidImages } = useContext(GlobalContext);
   const [image1, setImage1] = useState(null);
   const [image2, setImage2] = useState(null);
   const [image3, setImage3] = useState(null);
@@ -28,12 +25,6 @@ const KidProfilePhotos = (props) => {
   const [image6, setImage6] = useState(null);
   const [currentImg, setCurrentImg] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const navigation = useNavigation();
-
-  const addImageToList = (newImage) => {
-    const updatedList = [...kidImages, newImage];
-    setKidImages(updatedList);
-  };
   const pickImage = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -43,9 +34,8 @@ const KidProfilePhotos = (props) => {
     });
 
     if (!_image.cancelled) {
-      addImageToList(_image.uri);
       if(currentImg == 1){
-        setImage1(_image.uri); 
+        setImage1(_image.uri);
       }
       else if(currentImg == 2){
         setImage2(_image.uri);
@@ -62,7 +52,7 @@ const KidProfilePhotos = (props) => {
       else if(currentImg == 6){
         setImage6(_image.uri);
       }
-  
+      
     }
     setIsModalVisible(false);
   };
@@ -93,7 +83,7 @@ const KidProfilePhotos = (props) => {
       else if(currentImg == 6){
         setImage6(_image.uri);
       }
-  
+      
     }
     setIsModalVisible(false);
   };
@@ -101,18 +91,15 @@ const KidProfilePhotos = (props) => {
     setIsModalVisible(true);
     setCurrentImg(currentImg);
   };
-  const goBack = () => {
-    navigation.goBack();
-  };
 
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => props.navigation.navigate("Home")}>
         <AntIcons
           name={"left"}
-          size={30}
+          size={"25%"}
           color={darkBlue}
-          style={{ top: windowHeight / 13, right: windowWidth / 2.6 }}
+          style={{ top: windowHeight / 13, right: windowWidth / 2.3 }}
         />
       </TouchableOpacity>
       <Text style={styles.addPhotosText}>Add Photos</Text>
@@ -127,7 +114,7 @@ const KidProfilePhotos = (props) => {
         >
           <EntypoIcons
             name={"camera"}
-            size={30}
+            size={"28%"}
             color={darkBlue}
             style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
           />
@@ -140,7 +127,7 @@ const KidProfilePhotos = (props) => {
         >
           <EntypoIcons
             name={"camera"}
-            size={30}
+            size={"28%"}
             color={darkBlue}
             style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
           />
@@ -156,7 +143,7 @@ const KidProfilePhotos = (props) => {
         >
           <EntypoIcons
             name={"camera"}
-            size={30}
+            size={"28%"}
             color={darkBlue}
             style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
           />
@@ -185,7 +172,7 @@ const KidProfilePhotos = (props) => {
         >
           <EntypoIcons
             name={"camera"}
-            size={30}
+            size={"28%"}
             color={darkBlue}
             style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
           />
@@ -198,7 +185,7 @@ const KidProfilePhotos = (props) => {
         >
           <EntypoIcons
             name={"camera"}
-            size={30}
+            size={"28%"}
             color={darkBlue}
             style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
           />
@@ -206,7 +193,7 @@ const KidProfilePhotos = (props) => {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.doneButton} onPress={() => goBack()}>
+      <TouchableOpacity style={styles.doneButton}>
         <Text style={styles.doneText}>Done</Text>
       </TouchableOpacity>
 
@@ -241,34 +228,34 @@ const KidProfilePhotos = (props) => {
 
 const styles = StyleSheet.create({
   addPhotosText: {
-    fontSize: 40,
+    fontSize: Dimensions.get('window').width /11,
     color: darkBlue,
     fontWeight: "bold",
-    top: windowHeight / 8,
-    right: windowWidth / 7,
+    top: windowHeight / 13,
+    right: windowWidth / 8,
   },
   addPhotosDesc: {
-    fontSize: 20,
+    fontSize: Dimensions.get('window').width /25,
     color: darkBlue,
-    top: windowHeight / 7,
-    right: windowWidth / 90,
+    top: windowHeight / 12,
+    right: windowWidth / 70,
   },
   uploadPhoto: {
-    top: windowWidth - 270,
-    margin: 20,
-    height: 130,
-    width: 170,
-    padding: 45,
+    top: windowHeight / 10,
+    margin: Dimensions.get('window').width /70,
+    height: windowHeight / 7,
+    width: "40%",
+    padding: Dimensions.get('window').width /20,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 35,
+    borderRadius: "35%",
     backgroundColor: lightBlue,
   },
   photo: {
-    height: 130,
-    width: 170,
-    padding: 45,
-    borderRadius: 35,
+    height: "50%",
+    width: "30%",
+    padding: "20%",
+    borderRadius: "35%",
   },
   container: {
     justifyContent: "center",
@@ -279,36 +266,36 @@ const styles = StyleSheet.create({
   },
   doneButton: {
     backgroundColor: darkBlue,
-    borderRadius: 100,
+    borderRadius: "100%",
     alignItems: "center",
-    width: 230,
-    paddingVertical: 5,
-    marginLeft: "19%",
+    width: "60%",
+    paddingVertical: Dimensions.get('window').width /40,
+    marginLeft: Dimensions.get('window').width /30,
     position: "absolute",
-    top: windowHeight - 70,
+    top: windowHeight - 100,
   },
   doneText: {
     color: "#FFFFFF",
-    fontSize: 25,
+    fontSize: Dimensions.get('window').width /18,
     fontWeight: "bold",
   },
   modalContainer: {
     alignItems: "center",
     justifyContent: "center",
-    bottom: 20,
+    bottom: Dimensions.get('window').height /20,
     backgroundColor: "white",
   },
   modalContent: {
-    padding: 20,
-    borderRadius: 10,
+    padding: Dimensions.get('window').width /50,
+    borderRadius: "10%",
   },
   modalButton: {
-    marginBottom: 10,
-    padding: 10,
-    borderRadius: 5,
+    marginBottom: Dimensions.get('window').height /40,
+    padding: Dimensions.get('window').width /30,
+    borderRadius: "5%",
   },
   modalButtonText: {
-    fontSize: 16,
+    fontSize: Dimensions.get('window').width /25,
     color: "black",
     textAlign: "center",
   },

@@ -13,18 +13,13 @@ import EntypoIcons from "react-native-vector-icons/Entypo";
 import { lightBlue, navyblue, lightGrey, darkBlue, grey } from "../Constants";
 import * as ImagePicker from "expo-image-picker";
 import apiRoutes from "../apiRoutes";
-import { GlobalContext } from "../context/GlobalContext";
-
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
-
 
 const UploadPhoto = (props) => {
   const [image, setImage] = useState(null);
   const [name, setName] = useState("");
-  const [location, setLocation] = useState("");
-  const { user } = useContext(GlobalContext);
-
+  const [location, setLocaton] = useState("");
 
   const uploadPhoto = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
@@ -52,11 +47,11 @@ const UploadPhoto = (props) => {
   };
   const addFoundKid = async () => {
     const formData = new FormData();
-    formData.append('user', user.id); // ID of the user for the found kid
+    formData.append('user', '1'); // ID of the user for the found kid
     formData.append('name', name);
-    formData.append('gender', '');
-    formData.append('birthdate', '');
-    formData.append('location', location);
+    formData.append('gender', 'male');
+    formData.append('age', '10');
+    formData.append('location', 'Some Location');
   
     if (image) {
       const response = await fetch(image);
@@ -97,9 +92,9 @@ const UploadPhoto = (props) => {
       <TouchableOpacity onPress={() => props.navigation.navigate("Home")}>
         <Ionicons
           name={"left"}
-          size={30}
+          size={"25%"}
           color={darkBlue}
-          style={{ top: 70, left: 20 }}
+          style={{ top: windowHeight / 18, left: windowWidth / 20 }}
         />
       </TouchableOpacity>
       <Text style={styles.FillText}>Fill in the following fields</Text>
@@ -111,7 +106,7 @@ const UploadPhoto = (props) => {
 
       <View style={styles.container}>
         <Text style={styles.locationText}>Location</Text>
-        <TextInput style={styles.field} onChangeText={(location) => setLocation(location)}></TextInput>
+        <TextInput style={styles.field} onChangeText={(location) => setLocaton(location)}></TextInput>
       </View>
 
       <View style={styles.uploadedContainer}>
@@ -119,10 +114,10 @@ const UploadPhoto = (props) => {
           
           <Image
             source={require("../../assets/cameraUpload.jpg")}
-            style={{ width: 50, height: 45}}
+            style={{ width: "15%", height: "30%"}}
           />
           
-          <Text style={styles.TextUpload}>uploaded photo will appear here</Text>
+          <Text style={styles.TextUpload}>Uploaded photo will appear here</Text>
           <Text style={styles.SupportsText}>Supports JPG,PNG</Text>
           {image && <Image source={{ uri: image }} style={styles.photo} />}
           
@@ -144,18 +139,18 @@ const UploadPhoto = (props) => {
               backgroundColor: "white",
             }}
           >
-            <EntypoIcons name={"camera"} size={25} color={"#D79E9A"} />
+            <EntypoIcons name={"camera"} size={"25%"} color={"#D79E9A"} />
           </View>
-          <Text style={{ fontSize: 17, color: "white" }}>Take photo</Text>
+          <Text style={{ fontSize: Dimensions.get('window').width /22, color: "white" }}>Take photo</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.uploadPhoto} onPress={() => uploadPhoto() } >
           <Image
             source={require("../../assets/uploadGreen.jpg")}
-            style={{ width: 50, height: 45 }}
+            style={{ width: "20%", height: "20%" }}
           />
 
-          <Text style={{ fontSize: 17, color: "white", top: 5 }}>
+          <Text style={{ fontSize: Dimensions.get('window').width /22, color: "white", top: "2%" }}>
             Upload photo
           </Text>
         </TouchableOpacity>
@@ -180,12 +175,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   field: {
-    borderRadius: 100,
+    borderRadius: "100%",
     backgroundColor: lightGrey,
-    paddingVertical: 6,
-    paddingHorizontal: 8,
-    width: "78%",
-    fontSize: 17,
+    paddingVertical: Dimensions.get('window').height /80,
+    paddingHorizontal: Dimensions.get('window').width /20,
+    width: "80%",
+    fontSize: Dimensions.get('window').width /25,
   },
   uploadedContainer: {
     marginTop: 15,
@@ -193,30 +188,32 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   container: {
-    top: windowHeight / 6,
-    marginBottom: 35,
+    top: windowHeight / 9,
+    marginBottom: Dimensions.get('window').height /20,
     justifyContent: "center",
     alignItems: "center",
   },
   nameText: {
     right: windowWidth / 4.2,
-    fontSize: 17,
+    marginBottom: Dimensions.get('window').height /60,
+    fontSize: Dimensions.get('window').width /25,
     fontWeight: "bold",
     color: darkBlue,
   },
   locationText: {
     right: windowWidth / 3.3,
-    fontSize: 17,
+    marginBottom: Dimensions.get('window').height /60,
+    fontSize: Dimensions.get('window').width /25,
     fontWeight: "bold",
     color: darkBlue,
   },
   uploadedPhoto: {
-    top: windowHeight - 700,
-    margin: 20,
+    top: windowHeight - 610,
+    margin: Dimensions.get('window').width /20,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 35,
-    borderWidth: 1,
+    borderRadius: "35%",
+    borderWidth: "1%",
     borderStyle: "dotted",
     borderColor: darkBlue,
     height: "46%",
@@ -228,45 +225,45 @@ const styles = StyleSheet.create({
     height: "105%",
     width: "105%",
     
-    borderRadius: 30,
+    borderRadius: "30%",
   },
   takePhoto: {
-    margin: 2,
+    margin: "2%",
     backgroundColor: "#D79E9A",
-    paddingTop: 10,
-    height: 100,
-    width: 185,
+    paddingTop: Dimensions.get('window').height /70,
+    height: "100%",
+    width: "60%",
     alignItems: "center",
-    borderWidth: 1,
-    borderRadius: 20,
+    borderWidth: "1%",
+    borderRadius: "20%",
     borderColor: "white",
   },
   uploadPhoto: {
-    margin: 2,
+    margin: "2%",
     backgroundColor: "#68A3A8",
-    paddingTop: 10,
-    height: 100,
-    width: 185,
+    paddingTop: Dimensions.get('window').height /70,
+    height: "100%",
+    width: "60%",
     alignItems: "center",
-    borderWidth: 1,
-    borderRadius: 20,
+    borderWidth: "1%",
+    borderRadius: "20%",
     borderColor: "white",
   },
   FillText: {
-    fontSize: 25,
+    fontSize: Dimensions.get('window').width /18,
     color: darkBlue,
     fontWeight: "bold",
     textAlign: "center",
-    top: 90,
+    top: windowWidth / 12,
   },
   TextUpload: {
-    fontSize: 14,
+    fontSize: Dimensions.get('window').width /30,
     color: darkBlue,
     fontWeight: "bold",
    
   },
   SupportsText: {
-    fontSize: 10,
+    fontSize: Dimensions.get('window').width /45,
     color: lightGrey,
     fontWeight: "bold",
   
