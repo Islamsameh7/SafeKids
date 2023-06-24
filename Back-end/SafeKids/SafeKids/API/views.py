@@ -60,7 +60,8 @@ def login(request):
                 'username': user.username,
                 'phonenumber': user.phoneNumber,
                 'birthdate': user.birthdate,
-                'city': user.city
+                'city': user.city,
+                'photo':user.photo.url,
         }
             return Response(user_data, status=status.HTTP_200_OK)
         else:
@@ -82,7 +83,8 @@ def edit_user(request):
         user.birthdate = request.POST.get('birthdate')
     if request.POST.get('city'):
         user.city = request.POST.get('city')
-
+    if request.FILES.get('photo'):
+        user.photo = request.FILES.get('photo')
     user.save()
     user_data = {
                 'id': user.id,
@@ -92,7 +94,8 @@ def edit_user(request):
                 'username': user.username,
                 'phonenumber': user.phoneNumber,
                 'birthdate': user.birthdate,
-                'city': user.city
+                'city': user.city,
+                'photo':user.photo.url,
             }
     return Response(user_data, status=200)
 

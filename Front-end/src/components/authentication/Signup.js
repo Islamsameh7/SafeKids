@@ -6,27 +6,33 @@ import {
   StyleSheet,
   Touchable,
   TouchableOpacity,
+  Dimensions,
+  Alert
 } from "react-native";
-import Ionicons from 'react-native-vector-icons/AntDesign';
+import Ionicons from "react-native-vector-icons/AntDesign";
 import { navyblue, darkBlue, grey } from "../Constants";
 import axios from "axios";
 import apiRoutes from "../apiRoutes";
 import { post } from "../apiCalls";
 import DropdownComponent from "../DropdownComponent";
-import DatePicker from 'react-native-datepicker';
+import DatePicker from "react-native-datepicker";
 
 const genderChoice = [
   { label: "Female", value: "F" },
   { label: "Male", value: "M" },
- 
 ];
-const cityChoice =[
+const cityChoice = [
   { label: "Cairo", value: "cairo" },
   { label: "Alexandria", value: "alex" },
   { label: "Matrouh", value: "matrouh" },
   { label: "Hurghada", value: "hurghada" },
   { label: "Portsaid", value: "portsaid" },
 ];
+
+const showAlert = (message) => {
+  Alert.alert("", message, [{ text: "OK" }], { cancelable: true });
+};
+
 const Signup = (props) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -35,68 +41,99 @@ const Signup = (props) => {
   const [mobileNumber, setMobileNumber] = useState("");
   const [gender, setGender] = useState("");
   const [city, setCity] = useState("");
-  const [error, setError] = useState("")
 
-  
+  const [isEmailValid, setEmailValid] = useState(true);
+  const [isPasswordValid, setPasswordValid] = useState(true);
+  const [isPhoneValid, setPhoneValid] = useState(true);
+  const [error, setError] = useState("");
+
   const register = async () => {
     const formData = new FormData();
 
-    formData.append('name', name);
-    formData.append('email', email);
-    formData.append('password', password);
-    formData.append('birthdate', birthDate);  
-    formData.append('phoneNumber', mobileNumber);
-    formData.append('city', city);
-    formData.append('username','ahmed');
-    formData.append('gender', gender);
+    formData.append("name", name);
+   
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("birthdate", birthDate);
+    formData.append("phoneNumber", mobileNumber);
+    formData.append("city", city);
+    formData.append("username", name);
+    formData.append("gender", gender);
 
+    validateEmail();
+    validateMobile();
+    validatePassword();
 
+    if (isEmailValid && isPasswordValid && isPhoneValid) {
+      console.log(formData);
       const response = await fetch(apiRoutes.register, {
-        method: 'POST',
+        method: "POST",
         body: formData,
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       });
 
       if (response.ok) {
         // Successful response
         const responseData = await response.text();
-        console.log('User Registered Successfully:', responseData);
+        console.log("User Registered Successfully:", responseData);
+        showAlert("Registered Successfully");
+        props.navigation.navigate("Login");
       } else {
         // Error response
         const errorData = await response.text();
-        console.log('Failed to register user:', errorData);
+        console.log("Failed to register user:", errorData);
       }
-    
+    }
+  };
 
-  }
+  const validateEmail = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email === "" || !emailRegex.test(email)) {
+      setEmailValid(false);
+    } else {
+      setEmailValid(true);
+    }
+  };
 
+  const validatePassword = () => {
+    if (password === "" || password.length<8) {
+      setPasswordValid(false);
+    } else {
+      setPasswordValid(true);
+    }
+  };
+
+  const validateMobile = () => {
+    const mobileRegex = /^(011|010|012)\d{8}$/;
+    if (mobileNumber === "" || !mobileRegex.test(mobileNumber)) {
+      setPhoneValid(false);
+    } else {
+      setPhoneValid(true);
+    }
+  };
   return (
     <View style={{ backgroundColor: darkBlue }}>
-       <TouchableOpacity onPress={() => props.navigation.navigate("GetStarted")}><Ionicons name={'left'} size={30} color={'white'} style={{top:70,left:25}} /></TouchableOpacity>
-      <View style={{ alignItems: "center", width: 460 }}>
-        <View
+      <TouchableOpacity onPress={() => props.navigation.navigate("GetStarted")}>
+        <Ionicons
+          name={"left"}
+          size={30}
+          color={"white"}
           style={{
-            backgroundColor: "white",
-            height: 700,
-            width: 460,
-            borderTopLeftRadius: 130,
-            paddingTop: 15,
-            alignItems: "center",
-            top: 90,
+            marginTop: Dimensions.get("window").height / 20,
+            left: Dimensions.get("window").width / 20,
           }}
-        >
-          <Text
-            style={{
-              color: darkBlue,
-              fontSize: 30,
-              fontWeight: "bold",
-              marginBottom: 10,
-            }}
-          >
-            Create new {"\n"} Account
-          </Text>
+        />
+      </TouchableOpacity>
+      <View
+        style={{
+          alignItems: "center",
+          width: Dimensions.get("window").width / 0.9,
+        }}
+      >
+        <View style={styles.pageLayout}>
+          <Text style={styles.createAccText}>Create new {"\n"} Account</Text>
           <View
             style={{
               display: "flex",
@@ -122,15 +159,15 @@ const Signup = (props) => {
               </Text>
             </TouchableOpacity>
           </View>
-          
+
           <Text
             style={{
               color: darkBlue,
-              marginRight: 240,
+              marginRight: Dimensions.get("window").width / 1.22,
               fontSize: 15,
               fontWeight: "bold",
               letterSpacing: 2,
-              marginTop: 25,
+              marginTop: Dimensions.get("window").height / 40,
             }}
           >
             NAME
@@ -141,19 +178,32 @@ const Signup = (props) => {
             placeholder="John Doe"
             onChangeText={(text) => setName(text)}
           ></TextInput>
+          <View style={styles.row}>
+            <Text
+              style={{
+                color: darkBlue,
+                flex: 1,
+                alignItems: "flex-start",
+                left: Dimensions.get("window").width / 9.6,
+                fontSize: 15,
+                fontWeight: "bold",
+                letterSpacing: 2,
+              }}
+            >
+              EMAIL
+            </Text>
+            {!isEmailValid && (
+              <Text
+                style={{
+                  marginRight: Dimensions.get("window").width / 4.2,
+                  color: "red",
+                }}
+              >
+                *Please enter a valid email address*
+              </Text>
+            )}
+          </View>
 
-          <Text
-            style={{
-              color: darkBlue,
-              marginRight: 240,
-              fontSize: 15,
-              fontWeight: "bold",
-              letterSpacing: 2,
-              marginTop: 2,
-            }}
-          >
-            EMAIL
-          </Text>
           <TextInput
             style={styles.field}
             placeholderTextColor={grey}
@@ -161,18 +211,33 @@ const Signup = (props) => {
             onChangeText={(text) => setEmail(text)}
             keyboardType={"email-address"}
           ></TextInput>
-          <Text
-            style={{
-              color: darkBlue,
-              marginRight: 195,
-              fontSize: 15,
-              fontWeight: "bold",
-              letterSpacing: 2,
-              marginTop: 2,
-            }}
-          >
-            PASSWORD
-          </Text>
+
+          <View style={styles.row}>
+            <Text
+              style={{
+                color: darkBlue,
+                flex: 1,
+                alignItems: "flex-start",
+                left: Dimensions.get("window").width / 9.6,
+                fontSize: 15,
+                fontWeight: "bold",
+                letterSpacing: 2,
+                marginTop: Dimensions.get("window").height / 200,
+              }}
+            >
+              PASSWORD
+            </Text>
+            {!isPasswordValid && (
+              <Text
+                style={{
+                  marginRight: Dimensions.get("window").width / 6.4,
+                  color: "red",
+                }}
+              >
+                *Password Must be at least 8 characters*
+              </Text>
+            )}
+          </View>
           <TextInput
             style={styles.field}
             placeholderTextColor={grey}
@@ -183,11 +248,11 @@ const Signup = (props) => {
           <Text
             style={{
               color: darkBlue,
-              marginRight: 195,
+              marginRight: Dimensions.get("window").width / 1.5,
               fontSize: 15,
               fontWeight: "bold",
               letterSpacing: 2,
-              marginTop: 2,
+              marginTop: Dimensions.get("window").height / 200,
             }}
           >
             BIRTH DATE
@@ -198,18 +263,31 @@ const Signup = (props) => {
             placeholder="DD-MM-YYYY"
             onChangeText={(text) => setBirthDate(text)}
           ></TextInput>
+            <View style={styles.row}>
           <Text
             style={{
               color: darkBlue,
-              marginRight: 155,
+              flex:1,
+              left: Dimensions.get("window").width / 10,
               fontSize: 15,
               fontWeight: "bold",
               letterSpacing: 2,
-              marginTop: 2,
+              marginTop: Dimensions.get("window").height / 200,
             }}
           >
             MOBILE NUMBER
           </Text>
+          {!isPhoneValid && (
+              <Text
+                style={{
+                  marginRight: Dimensions.get("window").width / 3.4,
+                  color: "red",
+                }}
+              >
+                *invalid phone number*
+              </Text>
+            )}
+            </View>
           <TextInput
             style={styles.field}
             placeholderTextColor={grey}
@@ -220,38 +298,36 @@ const Signup = (props) => {
           <Text
             style={{
               color: darkBlue,
-              marginRight: 230,
+              marginRight: Dimensions.get("window").width / 1.34,
               fontSize: 15,
               fontWeight: "bold",
               letterSpacing: 2,
-              marginTop: 2,
+              marginTop: Dimensions.get("window").height / 200,
             }}
           >
             GENDER
           </Text>
-          
-      
-           <DropdownComponent
+
+          <DropdownComponent
             data={genderChoice}
             onChange={(item) => {
               setGender(item.value);
             }}
           ></DropdownComponent>
-         <Text
+          <Text
             style={{
               color: darkBlue,
-              marginRight: 260,
+              marginRight: Dimensions.get("window").width / 1.24,
               fontSize: 15,
               fontWeight: "bold",
               letterSpacing: 2,
-              marginTop: 2,
+              marginTop: Dimensions.get("window").height / 200,
             }}
           >
             CITY
           </Text>
-          
-      
-           <DropdownComponent
+
+          <DropdownComponent
             data={cityChoice}
             onChange={(item) => {
               setCity(item.value);
@@ -261,17 +337,8 @@ const Signup = (props) => {
           <TouchableOpacity
             onPress={() => {
               register();
-              props.navigation.navigate("Login");
             }}
-            style={{
-              backgroundColor: darkBlue,
-
-              borderRadius: 100,
-              alignItems: "center",
-              width: 250,
-              paddingVertical: 5,
-              marginVertical: 10,
-            }}
+            style={styles.signupButton}
           >
             <Text style={{ color: "white", fontSize: 23, fontWeight: "bold" }}>
               Sign up
@@ -289,9 +356,36 @@ const styles = StyleSheet.create({
     color: navyblue,
     paddingHorizontal: 8,
     paddingVertical: 6,
-    width: "65%",
+    width: Dimensions.get("window").width / 1.2,
     backgroundColor: "rgb(220,220, 220)",
     marginVertical: 7,
+    marginRight: Dimensions.get("window").width / 10,
+  },
+  createAccText: {
+    color: darkBlue,
+    fontSize: 30,
+    fontWeight: "bold",
+    marginBottom: Dimensions.get("window").height / 60,
+  },
+  pageLayout: {
+    backgroundColor: "white",
+    height: Dimensions.get("window").height,
+    width: Dimensions.get("window").width + Dimensions.get("window").width / 7,
+    borderTopLeftRadius: Dimensions.get("window").height / 7,
+    paddingTop: 15,
+    alignItems: "center",
+    marginTop: Dimensions.get("window").height / 50,
+  },
+  signupButton: {
+    backgroundColor: darkBlue,
+    borderRadius: 100,
+    alignItems: "center",
+    width: Dimensions.get("window").width / 2,
+    paddingVertical: 5,
+    marginVertical: 10,
+  },
+  row: {
+    flexDirection: "row",
   },
 });
 
