@@ -12,7 +12,7 @@ urlpatterns = [
     path('login/', login, name='login'),
     path('edit_user/', edit_user, name='edit_user'),
     path('logout/', logout, name='logout'),
-    path('similarity/', similarity, name='similarity'),
+    path('get_matching_profiles/', get_matching_profiles, name='get_matching_profiles'),
     
     path('get_csrf_token/', get_csrf_token, name='get_csrf_token'),
 

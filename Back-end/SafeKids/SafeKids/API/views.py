@@ -214,27 +214,51 @@ def get_found_kid_details(request, kid_name):
     except FoundKid.DoesNotExist:
         return render(request, 'kid_not_found.html')
 
-
 @api_view(['POST'])
-def similarity(request):
-    with open('model.pkl', 'rb') as f:
+def get_matching_profiles(request):
+    print(request)
+    with open('D:\FCAI\GRAD Project\SafeKids\model.pkl', 'rb') as f:
         model_data = pickle.load(f)
 
     mtcnn = model_data['mtcnn']
     resnet = model_data['resnet']
 
-    image1 = Image.open(request.FILES['image1'])
-    image1_cropped = mtcnn(image1)
-    image1_embedding = resnet(image1_cropped.unsqueeze(0)).flatten().detach().numpy()
+    image = Image.open(request.FILES['image'])
+    image_cropped = mtcnn(image)
+    image_embedding = resnet(image_cropped.unsqueeze(0)).flatten().detach().numpy()
 
+    Photos = Photo.objects.all()
     profiles = []
-    for x in models.Photo:
-        image2 = Image.open(x)
-        image2_cropped = mtcnn(image2)
-        image2_embedding = resnet(image2_cropped.unsqueeze(0)).flatten().detach().numpy()
-        similarity = 1 - spatial.distance.cosine(image1_embedding, image2_embedding)
+    for photo in Photos:
+        db_image = Image.open(photo.photo)
+        db_image_cropped = mtcnn(db_image)
+        db_image_embedding = resnet(db_image_cropped.unsqueeze(0)).flatten().detach().numpy()
+        similarity = 1 - spatial.distance.cosine(image_embedding, db_image_embedding)
 
-        # if similarity > 0.8:
-        #     profiles.append(Profile())
+        if similarity > 0.5:
+            if photo.missing_kid is not None:
+                # kid = photo.missing_kid
+                kid = {
+                    'name': photo.missing_kid.name,
+                    'lost_date': photo.missing_kid.lost_date,
+                    'last_known_location': photo.missing_kid.last_known_location,
+                    'notes': photo.missing_kid.notes,
+                    'similarity' : similarity
+                }
+            else:
+                # kid = photo.found_kid
+                kid = {
+                    'name': photo.found_kid.name,
+                    'age': photo.found_kid.age,
+                    'gender': photo.found_kid.gender,
+                    'location': photo.found_kid.location,
+                    'similarity' : similarity
+                }
 
-    return JsonResponse({'similarity': similarity})
+            profile = {
+                'kid' : kid,
+                'photo' : photo.photo.url
+            }
+            profiles.append(profile)
+
+    return JsonResponse({'profiles': profiles})
