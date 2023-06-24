@@ -23,7 +23,6 @@ import MissingKids from "./src/components/userFunctions/MissingKids";
 import Notifications from "./src/components/Notifications";
 import { GlobalProvider } from "./src/components/context/GlobalContext.js";
 
-
 const Stack = createNativeStackNavigator();
 
 function App(props) {
@@ -58,6 +57,7 @@ function App(props) {
           <Stack.Screen name="MissingKids" component={MissingKids} />
           <Stack.Screen name="KidProfile" component={KidProfile} />
           <Stack.Screen name="UserProfile" component={UserProfile} />
+          <Stack.Screen name="Notifications" component={Notifications} />
           {/* <Stack.Screen name="Notifications" component={Notifications} /> */}
         </Stack.Navigator>
       </NavigationContainer>
