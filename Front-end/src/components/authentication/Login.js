@@ -7,6 +7,8 @@ import {
   Touchable,
   TouchableOpacity,
   ImageBackground,
+  Dimensions,
+  Alert,
 } from "react-native";
 import Background from "../Background";
 import apiRoutes from "../apiRoutes";
@@ -20,6 +22,16 @@ const Login = (props) => {
   const [password, setPassword] = useState("");
   const { loginContext } = useContext(GlobalContext);
 
+  const showAlert = (message) => {
+    Alert.alert(
+      '',
+       message,
+      [
+        { text: 'OK' }
+      ],
+      { cancelable: true }
+    );
+  };
 
   const login = async () => {
     const formData = new FormData();
@@ -39,12 +51,14 @@ const Login = (props) => {
   
     if (response.ok) {
       const userData = await response.json();
+      showAlert("Logged in Successfully");
       loginContext(userData)
       props.navigation.navigate("Home");
       
     } else {
       // Error response
       const errorData = await response.text();
+      showAlert("Wrong Credintials! Try again.");
       console.log('Failed to Login:', errorData);
     }
   }
