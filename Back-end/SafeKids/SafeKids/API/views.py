@@ -262,3 +262,8 @@ def get_matching_profiles(request):
             profiles.append(profile)
 
     return JsonResponse({'profiles': profiles})
+
+def notifications(request):
+    user = request.user
+    notifications = Notification.objects.filter(recipient=user).order_by('-timestamp')
+    return render(request, 'notifications.html', {'notifications': notifications})

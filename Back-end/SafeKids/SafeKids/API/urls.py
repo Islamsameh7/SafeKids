@@ -1,8 +1,11 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 from .views import *
+import notifications.urls
+
+
 urlpatterns = [
     path('add_found_kid/', add_found_kid, name='add_found_kid'),
     path('add_missing_kid/', add_missing_kid, name='add_missing_kid'),
@@ -13,6 +16,7 @@ urlpatterns = [
     path('edit_user/', edit_user, name='edit_user'),
     path('logout/', logout, name='logout'),
     path('get_matching_profiles/', get_matching_profiles, name='get_matching_profiles'),
+    path('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
     
     path('get_csrf_token/', get_csrf_token, name='get_csrf_token'),
 
