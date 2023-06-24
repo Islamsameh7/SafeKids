@@ -120,6 +120,7 @@ const AddKidProfile = (props) => {
         emptyImages();
         console.log(kidImages.length);
         console.log("Missing Kid added successfully");
+        props.navigation.navigate("Home");
       } else {
         // Error response
         const errorData = await response.text();

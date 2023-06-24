@@ -8,14 +8,20 @@ import {
   ScrollView,
   Dimensions,
   TextInput,
+  Modal,
 } from "react-native";
 import { darkBlue, lightGrey, grey } from "../Constants";
 import { GlobalContext } from "../context/GlobalContext";
 import Ionicons from "react-native-vector-icons/AntDesign";
 import apiRoutes from "../apiRoutes";
+import * as ImagePicker from "expo-image-picker";
 
 const UserProfile = (props) => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [image, setImage] = useState(null);
+
   const { user, updateUserContext } = useContext(GlobalContext);
+
   const [isNameVisible, setIsNameVisible] = useState(true);
   const [isDateVisible, setIsDateVisible] = useState(true);
   const [isMobileVisible, setIsMobileVisible] = useState(true);
@@ -28,9 +34,44 @@ const UserProfile = (props) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [city, setCity] = useState("");
 
+  const [contentHeight, setContentHeight] = useState(0);
+  const [containerHeight, setContainerHeight] = useState(0);
+  
+  const editProfilePhoto = () => {
+    if (isEditIconVisible) {
+      setIsModalVisible(true);
+    }
+  };
   const handleEditProfile = () => {
     setEditIconVisible(!isEditIconVisible);
     setIsEditProfileVisible(!isEditProfileVisible);
+  };
+  const pickImage = async () => {
+    let _image = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!_image.cancelled) {
+      setImage(_image.uri);
+      console.log("image is set");
+    }
+    setIsModalVisible(false);
+  };
+  const takePicture = async () => {
+    let _image = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!_image.cancelled) {
+      setImage(_image.uri);
+    }
+    setIsModalVisible(false);
   };
   const editUser = async () => {
     const formData = new FormData();
@@ -39,7 +80,31 @@ const UserProfile = (props) => {
     formData.append("birthdate", birthDate);
     formData.append("phonenumber", phoneNumber);
     formData.append("city", city);
+    if (image) {
+      const response = await fetch(image);
+      const blob = await response.blob();
 
+      const fileName = image.split("/").pop(); // Extract the file name from the URI
+
+      const fileType = blob.type; // Get the MIME type of the file
+
+      if (
+        fileType === "image/jpeg" ||
+        fileType === "image/png" ||
+        fileType === "image/jpg"
+      ) {
+        formData.append("photo", {
+          uri: image,
+          name: fileName,
+          type: fileType,
+        });
+      } else {
+        console.log(
+          "Invalid file type. Only JPG, PNG, and JPEG images are allowed."
+        );
+        return;
+      }
+    }
     const response = await fetch(apiRoutes.edit_user, {
       method: "POST",
       body: formData,
@@ -59,11 +124,25 @@ const UserProfile = (props) => {
       const errorData = await response.text();
       console.log("Failed to Update User:", errorData);
     }
+   
+  };
+  const handleContentSizeChange = (width, height) => {
+    setContentHeight(height);
+  };
+
+  const handleLayout = (event) => {
+    const { height } = event.nativeEvent.layout;
+    setContainerHeight(height);
   };
   return (
-    <View>
-      <ScrollView>
+    <View style={{ flex: 1 }}>
+      <ScrollView
+       contentContainerStyle={{ flexGrow: 1 }}
+       onContentSizeChange={handleContentSizeChange}
+       scrollEnabled={contentHeight > containerHeight}
+       >
         <View
+          onLayout={handleLayout}
           style={{
             padding: 10,
             width: "100%",
@@ -74,17 +153,29 @@ const UserProfile = (props) => {
           }}
         ></View>
 
+        <TouchableOpacity
+          style={{
+            marginTop: Dimensions.get("window").height / 7,
+            left: Dimensions.get("window").width / 15,
+            position: "absolute",
+          }}
+          onPress={() => props.navigation.navigate("Home")}
+        >
+          <Ionicons name={"left"} size={30} color={darkBlue} />
+        </TouchableOpacity>
+
         <View style={{ alignItems: "center", justifyContent: "center" }}>
-          <Image
-            source={require("../../assets/user.png")}
-            style={{
-              width: 80,
-              height: 80,
-              borderRadius: 200,
-              backgroundColor: "white",
-              marginTop: -50,
-            }}
-          ></Image>
+          <TouchableOpacity onPress={() => editProfilePhoto()}>
+            <Image
+              source={require("../../assets/user.png")}
+              style={styles.photoAvatar}
+            ></Image>
+            <Image
+              source={{ uri: apiRoutes.mainUrl + user.photo }}
+              style={styles.photo}
+            ></Image>
+            {image && <Image source={{ uri: image }} style={styles.photo} />}
+          </TouchableOpacity>
 
           {/* NAME FIELD */}
           <View style={styles.row}>
@@ -246,6 +337,32 @@ const UserProfile = (props) => {
               <Text style={styles.discardText}>Discard Changes</Text>
             </TouchableOpacity>
           )}
+          <Modal visible={isModalVisible} animationType="slide">
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <TouchableOpacity
+                  style={styles.modalButton}
+                  onPress={() => takePicture()}
+                >
+                  <Text style={styles.modalButtonText}>Take Photo</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.modalButton}
+                  onPress={() => pickImage()}
+                >
+                  <Text style={styles.modalButtonText}>
+                    Choose from Library
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.modalButton}
+                  onPress={() => setIsModalVisible(false)}
+                >
+                  <Text style={styles.modalButtonText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
         </View>
       </ScrollView>
     </View>
@@ -322,6 +439,39 @@ const styles = StyleSheet.create({
   editIcon: {
     marginTop: Dimensions.get("window").height / 22,
     marginLeft: Dimensions.get("window").width / 20,
+  },
+  modalContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
+  },
+  modalContent: {
+    padding: 20,
+    borderRadius: 10,
+  },
+  modalButton: {
+    marginBottom: 10,
+    padding: 10,
+    borderRadius: 5,
+  },
+  modalButtonText: {
+    fontSize: 16,
+    color: "black",
+    textAlign: "center",
+  },
+  photoAvatar: {
+    width: Dimensions.get("window").width / 5,
+    height: Dimensions.get("window").height / 10,
+    borderRadius: 200,
+    backgroundColor: "white",
+    marginTop: -Dimensions.get("window").height / 20,
+  },
+  photo: {
+    width: Dimensions.get("window").width / 5,
+    height: Dimensions.get("window").height / 10,
+    borderRadius: 200,
+    backgroundColor: "white",
+    marginTop: -Dimensions.get("window").height / 10,
   },
 });
 
