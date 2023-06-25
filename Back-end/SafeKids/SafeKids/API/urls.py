@@ -16,7 +16,6 @@ urlpatterns = [
     path('edit_user/', edit_user, name='edit_user'),
     path('logout/', logout, name='logout'),
     path('get_matching_profiles/', get_matching_profiles, name='get_matching_profiles'),
-    path('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
     
     path('get_csrf_token/', get_csrf_token, name='get_csrf_token'),
 

@@ -16,21 +16,10 @@ const windowHeight = Dimensions.get("window").height;
 
 const MatchingProfiles = (props) => {
   const { matchingProfiles } = useContext(GlobalContext);
-  const accuracies = ["97%", "85%"];
-  const names = ["malak", "mona"];
-  const ages = ["6", "7"];
-  const genders = ["female", "female"];
-  const lostDates = ["19-9-2022", "20-1-2023"];
-  const lastLocations = ["dokki", "haram"];
-  const numCards = 2;
-  const images = [
-    require("../../assets/malak.jpg"),
-    require("../../assets/mona.jpg"),
-  ];
 
   const renderData = () => {
     return matchingProfiles.map((profile) => {
-      const accuracy = profile.kid.similarity * 100
+      const accuracy = profile.kid.similarity
       const name = profile.kid.name;
       const age = profile.kid.age;
       const gender = profile.kid.gender;

@@ -15,7 +15,7 @@ import axios from "axios";
 import apiRoutes from "../apiRoutes";
 import { post } from "../apiCalls";
 import DropdownComponent from "../DropdownComponent";
-import DatePicker from "react-native-datepicker";
+// import DatePicker from "react-native-datepicker";
 
 const genderChoice = [
   { label: "Female", value: "F" },
