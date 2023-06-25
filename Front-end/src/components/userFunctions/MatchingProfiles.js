@@ -11,6 +11,7 @@ import {
 import { GlobalContext } from "../context/GlobalContext";
 import Ionicons from "react-native-vector-icons/AntDesign";
 import { darkBlue, lightBlue } from "../Constants";
+import apiRoutes from "../apiRoutes";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
@@ -18,7 +19,7 @@ const MatchingProfiles = (props) => {
   const { matchingProfiles } = useContext(GlobalContext);
 
   const renderData = () => {
-    return matchingProfiles.map((profile) => {
+    return matchingProfiles.map((profile,index) => {
       const accuracy = profile.kid.similarity
       const name = profile.kid.name;
       const age = profile.kid.age;
@@ -26,10 +27,12 @@ const MatchingProfiles = (props) => {
       const lostDate = profile.kid.lost_date;
       const lastLocation = profile.kid.last_known_location;
       const image = profile.photo;
+
+      console.log(image);
       return (
         <View style={styles.card} key={index}>
           <Image
-            source={image}
+            source={{uri:apiRoutes.mainUrl+image}}
             style={{
               width: "45%",
               height: "95%",

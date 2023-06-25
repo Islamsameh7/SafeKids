@@ -4,8 +4,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 from scipy import spatial
 from sklearn.decomposition import PCA
-import dlib
-import cv2
+#import dlib
+#import cv2
 import pickle
 
 mtcnn = MTCNN()
@@ -17,5 +17,5 @@ model_data = {
     'resnet': resnet
 }
 
-with open('D:\FCAI\GRAD Project\SafeKids\Face Recognition Model\FaceNet.pkl', 'wb') as f:
+with open('D:\FCAI fourth year (final year)\SafeKids\SafeKids\FaceNet.pkl', 'wb') as f:
     pickle.dump(model_data, f)

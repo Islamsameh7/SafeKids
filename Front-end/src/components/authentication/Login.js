@@ -51,7 +51,7 @@ const Login = (props) => {
   
     if (response.ok) {
       const userData = await response.json();
-      showAlert("Logged in Successfully");
+    
       loginContext(userData)
       props.navigation.navigate("Home");
       

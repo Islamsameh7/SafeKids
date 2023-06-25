@@ -61,8 +61,11 @@ def login(request):
                 'phonenumber': user.phoneNumber,
                 'birthdate': user.birthdate,
                 'city': user.city,
-                # 'photo':user.photo.url,
+            
         }
+            if user.photo:
+                user_data['photo'] = user.photo.url
+            
             return Response(user_data, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -217,7 +220,7 @@ def get_found_kid_details(request, kid_name):
 @api_view(['POST'])
 def get_matching_profiles(request):
     print(request)
-    with open('D:\FCAI\GRAD Project\SafeKids\FaceNet.pkl', 'rb') as f:
+    with open('D:\FCAI fourth year (final year)\SafeKids\SafeKids\FaceNet.pkl', 'rb') as f:
         model_data = pickle.load(f)
 
     mtcnn = model_data['mtcnn']
