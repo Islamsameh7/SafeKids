@@ -223,7 +223,7 @@ def get_matching_profiles(request):
     mtcnn = model_data['mtcnn']
     resnet = model_data['resnet']
 
-    image = Image.open(request.FILES['image'])
+    image = Image.open(request.FILES['photo'])
     image_cropped = mtcnn(image)
     image_embedding = resnet(image_cropped.unsqueeze(0)).flatten().detach().numpy()
 
@@ -243,6 +243,7 @@ def get_matching_profiles(request):
                     'lost_date': photo.missing_kid.lost_date,
                     'last_known_location': photo.missing_kid.last_known_location,
                     'notes': photo.missing_kid.notes,
+                    'gender':photo.missing_kid.gender,
                     'similarity' : similarity
                 }
             else:
