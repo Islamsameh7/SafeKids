@@ -1,17 +1,17 @@
 import React, { useState, useContext, useEffect } from "react";
-import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Image, TouchableOpacity,Dimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/AntDesign";
 import { darkBlue } from "./Constants";
 import Background from "./Background";
-import { Context } from "./context/GlobalContext.js";
+
 
 const Matching = (props) => {
   const navigation = useNavigation();
   useEffect(() => {
     const navigateToNextScreen = setTimeout(() => {
       navigation.navigate("MatchingProfiles"); // Replace 'NextScreen' with the name of the screen you want to navigate to
-    }, 3000); // Replace 3000 with the desired delay in milliseconds
+    }, 5000); // Replace 3000 with the desired delay in milliseconds
 
     return () => clearTimeout(navigateToNextScreen);
   }, [navigation]);

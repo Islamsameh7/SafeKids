@@ -8,12 +8,14 @@ import {
   Dimensions,
   ScrollView,
 } from "react-native";
-
+import { GlobalContext } from "../context/GlobalContext";
 import Ionicons from "react-native-vector-icons/AntDesign";
 import { darkBlue, lightBlue } from "../Constants";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
+
 const MatchingProfiles = (props) => {
+  const { matchingProfiles } = useContext(GlobalContext);
   const accuracies = ["97%", "85%"];
   const names = ["malak", "mona"];
   const ages = ["6", "7"];
@@ -27,13 +29,14 @@ const MatchingProfiles = (props) => {
   ];
 
   const renderData = () => {
-    return accuracies.map((accuracy, index) => {
-      const name = names[index];
-      const age = ages[index];
-      const gender = genders[index];
-      const lostDate = lostDates[index];
-      const lastLocation = lastLocations[index];
-      const image = images[index];
+    return matchingProfiles.map((profile) => {
+      const accuracy = profile.kid.similarity * 100
+      const name = profile.kid.name;
+      const age = profile.kid.age;
+      const gender = profile.kid.gender;
+      const lostDate = profile.kid.lost_date;
+      const lastLocation = profile.kid.last_known_location;
+      const image = profile.photo;
       return (
         <View style={styles.card} key={index}>
           <Image
