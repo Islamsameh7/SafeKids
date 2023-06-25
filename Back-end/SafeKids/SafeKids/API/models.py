@@ -73,7 +73,8 @@ class Photo(models.Model):
 
 
 class Notification(models.Model):
-    message = models.CharField(max_length=1000)
-    time = models.TimeField(auto_now_add=True)
-    
+    recipient = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    message = models.CharField(max_length=255)
+    is_read = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
   
