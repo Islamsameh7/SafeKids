@@ -20,7 +20,7 @@ const MatchingProfiles = (props) => {
 
   const renderData = () => {
     return matchingProfiles.map((profile,index) => {
-      const accuracy = profile.kid.similarity
+      const accuracy = Math.round(profile.kid.similarity * 100)
       const name = profile.kid.name;
       const age = profile.kid.age;
       const gender = profile.kid.gender;
@@ -42,7 +42,7 @@ const MatchingProfiles = (props) => {
             }}
           />
           <View>
-            <Text style={styles.dataText}>Accuracy: {accuracy}</Text>
+            <Text style={styles.dataText}>Similarity: {accuracy}%</Text>
             <Text style={styles.dataText}>Name: {name}</Text>
             <Text style={styles.dataText}>Age: {age}</Text>
             <Text style={styles.dataText}>Gender: {gender}</Text>

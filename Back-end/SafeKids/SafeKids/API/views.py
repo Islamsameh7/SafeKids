@@ -2,6 +2,7 @@ from django.forms import ValidationError
 from django.shortcuts import render, redirect
 from django.urls import path
 from django.http import HttpResponse
+from torch import cosine_similarity
 from .models import *
 from django.views.decorators.csrf import csrf_exempt
 from .forms import *
@@ -19,6 +20,8 @@ from PIL import Image
 import numpy as np
 from scipy import spatial
 import pickle
+from django.contrib import messages
+from django.shortcuts import redirect
 
 # Create your views here.
 
@@ -220,7 +223,7 @@ def get_found_kid_details(request, kid_name):
 @api_view(['POST'])
 def get_matching_profiles(request):
     print(request)
-    with open('D:\FCAI fourth year (final year)\SafeKids\SafeKids\FaceNet.pkl', 'rb') as f:
+    with open('D:\FCAI\GRAD Project\SafeKids\Face Recognition Model\FaceNet.pkl', 'rb') as f:
         model_data = pickle.load(f)
 
     mtcnn = model_data['mtcnn']
@@ -230,7 +233,11 @@ def get_matching_profiles(request):
     image_cropped = mtcnn(image)
     image_embedding = resnet(image_cropped.unsqueeze(0)).flatten().detach().numpy()
 
-    Photos = Photo.objects.all()
+    if request.func == 'upload':
+        Photos = Photo.objects.filter(missing_kid__isnull=False)
+    else:
+        Photos = Photo.objects.filter(found_kid__isnull=False)
+
     profiles = []
     for photo in Photos:
         db_image = Image.open(photo.photo)
@@ -268,7 +275,11 @@ def get_matching_profiles(request):
 
     return Response(profiles)
 
-def notifications(request):
-    user = request.user
-    notifications = Notification.objects.filter(recipient=user).order_by('-timestamp')
-    return render(request, 'notifications.html', {'notifications': notifications})
+def my_view(request):
+    # Perform your logic here
+
+    # Add a success message with the desired notification content
+    messages.success(request, 'Notification message here.')
+
+    # Redirect the user to a specific page
+    return redirect('my_page_url_name')

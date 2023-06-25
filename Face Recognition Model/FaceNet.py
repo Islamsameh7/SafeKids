@@ -17,5 +17,5 @@ model_data = {
     'resnet': resnet
 }
 
-with open('D:\FCAI fourth year (final year)\SafeKids\SafeKids\FaceNet.pkl', 'wb') as f:
+with open('Face Recognition Model\FaceNet.pkl', 'wb') as f:
     pickle.dump(model_data, f)

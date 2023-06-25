@@ -70,11 +70,4 @@ class Photo(models.Model):
     photo = models.ImageField(upload_to=upload_to, blank=True, null=True)
 
     # vector = ArrayField(VectorField(), null=True)
-
-
-class Notification(models.Model):
-    recipient = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null = True)
-    message = models.CharField(max_length=255)
-    is_read = models.BooleanField(default=False)
-    timestamp = models.DateTimeField(auto_now_add=True, null = True)
   
