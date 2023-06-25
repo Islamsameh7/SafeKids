@@ -23,7 +23,7 @@ const UploadPhoto = (props) => {
   const [image, setImage] = useState(null);
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
-  const { user } = useContext(GlobalContext);
+  const { user,fetchMatchingProfiles } = useContext(GlobalContext);
 
 
   const uploadPhoto = async () => {
@@ -163,6 +163,7 @@ const UploadPhoto = (props) => {
       <View style={styles.submitContainer}>
         <TouchableOpacity style={styles.submitButton} onPress={() =>{ 
           addFoundKid();
+          fetchMatchingProfiles(image);
           props.navigation.navigate("Matching")
           } }>
           <Text style={styles.submitText}>Submit</Text>
