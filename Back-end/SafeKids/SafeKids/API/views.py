@@ -44,6 +44,7 @@ def register(request):
 
     return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['POST'])
 def login(request):
     email = request.data.get('email')
@@ -56,19 +57,19 @@ def login(request):
             user_data = {
                 'id': user.id,
                 'email': user.email,
-                'name':user.name,
-                'gender':user.gender,
+                'name': user.name,
+                'gender': user.gender,
                 'name': user.name,
                 'gender': user.gender,
                 'username': user.username,
                 'phonenumber': user.phoneNumber,
                 'birthdate': user.birthdate,
                 'city': user.city,
-            
-        }
+
+            }
             if user.photo:
                 user_data['photo'] = user.photo.url
-            
+
             return Response(user_data, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -93,16 +94,16 @@ def edit_user(request):
         user.photo = request.FILES.get('photo')
     user.save()
     user_data = {
-                'id': user.id,
-                'email': user.email,
-                'name': user.name,
-                'gender': user.gender,
-                'username': user.username,
-                'phonenumber': user.phoneNumber,
-                'birthdate': user.birthdate,
-                'city': user.city,
-                'photo':user.photo.url,
-            }
+        'id': user.id,
+        'email': user.email,
+        'name': user.name,
+        'gender': user.gender,
+        'username': user.username,
+        'phonenumber': user.phoneNumber,
+        'birthdate': user.birthdate,
+        'city': user.city,
+        'photo': user.photo.url,
+    }
     return Response(user_data, status=200)
 
 
@@ -112,6 +113,7 @@ def logout(request):
         logout(request)
         return Response({"detail": "Logged out successfully."})
     return Response({"detail": "User is not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
+
 
 @api_view(['POST'])
 def add_found_kid(request):
@@ -220,10 +222,11 @@ def get_found_kid_details(request, kid_name):
     except FoundKid.DoesNotExist:
         return render(request, 'kid_not_found.html')
 
+
 @api_view(['POST'])
 def get_matching_profiles(request):
     print(request)
-    with open('D:\FCAI\GRAD Project\SafeKids\Face Recognition Model\FaceNet.pkl', 'rb') as f:
+    with open('D:\FCAI fourth year (final year)\SafeKids\SafeKids\FaceNet.pkl', 'rb') as f:
         model_data = pickle.load(f)
 
     mtcnn = model_data['mtcnn']
@@ -231,21 +234,31 @@ def get_matching_profiles(request):
 
     image = Image.open(request.FILES['photo'])
     image_cropped = mtcnn(image)
-    image_embedding = resnet(image_cropped.unsqueeze(0)).flatten().detach().numpy()
+    image_embedding = resnet(image_cropped.unsqueeze(0)
+                             ).flatten().detach().numpy()
 
-    if request.func == 'upload':
+    if request.POST.get('type') == 'upload':
         Photos = Photo.objects.filter(missing_kid__isnull=False)
     else:
         Photos = Photo.objects.filter(found_kid__isnull=False)
 
+    bestSimilarity = 0
+
     profiles = []
-    for photo in Photos:
+    for i, photo in enumerate(Photos):
         db_image = Image.open(photo.photo)
         db_image_cropped = mtcnn(db_image)
-        db_image_embedding = resnet(db_image_cropped.unsqueeze(0)).flatten().detach().numpy()
-        similarity = 1 - spatial.distance.cosine(image_embedding, db_image_embedding)
+        db_image_embedding = resnet(
+            db_image_cropped.unsqueeze(0)).flatten().detach().numpy()
+        similarity = 1 - \
+            spatial.distance.cosine(image_embedding, db_image_embedding)
+        print(similarity)
+        if i == 0:
+            previous_missing_kid_id = photo.missing_kid.id
 
-        if similarity > 0.5:
+        if similarity > bestSimilarity and photo.missing_kid.id == previous_missing_kid_id and similarity > 0.5:
+            bestSimilarity = similarity
+
             if photo.missing_kid is not None:
                 # kid = photo.missing_kid
                 kid = {
@@ -253,9 +266,9 @@ def get_matching_profiles(request):
                     'lost_date': photo.missing_kid.lost_date,
                     'last_known_location': photo.missing_kid.last_known_location,
                     'notes': photo.missing_kid.notes,
-                    'gender':photo.missing_kid.gender,
-                    'similarity' : similarity,
-                    'user' : photo.missing_kid.user.id
+                    'gender': photo.missing_kid.gender,
+                    'similarity': similarity,
+                    'user': photo.missing_kid.user.id
                 }
             else:
                 # kid = photo.found_kid
@@ -264,16 +277,46 @@ def get_matching_profiles(request):
                     'age': photo.found_kid.age,
                     'gender': photo.found_kid.gender,
                     'location': photo.found_kid.location,
-                    'similarity' : similarity
+                    'similarity': similarity
                 }
 
             profile = {
-                'kid' : kid,
-                'photo' : photo.photo.url
+                'kid': kid,
+                'photo': photo.photo.url
             }
             profiles.append(profile)
+            
+        elif similarity > 0.5:
+            if photo.missing_kid is not None:
+                # kid = photo.missing_kid
+                kid = {
+                    'name': photo.missing_kid.name,
+                    'lost_date': photo.missing_kid.lost_date,
+                    'last_known_location': photo.missing_kid.last_known_location,
+                    'notes': photo.missing_kid.notes,
+                    'gender': photo.missing_kid.gender,
+                    'similarity': similarity,
+                    'user': photo.missing_kid.user.id
+                }
+            else:
+                # kid = photo.found_kid
+                kid = {
+                    'name': photo.found_kid.name,
+                    'age': photo.found_kid.age,
+                    'gender': photo.found_kid.gender,
+                    'location': photo.found_kid.location,
+                    'similarity': similarity
+                }
+
+            profile = {
+                'kid': kid,
+                'photo': photo.photo.url
+            }
+            profiles.append(profile)
+            previous_missing_kid_id = photo.missing_kid.id
 
     return Response(profiles)
+
 
 def my_view(request):
     # Perform your logic here

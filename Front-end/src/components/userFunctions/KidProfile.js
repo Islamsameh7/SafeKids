@@ -27,8 +27,8 @@ const KidProfile = (props) => {
  
                 <View >
                     <Image source={require("../../assets/babypic.png")} style={{
-                        width: 100, height: 100, borderRadius: "200", backgroundColor: "white",marginTop:50,alignSelf:"center"}}></Image>
-                        <Text style={{alignSelf:"left", marginLeft:20, marginTop:30, color:darkBlue, fontSize:15, fontWeight:"bold"}}>Personal Details:</Text>
+                        width: 100, height: 100, borderRadius: 200, backgroundColor: "white",marginTop:50,alignSelf:"center"}}></Image>
+                        <Text style={{alignSelf:"center", marginLeft:20, marginTop:30, color:darkBlue, fontSize:15, fontWeight:"bold"}}>Personal Details:</Text>
 
                     <View style={styles.content}> 
                     <Text style={{color:grey,fontSize:15}}>Name:</Text>
@@ -55,7 +55,7 @@ const KidProfile = (props) => {
                     <Text style={{color: darkBlue, marginLeft:15, fontSize:15}}>Dokki</Text>
                     </View>
 
-                    <Text style={{alignSelf:"left", marginLeft:20, marginTop:30, color:darkBlue, fontSize:15, fontWeight:"bold"}}>Contact Info:</Text>
+                    <Text style={{alignSelf:"center", marginLeft:20, marginTop:30, color:darkBlue, fontSize:15, fontWeight:"bold"}}>Contact Info:</Text>
 
                     <View style={styles.content}> 
                     <Text style={{color:grey,fontSize:15}}>Mobile No:</Text>

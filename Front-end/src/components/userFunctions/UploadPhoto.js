@@ -163,7 +163,7 @@ const UploadPhoto = (props) => {
       <View style={styles.submitContainer}>
         <TouchableOpacity style={styles.submitButton} onPress={() =>{ 
           addFoundKid();
-          fetchMatchingProfiles(image);
+          fetchMatchingProfiles(image,"upload");
           props.navigation.navigate("Matching")
           } }>
           <Text style={styles.submitText}>Submit</Text>

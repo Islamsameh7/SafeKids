@@ -21,7 +21,7 @@ export const GlobalProvider = ({ children }) => {
   const emptyImages = () => {
     setKidImages([]);
   };
-  const fetchMatchingProfiles = async (image) => {
+  const fetchMatchingProfiles = async (image,type) => {
     const formData = new FormData();
     try {
       if (image) {
@@ -31,7 +31,7 @@ export const GlobalProvider = ({ children }) => {
         const fileName = image.split("/").pop(); // Extract the file name from the URI
 
         const fileType = blob.type; // Get the MIME type of the file
-
+        formData.append("type",type);
         if (
           fileType === "image/jpeg" ||
           fileType === "image/png" ||
