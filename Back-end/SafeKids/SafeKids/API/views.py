@@ -61,7 +61,7 @@ def login(request):
                 'phonenumber': user.phoneNumber,
                 'birthdate': user.birthdate,
                 'city': user.city,
-                'photo':user.photo.url,
+                # 'photo':user.photo.url,
         }
             return Response(user_data, status=status.HTTP_200_OK)
         else:
@@ -217,7 +217,7 @@ def get_found_kid_details(request, kid_name):
 @api_view(['POST'])
 def get_matching_profiles(request):
     print(request)
-    with open('D:\FCAI\GRAD Project\SafeKids\model.pkl', 'rb') as f:
+    with open('D:\FCAI\GRAD Project\SafeKids\FaceNet.pkl', 'rb') as f:
         model_data = pickle.load(f)
 
     mtcnn = model_data['mtcnn']
@@ -244,7 +244,8 @@ def get_matching_profiles(request):
                     'last_known_location': photo.missing_kid.last_known_location,
                     'notes': photo.missing_kid.notes,
                     'gender':photo.missing_kid.gender,
-                    'similarity' : similarity
+                    'similarity' : similarity,
+                    'user' : photo.missing_kid.user.id
                 }
             else:
                 # kid = photo.found_kid
@@ -262,7 +263,7 @@ def get_matching_profiles(request):
             }
             profiles.append(profile)
 
-    return JsonResponse({'profiles': profiles})
+    return Response(profiles)
 
 def notifications(request):
     user = request.user
