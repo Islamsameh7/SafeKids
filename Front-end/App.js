@@ -37,7 +37,7 @@ function App(props) {
             },
           }}
         >
-          <Stack.Screen name="KidProfile" component={KidProfile} />
+         
           <Stack.Screen name="GetStarted" component={GetStarted} />
           <Stack.Screen name="Signup" component={Signup} />
           <Stack.Screen name="Login" component={Login} />
@@ -53,7 +53,7 @@ function App(props) {
           <Stack.Screen name="AboutUs" component={AboutUs} />
           <Stack.Screen name="MyKids" component={MyKids} />
           <Stack.Screen name="MissingKids" component={MissingKids} />
-          
+          <Stack.Screen name="KidProfile" component={KidProfile} />
           <Stack.Screen name="UserProfile" component={UserProfile} />
           <Stack.Screen name="Notifications" component={Notifications} />
           {/* <Stack.Screen name="Notifications" component={Notifications} /> */}

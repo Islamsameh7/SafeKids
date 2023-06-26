@@ -31,11 +31,12 @@ const MatchingProfiles = (props) => {
       console.log(image);
       return (
         <View style={styles.card} key={index}>
+          <TouchableOpacity onPress={() => props.navigation.navigate("KidProfile",{profile})}>
           <Image
             source={{uri:apiRoutes.mainUrl+image}}
             style={{
               width: "45%",
-              height: "95%",
+              height: "25%",
               borderRadius: 30,
               justifyContent: "center",
               marginRight: 10,
@@ -51,6 +52,8 @@ const MatchingProfiles = (props) => {
               LastKnownLocation: {lastLocation}
             </Text>
           </View>
+          </TouchableOpacity>
+         
         </View>
       );
     });

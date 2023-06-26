@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
     backgroundColor: darkBlue,
     borderRadius: 100,
     alignItems: "center",
-    width: 200,
+    width: Dimensions.get("window").width / 2,
     paddingVertical: 13,
     marginLeft: "25%",
   },

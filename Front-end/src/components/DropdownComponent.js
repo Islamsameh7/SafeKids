@@ -4,7 +4,7 @@ import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { navyblue, darkBlue, grey } from "./Constants";
 
-const DropdownComponent = ({ data, onChange }) => {
+const DropdownComponent = ({ data, onChange,dropdownStyle,placeholder }) => {
   const [value, setValue] = useState(null);
 
   const handleValueChange = (item) => {
@@ -19,7 +19,7 @@ const DropdownComponent = ({ data, onChange }) => {
       containerStyle={{
         top: -Dimensions.get('window').height/30,
       }}
-      style={styles.dropdown}
+      style={dropdownStyle}
       selectedTextStyle={styles.selectedTextStyle}
       inputSearchStyle={styles.inputSearchStyle}
       iconStyle={styles.iconStyle}
@@ -27,7 +27,7 @@ const DropdownComponent = ({ data, onChange }) => {
       maxHeight={300}
       labelField="label"
       valueField="value"
-      placeholder="Select one.."
+      placeholder= {placeholder}
       placeholderTextColor={grey}
       value={value}
       onChange={handleValueChange}
@@ -38,15 +38,7 @@ const DropdownComponent = ({ data, onChange }) => {
 export default DropdownComponent;
 
 const styles = StyleSheet.create({
-  dropdown: {
-    borderRadius: 100,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    width: Dimensions.get('window').width/1.2,
-    backgroundColor: "rgb(220, 220, 220)",
-    marginVertical: 10,
-    marginRight:Dimensions.get('window').width/10,
-  },
+ 
   icon: {
     marginRight: 5,
   },

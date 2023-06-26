@@ -7,7 +7,7 @@ import {
   Touchable,
   TouchableOpacity,
   Dimensions,
-  Alert
+  Alert,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/AntDesign";
 import { navyblue, darkBlue, grey } from "../Constants";
@@ -28,6 +28,18 @@ const cityChoice = [
   { label: "Hurghada", value: "hurghada" },
   { label: "Portsaid", value: "portsaid" },
 ];
+var days = [];
+
+const months = [];
+
+for (let i = 1; i <= 12; i++) {
+  months.push({ label: String(i), value: String(i) });
+}
+const years = [];
+
+for (let i = 1960; i <= 2005; i++) {
+  years.push({ label: String(i), value: String(i) });
+}
 
 const showAlert = (message) => {
   Alert.alert("", message, [{ text: "OK" }], { cancelable: true });
@@ -41,17 +53,54 @@ const Signup = (props) => {
   const [mobileNumber, setMobileNumber] = useState("");
   const [gender, setGender] = useState("");
   const [city, setCity] = useState("");
+  const [day, setDay] = useState("");
+  const [month, setMonth] = useState("");
+  const [year, setYear] = useState("");
 
   const [isEmailValid, setEmailValid] = useState(true);
   const [isPasswordValid, setPasswordValid] = useState(true);
   const [isPhoneValid, setPhoneValid] = useState(true);
+  const [isBirthDateValid, setBirthDateValid] = useState(true);
   const [error, setError] = useState("");
+
+  const setDays = () => {
+    days = [];
+    if (
+      month == 1 ||
+      month == 3 ||
+      month == 5 ||
+      month == 7 ||
+      month == 8 ||
+      month == 10 ||
+      month == 12
+    ) {
+      for (let i = 1; i <= 31; i++) {
+        days.push({ label: String(i), value: String(i) });
+      }
+    } else if (month == 4 || month == 6 || month == 9 || month == 11) {
+      for (let i = 1; i <= 30; i++) {
+        days.push({ label: String(i), value: String(i) });
+      }
+    } else {
+      for (let i = 1; i <= 28; i++) {
+        days.push({ label: String(i), value: String(i) });
+      }
+    }
+  };
+  const saveBirthDate = () => {
+    if (day != "" && month != "" && year != "") {
+      setBirthDateValid(true);
+      setBirthDate(year + "-" + day + "-" + month);
+    } else {
+      setBirthDateValid(false);
+    }
+  };
 
   const register = async () => {
     const formData = new FormData();
 
     formData.append("name", name);
-   
+
     formData.append("email", email);
     formData.append("password", password);
     formData.append("birthdate", birthDate);
@@ -63,8 +112,9 @@ const Signup = (props) => {
     validateEmail();
     validateMobile();
     validatePassword();
+    saveBirthDate();
 
-    if (isEmailValid && isPasswordValid && isPhoneValid) {
+    if (isEmailValid && isPasswordValid && isPhoneValid && isBirthDateValid) {
       console.log(formData);
       const response = await fetch(apiRoutes.register, {
         method: "POST",
@@ -98,7 +148,7 @@ const Signup = (props) => {
   };
 
   const validatePassword = () => {
-    if (password === "" || password.length<8) {
+    if (password === "" || password.length < 8) {
       setPasswordValid(false);
     } else {
       setPasswordValid(true);
@@ -257,27 +307,50 @@ const Signup = (props) => {
           >
             BIRTH DATE
           </Text>
-          <TextInput
-            style={styles.field}
-            placeholderTextColor={grey}
-            placeholder="DD-MM-YYYY"
-            onChangeText={(text) => setBirthDate(text)}
-          ></TextInput>
-            <View style={styles.row}>
-          <Text
-            style={{
-              color: darkBlue,
-              flex:1,
-              left: Dimensions.get("window").width / 10,
-              fontSize: 15,
-              fontWeight: "bold",
-              letterSpacing: 2,
-              marginTop: Dimensions.get("window").height / 200,
-            }}
-          >
-            MOBILE NUMBER
-          </Text>
-          {!isPhoneValid && (
+
+          <View style={styles.row}>
+            <DropdownComponent
+              data={years}
+              onChange={(item) => {
+                setYear(item.value);
+              }}
+              dropdownStyle={styles.dateDropdown}
+              placeholder={"Year"}
+            ></DropdownComponent>
+            <DropdownComponent
+              data={months}
+              onChange={(item) => {
+                setMonth(item.value);
+                setDays();
+              }}
+              dropdownStyle={styles.dateDropdown}
+              placeholder={"Month"}
+            ></DropdownComponent>
+            <DropdownComponent
+              data={days}
+              onChange={(item) => {
+                setDay(item.value);
+              }}
+              dropdownStyle={styles.dateDropdown}
+              placeholder={"Day"}
+            ></DropdownComponent>
+          </View>
+
+          <View style={styles.row}>
+            <Text
+              style={{
+                color: darkBlue,
+                flex: 1,
+                left: Dimensions.get("window").width / 10,
+                fontSize: 15,
+                fontWeight: "bold",
+                letterSpacing: 2,
+                marginTop: Dimensions.get("window").height / 200,
+              }}
+            >
+              MOBILE NUMBER
+            </Text>
+            {!isPhoneValid && (
               <Text
                 style={{
                   marginRight: Dimensions.get("window").width / 3.4,
@@ -287,7 +360,7 @@ const Signup = (props) => {
                 *invalid phone number*
               </Text>
             )}
-            </View>
+          </View>
           <TextInput
             style={styles.field}
             placeholderTextColor={grey}
@@ -313,6 +386,8 @@ const Signup = (props) => {
             onChange={(item) => {
               setGender(item.value);
             }}
+            dropdownStyle={styles.dropdown}
+            placeholder={"select one..."}
           ></DropdownComponent>
           <Text
             style={{
@@ -332,6 +407,8 @@ const Signup = (props) => {
             onChange={(item) => {
               setCity(item.value);
             }}
+            dropdownStyle={styles.dropdown}
+            placeholder={"select one..."}
           ></DropdownComponent>
 
           <TouchableOpacity
@@ -386,6 +463,24 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "row",
+  },
+  dropdown: {
+    borderRadius: 100,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    width: Dimensions.get("window").width / 1.2,
+    backgroundColor: "rgb(220, 220, 220)",
+    marginVertical: 10,
+    marginRight: Dimensions.get("window").width / 10,
+  },
+  dateDropdown: {
+    borderRadius: 100,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    width: Dimensions.get("window").width / 4.7,
+    backgroundColor: "rgb(220, 220, 220)",
+    marginVertical: 10,
+    marginRight: Dimensions.get("window").width / 10,
   },
 });
 

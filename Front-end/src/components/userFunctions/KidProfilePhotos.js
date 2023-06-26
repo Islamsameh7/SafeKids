@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   StyleSheet,
@@ -19,21 +19,26 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const KidProfilePhotos = (props) => {
-  const { setKidImages,kidImages } = useContext(GlobalContext);
-  const [image1, setImage1] = useState(null);
-  const [image2, setImage2] = useState(null);
-  const [image3, setImage3] = useState(null);
-  const [image4, setImage4] = useState(null);
-  const [image5, setImage5] = useState(null);
-  const [image6, setImage6] = useState(null);
+  const { setKidImages, kidImages } = useContext(GlobalContext);
   const [currentImg, setCurrentImg] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const navigation = useNavigation();
+
+  // Create an array of image objects with their corresponding state
+  const imageList = [
+    { state: useState(null) },
+    { state: useState(null) },
+    { state: useState(null) },
+    { state: useState(null) },
+    { state: useState(null) },
+    { state: useState(null) },
+  ];
 
   const addImageToList = (newImage) => {
     const updatedList = [...kidImages, newImage];
     setKidImages(updatedList);
   };
+
   const pickImage = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -44,28 +49,12 @@ const KidProfilePhotos = (props) => {
 
     if (!_image.cancelled) {
       addImageToList(_image.uri);
-      if(currentImg == 1){
-        setImage1(_image.uri); 
-      }
-      else if(currentImg == 2){
-        setImage2(_image.uri);
-      }
-      else if(currentImg == 3){
-        setImage3(_image.uri);
-      }
-      else if(currentImg == 4){
-        setImage4(_image.uri);
-      }
-      else if(currentImg == 5){
-        setImage5(_image.uri);
-      }
-      else if(currentImg == 6){
-        setImage6(_image.uri);
-      }
-  
+      const currentImageState = imageList[currentImg - 1].state[1];
+      currentImageState(_image.uri);
     }
     setIsModalVisible(false);
   };
+
   const takePicture = async () => {
     let _image = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -75,32 +64,17 @@ const KidProfilePhotos = (props) => {
     });
 
     if (!_image.cancelled) {
-      if(currentImg == 1){
-        setImage1(_image.uri);
-      }
-      else if(currentImg == 2){
-        setImage2(_image.uri);
-      }
-      else if(currentImg == 3){
-        setImage3(_image.uri);
-      }
-      else if(currentImg == 4){
-        setImage4(_image.uri);
-      }
-      else if(currentImg == 5){
-        setImage5(_image.uri);
-      }
-      else if(currentImg == 6){
-        setImage6(_image.uri);
-      }
-  
+      const currentImageState = imageList[currentImg - 1].state[1];
+      currentImageState(_image.uri);
     }
     setIsModalVisible(false);
   };
+
   const changeCurrentImage = async (currentImg) => {
     setIsModalVisible(true);
     setCurrentImg(currentImg);
   };
+
   const goBack = () => {
     navigation.goBack();
   };
@@ -119,97 +93,46 @@ const KidProfilePhotos = (props) => {
       <Text style={styles.addPhotosDesc}>
         Add up to 6 pictures. use real pictures
       </Text>
-      {/* row 1 */}
-      <View style={styles.row}>
-        <TouchableOpacity
-          style={styles.uploadPhoto}
-          onPress={() => changeCurrentImage(1) }
-        >
-          <EntypoIcons
-            name={"camera"}
-            size={30}
-            color={darkBlue}
-            style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
-          />
-          {image1 && <Image source={{ uri: image1 }} style={styles.photo} />}
-        </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.uploadPhoto}
-          onPress={() => changeCurrentImage(2)}
-        >
-          <EntypoIcons
-            name={"camera"}
-            size={30}
-            color={darkBlue}
-            style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
-          />
-          {image2 && <Image source={{ uri: image2 }} style={styles.photo} />}
-        </TouchableOpacity>
-      </View>
+      {/* Iterate over the imageList array to generate the image components */}
+      {imageList.map((image, index) => (
+      index % 2 === 0 ? (
+        <View key={index} style={styles.row}>
+          <TouchableOpacity
+            style={styles.uploadPhoto}
+            onPress={() => changeCurrentImage(index + 1)}
+          >
+            <EntypoIcons
+              name={"camera"}
+              size={30}
+              color={darkBlue}
+              style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
+            />
+            {image.state[0] && <Image source={{ uri: image.state[0] }} style={styles.photo} />}
+          </TouchableOpacity>
 
-      {/* row 2 */}
-      <View style={styles.row}>
-        <TouchableOpacity
-          style={styles.uploadPhoto}
-          onPress={() => changeCurrentImage(3)}
-        >
-          <EntypoIcons
-            name={"camera"}
-            size={30}
-            color={darkBlue}
-            style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
-          />
-          {image3 && <Image source={{ uri: image3 }} style={styles.photo} />}
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.uploadPhoto}
-          onPress={() => changeCurrentImage(4)}
-        >
-          <EntypoIcons
-            name={"camera"}
-            size={30}
-            color={darkBlue}
-            style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
-          />
-          {image4 && <Image source={{ uri: image4 }} style={styles.photo} />}
-        </TouchableOpacity>
-      </View>
-
-      {/* row 3 */}
-      <View style={styles.row}>
-        <TouchableOpacity
-          style={styles.uploadPhoto}
-          onPress={() => changeCurrentImage(5)}
-        >
-          <EntypoIcons
-            name={"camera"}
-            size={30}
-            color={darkBlue}
-            style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
-          />
-          {image5 && <Image source={{ uri: image5 }} style={styles.photo} />}
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.uploadPhoto}
-          onPress={() => changeCurrentImage(6)}
-        >
-          <EntypoIcons
-            name={"camera"}
-            size={30}
-            color={darkBlue}
-            style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
-          />
-          {image6 && <Image source={{ uri: image6 }} style={styles.photo} />}
-        </TouchableOpacity>
-      </View>
+          {/* Render the second image in the pair if available */}
+          {index + 1 < imageList.length && (
+            <TouchableOpacity
+              style={styles.uploadPhoto}
+              onPress={() => changeCurrentImage(index + 2)}
+            >
+              <EntypoIcons
+                name={"camera"}
+                size={30}
+                color={darkBlue}
+                style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
+              />
+              {imageList[index + 1].state[0] && <Image source={{ uri: imageList[index + 1].state[0] }} style={styles.photo} />}
+            </TouchableOpacity>
+          )}
+        </View>
+      ) : null
+    ))}
 
       <TouchableOpacity style={styles.doneButton} onPress={() => goBack()} visi>
         <Text style={styles.doneText}>Done</Text>
       </TouchableOpacity>
-
 
       <Modal visible={isModalVisible} animationType="slide">
         <View style={styles.modalContainer}>
@@ -239,6 +162,15 @@ const KidProfilePhotos = (props) => {
   );
 };
 
+
+
+
+
+
+
+
+
+
 const styles = StyleSheet.create({
   addPhotosText: {
     fontSize: 40,
@@ -254,20 +186,20 @@ const styles = StyleSheet.create({
     right: windowWidth / 90,
   },
   uploadPhoto: {
-    top: windowWidth - 270,
-    margin: 20,
-    height: 130,
-    width: 170,
-    padding: 45,
+    top: windowWidth /3,
+    margin: windowWidth /25,
+    height: windowHeight/7,
+    width: windowWidth/2.4,
+    padding: windowWidth/10,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 35,
     backgroundColor: lightBlue,
   },
   photo: {
-    height: 130,
-    width: 170,
-    padding: 45,
+    height: windowHeight/7,
+    width: windowWidth/2.4,
+    padding: windowWidth/10,
     borderRadius: 35,
   },
   container: {
@@ -281,11 +213,11 @@ const styles = StyleSheet.create({
     backgroundColor: darkBlue,
     borderRadius: 100,
     alignItems: "center",
-    width: 230,
+    width: windowWidth/5,
     paddingVertical: 5,
     marginLeft: "19%",
     position: "absolute",
-    top: windowHeight - 70,
+    top: windowHeight/1.1,
   },
   doneText: {
     color: "#FFFFFF",
@@ -295,7 +227,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     alignItems: "center",
     justifyContent: "center",
-    bottom: 20,
+    bottom: windowHeight/40,
     backgroundColor: "white",
   },
   modalContent: {
@@ -303,7 +235,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   modalButton: {
-    marginBottom: 10,
+    marginBottom: windowHeight/35,
     padding: 10,
     borderRadius: 5,
   },

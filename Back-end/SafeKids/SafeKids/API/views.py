@@ -263,6 +263,7 @@ def get_matching_profiles(request):
                 # kid = photo.missing_kid
                 kid = {
                     'name': photo.missing_kid.name,
+                    'birthdate': photo.missing_kid.birthdate,
                     'lost_date': photo.missing_kid.lost_date,
                     'last_known_location': photo.missing_kid.last_known_location,
                     'notes': photo.missing_kid.notes,
@@ -291,6 +292,7 @@ def get_matching_profiles(request):
                 # kid = photo.missing_kid
                 kid = {
                     'name': photo.missing_kid.name,
+                    'birthdate': photo.missing_kid.birthdate,
                     'lost_date': photo.missing_kid.lost_date,
                     'last_known_location': photo.missing_kid.last_known_location,
                     'notes': photo.missing_kid.notes,

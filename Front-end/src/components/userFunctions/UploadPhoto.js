@@ -99,7 +99,7 @@ const UploadPhoto = (props) => {
           name={"left"}
           size={30}
           color={darkBlue}
-          style={{ top: 70, left: 20 }}
+          style={{ top: windowHeight/15, left: windowWidth/15 }}
         />
       </TouchableOpacity>
       <Text style={styles.FillText}>Fill in the following fields</Text>
@@ -115,18 +115,18 @@ const UploadPhoto = (props) => {
       </View>
 
       <View style={styles.uploadedContainer}>
-        <TouchableOpacity style={styles.uploadedPhoto}>
+        <View style={styles.uploadedPhoto}>
           
           <Image
             source={require("../../assets/cameraUpload.jpg")}
-            style={{ width: 50, height: 45}}
+            style={{ width: windowWidth/8, height: windowHeight/18}}
           />
           
           <Text style={styles.TextUpload}>uploaded photo will appear here</Text>
           <Text style={styles.SupportsText}>Supports JPG,PNG</Text>
           {image && <Image source={{ uri: image }} style={styles.photo} />}
           
-        </TouchableOpacity>
+        </View>
         
       </View>
       <View style={styles.row}>
@@ -134,8 +134,8 @@ const UploadPhoto = (props) => {
         <TouchableOpacity style={styles.takePhoto} onPress={() => takePhoto()}>
           <View
             style={{
-              width: 50,
-              height: 50,
+              width: windowWidth/8,
+              height: windowHeight/18,
               borderRadius: 45,
               borderWidth: 2,
               borderColor: "white",
@@ -152,10 +152,10 @@ const UploadPhoto = (props) => {
         <TouchableOpacity style={styles.uploadPhoto} onPress={() => uploadPhoto() } >
           <Image
             source={require("../../assets/uploadGreen.jpg")}
-            style={{ width: 50, height: 45 }}
+            style={{ width: windowWidth/10, height: windowHeight/18 }}
           />
 
-          <Text style={{ fontSize: 17, color: "white", top: 5 }}>
+          <Text style={{ fontSize: 17, color: "white",  }}>
             Upload photo
           </Text>
         </TouchableOpacity>
@@ -175,8 +175,8 @@ const UploadPhoto = (props) => {
 
 const styles = StyleSheet.create({
   row: {
-    bottom: 0,
-    margin: 40,
+
+    margin: windowWidth/10,
     justifyContent:'center',
     flexDirection: "row",
   },
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     backgroundColor: lightGrey,
     paddingVertical: 6,
     paddingHorizontal: 8,
-    width: "78%",
+    width: windowWidth/1.24,
     fontSize: 17,
   },
   uploadedContainer: {
@@ -235,8 +235,8 @@ const styles = StyleSheet.create({
     margin: 2,
     backgroundColor: "#D79E9A",
     paddingTop: 10,
-    height: 100,
-    width: 185,
+    height: windowHeight/8.4,
+    width: windowWidth/2.2,
     alignItems: "center",
     borderWidth: 1,
     borderRadius: 20,
@@ -246,8 +246,8 @@ const styles = StyleSheet.create({
     margin: 2,
     backgroundColor: "#68A3A8",
     paddingTop: 10,
-    height: 100,
-    width: 185,
+    height: windowHeight/8.4,
+    width: windowWidth/2.2,
     alignItems: "center",
     borderWidth: 1,
     borderRadius: 20,
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
     color: darkBlue,
     fontWeight: "bold",
     textAlign: "center",
-    top: 90,
+    top: windowHeight/9,
   },
   TextUpload: {
     fontSize: 14,
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     backgroundColor: darkBlue,
     borderRadius: 100,
     alignItems: "center",
-    width: 100,
+    width: windowWidth/4,
     paddingVertical: 5,
     marginLeft: "19%",
     position: "absolute",
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
   },
   submitContainer: {
     alignItems: "center",
-    marginTop: 30,
+    marginTop: windowHeight/25,
   },
 });
 
