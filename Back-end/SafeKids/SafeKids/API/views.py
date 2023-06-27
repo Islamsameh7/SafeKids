@@ -234,13 +234,14 @@ def get_matching_profiles(request):
 
     image = Image.open(request.FILES['photo'])
     image_cropped = mtcnn(image)
-    image_embedding = resnet(image_cropped.unsqueeze(0)
-                             ).flatten().detach().numpy()
+    image_embedding = resnet(image_cropped.unsqueeze(0)).flatten().detach().numpy()
 
     if request.POST.get('type') == 'upload':
         Photos = Photo.objects.filter(missing_kid__isnull=False)
+        kid_type = 'found'
     else:
         Photos = Photo.objects.filter(found_kid__isnull=False)
+        kid_type = 'missing'
 
     bestSimilarity = 0
 
@@ -250,8 +251,7 @@ def get_matching_profiles(request):
         db_image_cropped = mtcnn(db_image)
         db_image_embedding = resnet(
             db_image_cropped.unsqueeze(0)).flatten().detach().numpy()
-        similarity = 1 - \
-            spatial.distance.cosine(image_embedding, db_image_embedding)
+        similarity = 1 - spatial.distance.cosine(image_embedding, db_image_embedding)
         print(similarity)
         if i == 0:
             previous_missing_kid_id = photo.missing_kid.id
@@ -324,12 +324,15 @@ def get_matching_profiles(request):
 
     for i in profiles:
         kid = profile['kid']
-        send_notification(kid['user'], kid['name'], kid['id'])
+        send_notification(kid['user'], kid['name'], kid['id'], kid_type)
 
     return Response(profiles)
 
 
-def send_notification(user, name, id):
+def send_notification(user, name, id, kid_type):
     message = ''
     notification = Notification(user=user, message=message, kid_id=id)
     notification.save()
+
+def get_user_notifications(request):
+    notifications = Notification.objects.filter(user=request.user_id)
