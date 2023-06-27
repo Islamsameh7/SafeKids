@@ -226,7 +226,7 @@ def get_found_kid_details(request, kid_name):
 @api_view(['POST'])
 def get_matching_profiles(request):
     print(request)
-    with open('D:\FCAI fourth year (final year)\SafeKids\SafeKids\FaceNet.pkl', 'rb') as f:
+    with open('D:\FCAI\GRAD Project\SafeKids\Face Recognition Model\FaceNet.pkl', 'rb') as f:
         model_data = pickle.load(f)
 
     mtcnn = model_data['mtcnn']
@@ -262,6 +262,7 @@ def get_matching_profiles(request):
             if photo.missing_kid is not None:
                 # kid = photo.missing_kid
                 kid = {
+                    'id': photo.missing_kid.id,
                     'name': photo.missing_kid.name,
                     'birthdate': photo.missing_kid.birthdate,
                     'lost_date': photo.missing_kid.lost_date,
@@ -274,6 +275,7 @@ def get_matching_profiles(request):
             else:
                 # kid = photo.found_kid
                 kid = {
+                    'id': photo.found_kid.id,
                     'name': photo.found_kid.name,
                     'age': photo.found_kid.age,
                     'gender': photo.found_kid.gender,
@@ -291,6 +293,7 @@ def get_matching_profiles(request):
             if photo.missing_kid is not None:
                 # kid = photo.missing_kid
                 kid = {
+                    'id': photo.missing_kid.id,
                     'name': photo.missing_kid.name,
                     'birthdate': photo.missing_kid.birthdate,
                     'lost_date': photo.missing_kid.lost_date,
@@ -303,11 +306,13 @@ def get_matching_profiles(request):
             else:
                 # kid = photo.found_kid
                 kid = {
+                    'id': photo.found_kid.id,
                     'name': photo.found_kid.name,
                     'age': photo.found_kid.age,
                     'gender': photo.found_kid.gender,
                     'location': photo.found_kid.location,
-                    'similarity': similarity
+                    'similarity': similarity,
+                    'user': photo.missing_kid.user.id
                 }
 
             profile = {
@@ -317,14 +322,14 @@ def get_matching_profiles(request):
             profiles.append(profile)
             previous_missing_kid_id = photo.missing_kid.id
 
+    for i in profiles:
+        kid = profile['kid']
+        send_notification(kid['user'], kid['name'], kid['id'])
+
     return Response(profiles)
 
 
-def my_view(request):
-    # Perform your logic here
-
-    # Add a success message with the desired notification content
-    messages.success(request, 'Notification message here.')
-
-    # Redirect the user to a specific page
-    return redirect('my_page_url_name')
+def send_notification(user, name, id):
+    message = ''
+    notification = Notification(user=user, message=message, kid_id=id)
+    notification.save()

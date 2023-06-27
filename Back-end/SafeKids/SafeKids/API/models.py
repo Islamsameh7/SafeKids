@@ -68,6 +68,10 @@ class Photo(models.Model):
     found_kid = models.ForeignKey(FoundKid, on_delete=models.CASCADE, blank=True, null=True)
     missing_kid = models.ForeignKey(MissingKid, on_delete=models.CASCADE, blank=True, null=True)
     photo = models.ImageField(upload_to=upload_to, blank=True, null=True)
-
-    # vector = ArrayField(VectorField(), null=True)
   
+class Notification(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    message = models.CharField(max_length=255)
+    kid_id = models.IntegerField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
