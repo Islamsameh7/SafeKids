@@ -252,7 +252,7 @@ def get_matching_profiles(request):
             db_image_cropped.unsqueeze(0)).flatten().detach().numpy()
         similarity = 1 - \
             spatial.distance.cosine(image_embedding, db_image_embedding)
-        print(similarity)
+      
         if i == 0:
             previous_missing_kid_id = photo.missing_kid.id
 
@@ -269,7 +269,9 @@ def get_matching_profiles(request):
                     'notes': photo.missing_kid.notes,
                     'gender': photo.missing_kid.gender,
                     'similarity': similarity,
-                    'user': photo.missing_kid.user.id
+                    'user': photo.missing_kid.user.id,
+                    'parentPhone':photo.missing_kid.user.phoneNumber,
+                    'parentEmail':photo.missing_kid.user.email,
                 }
             else:
                 # kid = photo.found_kid
@@ -298,7 +300,9 @@ def get_matching_profiles(request):
                     'notes': photo.missing_kid.notes,
                     'gender': photo.missing_kid.gender,
                     'similarity': similarity,
-                    'user': photo.missing_kid.user.id
+                    'user': photo.missing_kid.user.id,
+                    'parentPhone':photo.missing_kid.user.phoneNumber,
+                    'parentEmail':photo.missing_kid.user.email,
                 }
             else:
                 # kid = photo.found_kid

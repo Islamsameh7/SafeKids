@@ -19,8 +19,8 @@ const MatchingProfiles = (props) => {
   const { matchingProfiles } = useContext(GlobalContext);
 
   const renderData = () => {
-    return matchingProfiles.map((profile,index) => {
-      const accuracy = Math.round(profile.kid.similarity * 100)
+    return matchingProfiles.map((profile, index) => {
+      const accuracy = Math.round(profile.kid.similarity * 100);
       const name = profile.kid.name;
       const age = profile.kid.age;
       const gender = profile.kid.gender;
@@ -31,29 +31,31 @@ const MatchingProfiles = (props) => {
       console.log(image);
       return (
         <View style={styles.card} key={index}>
-          <TouchableOpacity onPress={() => props.navigation.navigate("KidProfile",{profile})}>
-          <Image
-            source={{uri:apiRoutes.mainUrl+image}}
-            style={{
-              width: "45%",
-              height: "25%",
-              borderRadius: 30,
-              justifyContent: "center",
-              marginRight: 10,
-            }}
-          />
-          <View>
-            <Text style={styles.dataText}>Similarity: {accuracy}%</Text>
-            <Text style={styles.dataText}>Name: {name}</Text>
-            <Text style={styles.dataText}>Age: {age}</Text>
-            <Text style={styles.dataText}>Gender: {gender}</Text>
-            <Text style={styles.dataText}>LostDate: {lostDate}</Text>
-            <Text style={styles.dataText}>
-              LastKnownLocation: {lastLocation}
-            </Text>
-          </View>
+          <TouchableOpacity
+            onPress={() => props.navigation.navigate("KidProfile", { profile })}
+            style={{ flexDirection: "row" }}
+          >
+            <Image
+              source={{ uri: apiRoutes.mainUrl + image }}
+              style={{
+                width: windowWidth / 3,
+                height: windowHeight / 7,
+                borderRadius: 30,
+                justifyContent: "center",
+                marginRight: windowWidth / 100,
+              }}
+            />
+            <View>
+              <Text style={styles.dataText}>Similarity: {accuracy}%</Text>
+              <Text style={styles.dataText}>Name: {name}</Text>
+              <Text style={styles.dataText}>Age: {age}</Text>
+              <Text style={styles.dataText}>Gender: {gender}</Text>
+              <Text style={styles.dataText}>LostDate: {lostDate}</Text>
+              <Text style={styles.dataText}>
+                LastKnownLocation: {lastLocation}
+              </Text>
+            </View>
           </TouchableOpacity>
-         
         </View>
       );
     });
@@ -68,8 +70,9 @@ const MatchingProfiles = (props) => {
         <Ionicons name={"left"} size={30} color={darkBlue} />
       </TouchableOpacity>
       <Text style={styles.matchingText}>Matching Profiles</Text>
-      <ScrollView></ScrollView>
-      <View style={styles.container}>{renderData()}</View>
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        <View style={styles.container}>{renderData()}</View>
+      </ScrollView>
 
       <TouchableOpacity style={styles.doneButton}>
         <Text style={styles.doneText}>Done</Text>
@@ -84,7 +87,7 @@ const styles = StyleSheet.create({
     color: darkBlue,
     fontWeight: "bold",
     textAlign: "center",
-    top: 90,
+    top: windowHeight / 7,
   },
   dataText: {
     fontSize: 14,
@@ -95,12 +98,11 @@ const styles = StyleSheet.create({
   },
   card: {
     alignItems: "center",
-    flexDirection: "row",
     backgroundColor: lightBlue,
-    width: "85%",
+    width: windowWidth/1.1,
     padding: 30,
     borderRadius: 20,
-    marginTop: 50,
+    marginTop: windowHeight / 20,
   },
   container: {
     alignItems: "center",
@@ -121,6 +123,11 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 22,
     fontWeight: "bold",
+  },
+  scrollViewContent: {
+    alignItems: "center",
+    paddingTop: Dimensions.get("window").height / 14,
+    paddingBottom: Dimensions.get("window").height / 3,
   },
 });
 
