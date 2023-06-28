@@ -16,6 +16,7 @@ urlpatterns = [
     path('edit_user/', edit_user, name='edit_user'),
     path('edit_kid/', edit_kid, name='edit_kid'),
     path('logout/', logout, name='logout'),
+    path('get_my_kids/', get_my_kids, name='get_my_kids'),
     path('get_matching_profiles/', get_matching_profiles, name='get_matching_profiles'),
     
     path('get_csrf_token/', get_csrf_token, name='get_csrf_token'),

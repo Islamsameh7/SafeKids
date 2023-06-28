@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -16,11 +16,39 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const MyKids = (props) => {
-  const { setCurrentKidProfile } = useContext(GlobalContext);
+  const { user, setCurrentKidProfile } = useContext(GlobalContext);
 
+  const [mykids, setMyKids] = useState([]);
+
+  useEffect(() => {
+    const getMyKids = async () => {
+      const formData = new FormData();
+
+      formData.append("user_id", user.id);
+
+      const response = await fetch(apiRoutes.getMyKids, {
+        method: "POST",
+        body: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (response.ok) {
+        const kidData = await response.json();
+        setMyKids(kidData);
+      } else {
+        // Error response
+        const errorData = await response.text();
+       
+        console.log("Failed to get data:", errorData);
+      }
+    };
+    getMyKids();
+  }, []);
   const renderData = () => {
-    return matchingProfiles.map((profile, index) => {
-      const accuracy = Math.round(profile.kid.similarity * 100);
+    console.log(mykids.length);
+    return mykids.map((profile, index) => {
       const name = profile.kid.name;
       const age = profile.kid.age;
       const gender = profile.kid.gender;
@@ -28,7 +56,6 @@ const MyKids = (props) => {
       const lastLocation = profile.kid.last_known_location;
       const image = profile.photo;
 
-      console.log(image);
       return (
         <View style={styles.card} key={index}>
           <TouchableOpacity
@@ -49,7 +76,6 @@ const MyKids = (props) => {
               }}
             />
             <View>
-              <Text style={styles.dataText}>Similarity: {accuracy}%</Text>
               <Text style={styles.dataText}>Name: {name}</Text>
               <Text style={styles.dataText}>Age: {age}</Text>
               <Text style={styles.dataText}>Gender: {gender}</Text>
@@ -72,20 +98,16 @@ const MyKids = (props) => {
       >
         <Ionicons name={"left"} size={30} color={darkBlue} />
       </TouchableOpacity>
-      <Text style={styles.matchingText}>Matching Profiles</Text>
+      <Text style={styles.headText}>My Kids</Text>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.container}>{renderData()}</View>
       </ScrollView>
-
-      <TouchableOpacity style={styles.doneButton}>
-        <Text style={styles.doneText}>Done</Text>
-      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  matchingText: {
+  headText: {
     fontSize: 25,
     color: darkBlue,
     fontWeight: "bold",
@@ -112,21 +134,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     top: windowHeight / 8,
   },
-  doneButton: {
-    backgroundColor: darkBlue,
-    borderRadius: 100,
-    alignItems: "center",
-    width: 170,
-    paddingVertical: 5,
-    top: windowHeight / 3,
-    marginLeft: "30%",
-    justifyContent: "center",
-  },
-  doneText: {
-    color: "#FFFFFF",
-    fontSize: 22,
-    fontWeight: "bold",
-  },
+
   scrollViewContent: {
     alignItems: "center",
     paddingTop: Dimensions.get("window").height / 14,

@@ -6,10 +6,10 @@ import { darkBlue, lightBlue } from "./Constants";
 import IonIcons from "react-native-vector-icons/Ionicons";
 import FontIcons from "react-native-vector-icons/FontAwesome";
 import AntIcons from "react-native-vector-icons/AntDesign";
-
+import { GlobalContext } from "./context/GlobalContext";
 const Home = (props) => {
 
-
+  const { user } = useContext(GlobalContext);
   return (
     <View>
       <View
@@ -34,7 +34,7 @@ const Home = (props) => {
 
       </View>
       <Text style={styles.helloText}>Hello,</Text>
-      <Text style={styles.userText}>User</Text>
+      <Text style={styles.userText}>{user.name}</Text>
       <View style={{ alignItems: "center", marginTop: "5%" }}>
         <TouchableOpacity
           onPress={() => props.navigation.navigate("AddKidProfile")}

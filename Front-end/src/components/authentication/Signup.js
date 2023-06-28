@@ -87,10 +87,10 @@ const Signup = (props) => {
       }
     }
   };
-  const saveBirthDate = () => {
+  const checkBirthDate = () => {
     if (day != "" && month != "" && year != "") {
       setBirthDateValid(true);
-      setBirthDate(year + "-" + day + "-" + month);
+  
     } else {
       setBirthDateValid(false);
     }
@@ -98,12 +98,12 @@ const Signup = (props) => {
 
   const register = async () => {
     const formData = new FormData();
-
+    checkBirthDate();
     formData.append("name", name);
 
     formData.append("email", email);
     formData.append("password", password);
-    formData.append("birthdate", birthDate);
+    formData.append("birthdate", year + "-" + month + "-" + day);
     formData.append("phoneNumber", mobileNumber);
     formData.append("city", city);
     formData.append("username", name);
@@ -112,7 +112,7 @@ const Signup = (props) => {
     validateEmail();
     validateMobile();
     validatePassword();
-    saveBirthDate();
+   
 
     if (isEmailValid && isPasswordValid && isPhoneValid && isBirthDateValid) {
       console.log(formData);
@@ -307,7 +307,16 @@ const Signup = (props) => {
           >
             BIRTH DATE
           </Text>
-
+          {!isBirthDateValid && (
+              <Text
+                style={{
+                  marginRight: Dimensions.get("window").width / 6.4,
+                  color: "red",
+                }}
+              >
+                *Birtdate not valid*
+              </Text>
+            )}
           <View style={styles.row}>
             <DropdownComponent
               data={years}

@@ -4,7 +4,7 @@ import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { navyblue, darkBlue, grey } from "./Constants";
 
-const DropdownComponent = ({ data, onChange,dropdownStyle,placeholder }) => {
+const DropdownComponent = ({ data, onChange,dropdownStyle,placeholder,placeholderStyle }) => {
   const [value, setValue] = useState(null);
 
   const handleValueChange = (item) => {
@@ -28,6 +28,7 @@ const DropdownComponent = ({ data, onChange,dropdownStyle,placeholder }) => {
       labelField="label"
       valueField="value"
       placeholder= {placeholder}
+      placeholderStyle={placeholderStyle}
       placeholderTextColor={grey}
       value={value}
       onChange={handleValueChange}

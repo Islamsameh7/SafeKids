@@ -22,7 +22,7 @@ from scipy import spatial
 import pickle
 from django.contrib import messages
 from django.shortcuts import redirect
-
+from datetime import date
 # Create your views here.
 
 
@@ -80,7 +80,7 @@ def login(request):
 @api_view(['POST'])
 def edit_user(request):
 
-    user = CustomUser.objects.get(id=request.POST.get('user_id'))
+    user = CustomUser.objects.get(id=request.POST.get('user_id')).first
 
     if request.POST.get('name'):
         user.name = request.POST.get('name')
@@ -106,6 +106,7 @@ def edit_user(request):
     }
     return Response(user_data, status=200)
 
+
 @api_view(['POST'])
 def edit_kid(request):
 
@@ -118,11 +119,12 @@ def edit_kid(request):
     if request.POST.get('lostDate'):
         kid.lost_date = request.POST.get('lostDate')
     if request.POST.get('lastKnownLocation'):
-        kid.last_known_location = request.POST.get('lastKnownLocation')        
-   
+        kid.last_known_location = request.POST.get('lastKnownLocation')
+
     kid.save()
-   
-    return Response( status=200)
+
+    return Response(status=200)
+
 
 @api_view(['POST'])
 def logout(request):
@@ -189,6 +191,44 @@ def add_missing_kid(request):
         return HttpResponse(form.errors, status=400)
 
 
+@api_view(['POST'])
+def get_my_kids(request):
+    missing_kids = MissingKid.objects.filter(
+        user_id=request.POST.get('user_id'))
+    user = CustomUser.objects.get(
+        id=request.POST.get('user_id'))
+    
+    kids = []
+    
+    for kid in missing_kids:
+        photos = Photo.objects.filter(missing_kid=kid)
+        photo = photos.first() if photos.exists() else None
+        birthdate = date.fromisoformat(kid.birthdate.strftime("%Y-%m-%d"))
+        age = 2023 - birthdate.year
+        kid_data = {
+            'name': kid.name,
+            'id': kid.id,
+            'birthdate': kid.birthdate,
+            'age':age,
+            'gender': kid.gender,
+            'lost_date': kid.lost_date,
+            'last_known_location': kid.last_known_location,
+            'still_missing': kid.still_missing,
+            'notes': kid.notes,
+            'parentPhone': user.phoneNumber,
+            'parentEmail': user.email,
+            'user': user.id,
+        }
+        profile={
+            'kid':kid_data,
+            'photo':photo.photo.url,
+        }
+    
+        kids.append(profile)
+      
+    return Response(kids)
+
+
 @api_view(['GET'])
 def get_missing_kids(request):
     missing_kids = MissingKid.objects.all()
@@ -217,6 +257,7 @@ def get_missing_kids(request):
             kid_data['photo_url'] = None
 
         data.append(kid_data)
+        
 
     return JsonResponse(data, safe=False)
 
@@ -251,7 +292,8 @@ def get_matching_profiles(request):
 
     image = Image.open(request.FILES['photo'])
     image_cropped = mtcnn(image)
-    image_embedding = resnet(image_cropped.unsqueeze(0)).flatten().detach().numpy()
+    image_embedding = resnet(image_cropped.unsqueeze(0)
+                             ).flatten().detach().numpy()
 
     if request.POST.get('type') == 'upload':
         Photos = Photo.objects.filter(missing_kid__isnull=False)
@@ -270,7 +312,7 @@ def get_matching_profiles(request):
             db_image_cropped.unsqueeze(0)).flatten().detach().numpy()
         similarity = 1 - \
             spatial.distance.cosine(image_embedding, db_image_embedding)
-      
+
         if i == 0:
             previous_missing_kid_id = photo.missing_kid.id
 
@@ -289,8 +331,8 @@ def get_matching_profiles(request):
                     'gender': photo.missing_kid.gender,
                     'similarity': similarity,
                     'user': photo.missing_kid.user.id,
-                    'parentPhone':photo.missing_kid.user.phoneNumber,
-                    'parentEmail':photo.missing_kid.user.email,
+                    'parentPhone': photo.missing_kid.user.phoneNumber,
+                    'parentEmail': photo.missing_kid.user.email,
                 }
             else:
                 # kid = photo.found_kid
@@ -308,7 +350,7 @@ def get_matching_profiles(request):
                 'photo': photo.photo.url
             }
             profiles.append(profile)
-            
+
         elif similarity > 0.5:
             if photo.missing_kid is not None:
                 # kid = photo.missing_kid
@@ -322,8 +364,8 @@ def get_matching_profiles(request):
                     'gender': photo.missing_kid.gender,
                     'similarity': similarity,
                     'user': photo.missing_kid.user.id,
-                    'parentPhone':photo.missing_kid.user.phoneNumber,
-                    'parentEmail':photo.missing_kid.user.email,
+                    'parentPhone': photo.missing_kid.user.phoneNumber,
+                    'parentEmail': photo.missing_kid.user.email,
                 }
             else:
                 # kid = photo.found_kid
@@ -344,18 +386,22 @@ def get_matching_profiles(request):
             profiles.append(profile)
             previous_missing_kid_id = photo.missing_kid.id
 
-    #for i in profiles:
-        #kid = profile['kid']
-        #send_notification(kid['user'], kid['name'], kid['id'], kid_type)
+    # for i in profiles:
+        # kid = profile['kid']
+        # send_notification(kid['user'], kid['name'], kid['id'], kid_type)
 
     return Response(profiles)
 
+
 """
 """
+
+
 def send_notification(user, name, id, kid_type):
     message = ''
     notification = Notification(user=user, message=message, kid_id=id)
     notification.save()
+
 
 def get_user_notifications(request):
     notifications = Notification.objects.filter(user=request.user_id)

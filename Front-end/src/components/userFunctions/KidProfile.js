@@ -14,6 +14,21 @@ import Ionicons from "react-native-vector-icons/AntDesign";
 import { useRoute } from "@react-navigation/native";
 import { GlobalContext } from "../context/GlobalContext";
 import apiRoutes from "../apiRoutes";
+import DropdownComponent from "../DropdownComponent";
+
+var days = [];
+
+const months = [];
+
+for (let i = 1; i <= 12; i++) {
+  months.push({ label: String(i), value: String(i) });
+}
+const years = [];
+
+for (let i = 1960; i <= 2005; i++) {
+  years.push({ label: String(i), value: String(i) });
+}
+
 const KidProfile = (props) => {
   const [isParent, setIsParent] = useState(false);
 
@@ -30,12 +45,42 @@ const KidProfile = (props) => {
   const [lostDate, setLostDate] = useState("");
   const [lastKnown, setLastKnown] = useState("");
 
-  const { user,currentKidProfile } = useContext(GlobalContext);
+  const { user, currentKidProfile } = useContext(GlobalContext);
+  
+  const [day, setDay] = useState("");
+  const [month, setMonth] = useState("");
+  const [year, setYear] = useState("");
+
+  const setDays = () => {
+    days = [];
+    if (
+      month == 1 ||
+      month == 3 ||
+      month == 5 ||
+      month == 7 ||
+      month == 8 ||
+      month == 10 ||
+      month == 12
+    ) {
+      for (let i = 1; i <= 31; i++) {
+        days.push({ label: String(i), value: String(i) });
+      }
+    } else if (month == 4 || month == 6 || month == 9 || month == 11) {
+      for (let i = 1; i <= 30; i++) {
+        days.push({ label: String(i), value: String(i) });
+      }
+    } else {
+      for (let i = 1; i <= 28; i++) {
+        days.push({ label: String(i), value: String(i) });
+      }
+    }
+  };
 
 
   const handleEditProfile = () => {
     setEditIconVisible(!isEditIconVisible);
     setIsEditProfileVisible(!isEditProfileVisible);
+   
   };
   useEffect(() => {
     if (currentKidProfile.kid.user == user.id) {
@@ -54,7 +99,7 @@ const KidProfile = (props) => {
     formData.append("name", name);
     formData.append("lostDate", lostDate);
     formData.append("lastKnownLocation", lastKnown);
-    formData.append("birthdate", birthDate);
+    formData.append("birthdate", year + "-" + month + "-" + day);
     /*
     if (image) {
       const response = await fetch(image);
@@ -81,7 +126,7 @@ const KidProfile = (props) => {
         return;
       }
     }*/
-    const response = await fetch(apiRoutes.edit_user, {
+    const response = await fetch(apiRoutes.edit_kid, {
       method: "POST",
       body: formData,
       headers: {
@@ -92,14 +137,13 @@ const KidProfile = (props) => {
     if (response.ok) {
       //const responseData = await response.text();
       console.log("kid Updated Successfully");
-   
+
       props.navigation.replace("KidProfile");
     } else {
       // Error response
       const errorData = await response.text();
       console.log("Failed to Update Kid:", errorData);
     }
-   
   };
   return (
     <View>
@@ -146,7 +190,10 @@ const KidProfile = (props) => {
               style={styles.field}
               placeholderTextColor={grey}
               // placeholder="Jiara Martins"
-              onChangeText={(name) => setName(name)}
+              onChangeText={(name) => {
+                setName(name);
+                currentKidProfile.kid.name = name;
+              }}
             ></TextInput>
           )}
           {isNameVisible && (
@@ -174,14 +221,7 @@ const KidProfile = (props) => {
 
         <View style={styles.content}>
           <Text style={{ color: grey, fontSize: 15 }}>Birth date:</Text>
-          {!isBirthDateVisible && (
-            <TextInput
-              style={styles.field}
-              placeholderTextColor={grey}
-              // placeholder="Jiara Martins"
-              onChangeText={(birthDate) => setBirthDate(birthDate)}
-            ></TextInput>
-          )}
+         
           {isBirthDateVisible && (
             <Text
               style={{
@@ -196,17 +236,50 @@ const KidProfile = (props) => {
           {isEditIconVisible && (
             <TouchableOpacity
               onPress={() => setIsBirthDateVisible(!isBirthDateVisible)}
+            
             >
               <Ionicons
                 name={"edit"}
                 size={25}
                 color={darkBlue}
-                style={styles.editIcon}
+              
               />
             </TouchableOpacity>
           )}
         </View>
-
+        {!isBirthDateVisible && (
+            <View style={styles.row}>
+            <DropdownComponent
+              data={years}
+              onChange={(item) => {
+                setYear(item.value);
+              }}
+              dropdownStyle={styles.dateDropdown}
+              placeholder={"Y"}
+              placeholderStyle={{fontSize:15}}
+            ></DropdownComponent>
+            <DropdownComponent
+              data={months}
+              onChange={(item) => {
+                setMonth(item.value);
+                setDays();
+                console.log("month is"+item.value);
+              }}
+              dropdownStyle={styles.dateDropdown}
+              placeholder={"M"}
+              placeholderStyle={{fontSize:15}}
+            ></DropdownComponent>
+            <DropdownComponent
+              data={days}
+              onChange={(item) => {
+                setDay(item.value);
+              }}
+              dropdownStyle={styles.dateDropdown}
+              placeholder={"D"}
+              placeholderStyle={{fontSize:15}}
+            ></DropdownComponent>
+          </View>
+          )}
         <View style={styles.content}>
           <Text style={{ color: grey, fontSize: 15 }}>Gender:</Text>
 
@@ -228,7 +301,10 @@ const KidProfile = (props) => {
               style={styles.field}
               placeholderTextColor={grey}
               // placeholder="Jiara Martins"
-              onChangeText={(date) => setLostDate(date)}
+              onChangeText={(date) => {
+                setLostDate(date);
+                currentKidProfile.kid.lost_date = date;
+              }}
             ></TextInput>
           )}
           {isLostDateVisible && (
@@ -264,7 +340,10 @@ const KidProfile = (props) => {
             <TextInput
               style={styles.field}
               placeholderTextColor={grey}
-              onChangeText={(location) => setLastKnown(location)}
+              onChangeText={(location) => {
+                setLastKnown(location);
+                currentKidProfile.kid.last_known_location = location;
+              }}
             ></TextInput>
           )}
           {isLastKnownVisible && (
@@ -275,7 +354,7 @@ const KidProfile = (props) => {
                 fontSize: 15,
               }}
             >
-              Dokki
+              {currentKidProfile.kid.last_known_location}
             </Text>
           )}
           {isEditIconVisible && (
@@ -319,7 +398,7 @@ const KidProfile = (props) => {
         </View>
       </View>
 
-      {isParent && isEditProfileVisible &&(
+      {isParent && isEditProfileVisible && (
         <TouchableOpacity
           style={styles.EditButton}
           onPress={() => handleEditProfile()}
@@ -328,7 +407,7 @@ const KidProfile = (props) => {
         </TouchableOpacity>
       )}
       {!isEditProfileVisible && (
-        <TouchableOpacity style={styles.EditButton} onPress={() => editKid()}>
+        <TouchableOpacity style={styles.EditButton} onPress={() => {editKid()}}>
           <Text style={styles.EditText}>Submit</Text>
         </TouchableOpacity>
       )}
@@ -382,6 +461,18 @@ const styles = StyleSheet.create({
   },
   discardText: {
     textDecorationLine: "underline",
+  },
+  dateDropdown: {
+    borderRadius: 100,
+    paddingHorizontal: 6,
+    width: Dimensions.get("window").width /5.2,
+    backgroundColor: "rgb(220, 220, 220)",
+    
+    marginRight: Dimensions.get("window").width / 14,
+  },
+  row: {
+    flexDirection: "row",
+    marginLeft: Dimensions.get("window").width / 7,
   },
 });
 
