@@ -106,6 +106,23 @@ def edit_user(request):
     }
     return Response(user_data, status=200)
 
+@api_view(['POST'])
+def edit_kid(request):
+
+    kid = MissingKid.objects.get(id=request.POST.get('kid_id'))
+
+    if request.POST.get('name'):
+        kid.name = request.POST.get('name')
+    if request.POST.get('birthdate'):
+        kid.birthdate = request.POST.get('birthdate')
+    if request.POST.get('lostDate'):
+        kid.lost_date = request.POST.get('lostDate')
+    if request.POST.get('lastKnownLocation'):
+        kid.last_known_location = request.POST.get('lastKnownLocation')        
+   
+    kid.save()
+   
+    return Response( status=200)
 
 @api_view(['POST'])
 def logout(request):
@@ -234,13 +251,14 @@ def get_matching_profiles(request):
 
     image = Image.open(request.FILES['photo'])
     image_cropped = mtcnn(image)
-    image_embedding = resnet(image_cropped.unsqueeze(0)
-                             ).flatten().detach().numpy()
+    image_embedding = resnet(image_cropped.unsqueeze(0)).flatten().detach().numpy()
 
     if request.POST.get('type') == 'upload':
         Photos = Photo.objects.filter(missing_kid__isnull=False)
+        kid_type = 'found'
     else:
         Photos = Photo.objects.filter(found_kid__isnull=False)
+        kid_type = 'missing'
 
     bestSimilarity = 0
 
@@ -262,6 +280,7 @@ def get_matching_profiles(request):
             if photo.missing_kid is not None:
                 # kid = photo.missing_kid
                 kid = {
+                    'id': photo.missing_kid.id,
                     'name': photo.missing_kid.name,
                     'birthdate': photo.missing_kid.birthdate,
                     'lost_date': photo.missing_kid.lost_date,
@@ -276,6 +295,7 @@ def get_matching_profiles(request):
             else:
                 # kid = photo.found_kid
                 kid = {
+                    'id': photo.found_kid.id,
                     'name': photo.found_kid.name,
                     'age': photo.found_kid.age,
                     'gender': photo.found_kid.gender,
@@ -293,6 +313,7 @@ def get_matching_profiles(request):
             if photo.missing_kid is not None:
                 # kid = photo.missing_kid
                 kid = {
+                    'id': photo.missing_kid.id,
                     'name': photo.missing_kid.name,
                     'birthdate': photo.missing_kid.birthdate,
                     'lost_date': photo.missing_kid.lost_date,
@@ -307,11 +328,13 @@ def get_matching_profiles(request):
             else:
                 # kid = photo.found_kid
                 kid = {
+                    'id': photo.found_kid.id,
                     'name': photo.found_kid.name,
                     'age': photo.found_kid.age,
                     'gender': photo.found_kid.gender,
                     'location': photo.found_kid.location,
-                    'similarity': similarity
+                    'similarity': similarity,
+                    'user': photo.missing_kid.user.id
                 }
 
             profile = {
@@ -321,14 +344,18 @@ def get_matching_profiles(request):
             profiles.append(profile)
             previous_missing_kid_id = photo.missing_kid.id
 
+    #for i in profiles:
+        #kid = profile['kid']
+        #send_notification(kid['user'], kid['name'], kid['id'], kid_type)
+
     return Response(profiles)
 
+"""
+"""
+def send_notification(user, name, id, kid_type):
+    message = ''
+    notification = Notification(user=user, message=message, kid_id=id)
+    notification.save()
 
-def my_view(request):
-    # Perform your logic here
-
-    # Add a success message with the desired notification content
-    messages.success(request, 'Notification message here.')
-
-    # Redirect the user to a specific page
-    return redirect('my_page_url_name')
+def get_user_notifications(request):
+    notifications = Notification.objects.filter(user=request.user_id)
