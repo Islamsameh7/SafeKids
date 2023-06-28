@@ -7,6 +7,7 @@ export const GlobalProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [kidImages, setKidImages] = useState([]);
   const [matchingProfiles, setMatchingProfiles] = useState([]);
+  const [currentKidProfile, setCurrentKidProfile] = useState([]);
 
   const loginContext = (userData) => {
     setUser(userData);
@@ -17,10 +18,10 @@ export const GlobalProvider = ({ children }) => {
   const logoutContext = () => {
     setUser(null);
   };
-
   const emptyImages = () => {
     setKidImages([]);
   };
+
   const fetchMatchingProfiles = async (image,type) => {
     const formData = new FormData();
     try {
@@ -80,6 +81,9 @@ export const GlobalProvider = ({ children }) => {
         emptyImages,
         matchingProfiles,
         fetchMatchingProfiles,
+        currentKidProfile,
+        setCurrentKidProfile,
+  
       }}
     >
       {children}

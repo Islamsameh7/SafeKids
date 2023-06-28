@@ -16,7 +16,7 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const MatchingProfiles = (props) => {
-  const { matchingProfiles } = useContext(GlobalContext);
+  const { matchingProfiles,setCurrentKidProfile } = useContext(GlobalContext);
 
   const renderData = () => {
     return matchingProfiles.map((profile, index) => {
@@ -32,7 +32,10 @@ const MatchingProfiles = (props) => {
       return (
         <View style={styles.card} key={index}>
           <TouchableOpacity
-            onPress={() => props.navigation.navigate("KidProfile", { profile })}
+            onPress={() => {
+              setCurrentKidProfile(profile);
+              props.navigation.navigate("KidProfile");
+            }}
             style={{ flexDirection: "row" }}
           >
             <Image
@@ -99,7 +102,7 @@ const styles = StyleSheet.create({
   card: {
     alignItems: "center",
     backgroundColor: lightBlue,
-    width: windowWidth/1.1,
+    width: windowWidth / 1.1,
     padding: 30,
     borderRadius: 20,
     marginTop: windowHeight / 20,

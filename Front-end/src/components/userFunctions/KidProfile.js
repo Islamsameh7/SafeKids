@@ -23,21 +23,22 @@ const KidProfile = (props) => {
   const [isLostDateVisible, setIsLostDateVisible] = useState(true);
   const [isLastKnownVisible, setIsLastKnownVisible] = useState(true);
   const [isEditIconVisible, setEditIconVisible] = useState(false);
+  const [isEditProfileVisible, setIsEditProfileVisible] = useState(true);
 
   const [name, setName] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [lostDate, setLostDate] = useState("");
   const [lastKnown, setLastKnown] = useState("");
 
-  const { user } = useContext(GlobalContext);
-  const route = useRoute();
-  const { profile } = route.params;
+  const { user,currentKidProfile } = useContext(GlobalContext);
+
 
   const handleEditProfile = () => {
     setEditIconVisible(!isEditIconVisible);
+    setIsEditProfileVisible(!isEditProfileVisible);
   };
   useEffect(() => {
-    if (profile.kid.user == user.id) {
+    if (currentKidProfile.kid.user == user.id) {
       setIsParent(true);
     }
 
@@ -46,6 +47,60 @@ const KidProfile = (props) => {
       // Code to clean up any resources or subscriptions
     };
   }, []);
+
+  const editKid = async () => {
+    const formData = new FormData();
+    formData.append("kid_id", currentKidProfile.kid.id);
+    formData.append("name", name);
+    formData.append("lostDate", lostDate);
+    formData.append("lastKnownLocation", lastKnown);
+    formData.append("birthdate", birthDate);
+    /*
+    if (image) {
+      const response = await fetch(image);
+      const blob = await response.blob();
+
+      const fileName = image.split("/").pop(); // Extract the file name from the URI
+
+      const fileType = blob.type; // Get the MIME type of the file
+
+      if (
+        fileType === "image/jpeg" ||
+        fileType === "image/png" ||
+        fileType === "image/jpg"
+      ) {
+        formData.append("photo", {
+          uri: image,
+          name: fileName,
+          type: fileType,
+        });
+      } else {
+        console.log(
+          "Invalid file type. Only JPG, PNG, and JPEG images are allowed."
+        );
+        return;
+      }
+    }*/
+    const response = await fetch(apiRoutes.edit_user, {
+      method: "POST",
+      body: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    if (response.ok) {
+      //const responseData = await response.text();
+      console.log("kid Updated Successfully");
+   
+      props.navigation.replace("KidProfile");
+    } else {
+      // Error response
+      const errorData = await response.text();
+      console.log("Failed to Update Kid:", errorData);
+    }
+   
+  };
   return (
     <View>
       <TouchableOpacity
@@ -61,7 +116,7 @@ const KidProfile = (props) => {
 
       <View>
         <Image
-          source={{ uri: apiRoutes.mainUrl + profile.photo }}
+          source={{ uri: apiRoutes.mainUrl + currentKidProfile.photo }}
           style={{
             width: 100,
             height: 100,
@@ -102,7 +157,7 @@ const KidProfile = (props) => {
                 fontSize: 15,
               }}
             >
-              {profile.kid.name}
+              {currentKidProfile.kid.name}
             </Text>
           )}
           {isEditIconVisible && (
@@ -135,7 +190,7 @@ const KidProfile = (props) => {
                 fontSize: 15,
               }}
             >
-              {profile.kid.birthdate}
+              {currentKidProfile.kid.birthdate}
             </Text>
           )}
           {isEditIconVisible && (
@@ -162,7 +217,7 @@ const KidProfile = (props) => {
               fontSize: 15,
             }}
           >
-            {profile.kid.gender}
+            {currentKidProfile.kid.gender}
           </Text>
         </View>
 
@@ -184,19 +239,21 @@ const KidProfile = (props) => {
                 fontSize: 15,
               }}
             >
-              {profile.kid.lost_date}
+              {currentKidProfile.kid.lost_date}
             </Text>
           )}
-          {isEditIconVisible && 
-          <TouchableOpacity onPress={() => setIsLostDateVisible(!isLostDateVisible)}>
-            <Ionicons
-              name={"edit"}
-              size={25}
-              color={darkBlue}
-              style={styles.editIcon}
-            />
-          </TouchableOpacity>
-}
+          {isEditIconVisible && (
+            <TouchableOpacity
+              onPress={() => setIsLostDateVisible(!isLostDateVisible)}
+            >
+              <Ionicons
+                name={"edit"}
+                size={25}
+                color={darkBlue}
+                style={styles.editIcon}
+              />
+            </TouchableOpacity>
+          )}
         </View>
 
         <View style={styles.content}>
@@ -210,27 +267,29 @@ const KidProfile = (props) => {
               onChangeText={(location) => setLastKnown(location)}
             ></TextInput>
           )}
-          {isLastKnownVisible &&
-          <Text
-            style={{
-              color: darkBlue,
-              marginLeft: Dimensions.get("window").width / 20,
-              fontSize: 15,
-            }}
-          >
-            Dokki
-          </Text>
-}
-{isEditIconVisible && 
-          <TouchableOpacity onPress={() => setIsNameVisible(!isNameVisible)}>
-            <Ionicons
-              name={"edit"}
-              size={25}
-              color={darkBlue}
-              style={styles.editIcon}
-            />
-          </TouchableOpacity>
-}
+          {isLastKnownVisible && (
+            <Text
+              style={{
+                color: darkBlue,
+                marginLeft: Dimensions.get("window").width / 20,
+                fontSize: 15,
+              }}
+            >
+              Dokki
+            </Text>
+          )}
+          {isEditIconVisible && (
+            <TouchableOpacity
+              onPress={() => setIsLastKnownVisible(!isLastKnownVisible)}
+            >
+              <Ionicons
+                name={"edit"}
+                size={25}
+                color={darkBlue}
+                style={styles.editIcon}
+              />
+            </TouchableOpacity>
+          )}
         </View>
 
         <Text
@@ -248,24 +307,37 @@ const KidProfile = (props) => {
         <View style={styles.content}>
           <Text style={{ color: grey, fontSize: 15 }}>Mobile No:</Text>
           <Text style={{ color: darkBlue, marginLeft: 25, fontSize: 15 }}>
-            {profile.kid.parentPhone}
+            {currentKidProfile.kid.parentPhone}
           </Text>
         </View>
 
         <View style={styles.content}>
           <Text style={{ color: grey, fontSize: 15 }}>Email:</Text>
           <Text style={{ color: darkBlue, marginLeft: 20, fontSize: 15 }}>
-            {profile.kid.parentEmail}
+            {currentKidProfile.kid.parentEmail}
           </Text>
         </View>
       </View>
 
-      {isParent && (
+      {isParent && isEditProfileVisible &&(
         <TouchableOpacity
           style={styles.EditButton}
           onPress={() => handleEditProfile()}
         >
           <Text style={styles.EditText}>Edit Profile</Text>
+        </TouchableOpacity>
+      )}
+      {!isEditProfileVisible && (
+        <TouchableOpacity style={styles.EditButton} onPress={() => editKid()}>
+          <Text style={styles.EditText}>Submit</Text>
+        </TouchableOpacity>
+      )}
+      {!isEditProfileVisible && (
+        <TouchableOpacity
+          style={styles.discardChanges}
+          onPress={() => props.navigation.replace("KidProfile")}
+        >
+          <Text style={styles.discardText}>Discard Changes</Text>
         </TouchableOpacity>
       )}
     </View>
@@ -303,6 +375,13 @@ const styles = StyleSheet.create({
     height: Dimensions.get("window").height / 25,
     paddingLeft: 20,
     fontSize: Dimensions.get("window").width / 30,
+  },
+  discardChanges: {
+    marginLeft: Dimensions.get("window").width / 2.6,
+    marginTop: Dimensions.get("window").height / 35,
+  },
+  discardText: {
+    textDecorationLine: "underline",
   },
 });
 
