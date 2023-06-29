@@ -10,6 +10,28 @@ import { GlobalContext } from "./context/GlobalContext";
 const Home = (props) => {
 
   const { user } = useContext(GlobalContext);
+  const func = async () => {
+    const formData = new FormData();
+
+
+
+   
+
+    const response = await fetch(apiRoutes.login, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  
+    if (response.ok) {
+ 
+      
+    } else {
+ 
+    }
+  }
   return (
     <View>
       <View
@@ -20,7 +42,7 @@ const Home = (props) => {
           alignItems: "center",
         }}
       >
-        <TouchableOpacity style={{ marginLeft: "5%" }}>
+        <TouchableOpacity style={{ marginLeft: "5%" } } onPress={() => func()}>
           <IonIcons name={"menu"} size={40} color={darkBlue} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => props.navigation.navigate("Notifications")} style={{ marginLeft: "55%" }}>

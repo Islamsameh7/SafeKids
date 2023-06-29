@@ -69,7 +69,7 @@ def login(request):
             }
             if user.photo:
                 user_data['photo'] = user.photo.url
-
+            #messages.success(request,"hello")        
             return Response(user_data, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -199,9 +199,14 @@ def get_my_kids(request):
         id=request.POST.get('user_id'))
     
     kids = []
+   
     
     for kid in missing_kids:
         photos = Photo.objects.filter(missing_kid=kid)
+        kidPhotos = []
+        for photo in photos:
+            kidPhotos.append(photo.photo.url)
+            
         photo = photos.first() if photos.exists() else None
         birthdate = date.fromisoformat(kid.birthdate.strftime("%Y-%m-%d"))
         age = 2023 - birthdate.year
@@ -222,6 +227,8 @@ def get_my_kids(request):
         profile={
             'kid':kid_data,
             'photo':photo.photo.url,
+            'photos':kidPhotos,
+            
         }
     
         kids.append(profile)

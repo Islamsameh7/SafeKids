@@ -9,13 +9,13 @@ import {
   Dimensions,
   TextInput,
 } from "react-native";
-import { darkBlue, grey, lightGrey } from "../Constants";
+import { darkBlue, grey, lightGrey,lightGrey2 } from "../Constants";
 import Ionicons from "react-native-vector-icons/AntDesign";
 import { useRoute } from "@react-navigation/native";
 import { GlobalContext } from "../context/GlobalContext";
 import apiRoutes from "../apiRoutes";
 import DropdownComponent from "../DropdownComponent";
-
+import EntypoIcons from "react-native-vector-icons/Entypo";
 var days = [];
 
 const months = [];
@@ -100,6 +100,7 @@ const KidProfile = (props) => {
     formData.append("lostDate", lostDate);
     formData.append("lastKnownLocation", lastKnown);
     formData.append("birthdate", year + "-" + month + "-" + day);
+    currentKidProfile.kid.birthdate = year + "-" + month + "-" + day;
     /*
     if (image) {
       const response = await fetch(image);
@@ -397,14 +398,27 @@ const KidProfile = (props) => {
           </Text>
         </View>
       </View>
+      
 
       {isParent && isEditProfileVisible && (
+        
+        <View>
+          
+        <TouchableOpacity
+          style={styles.addPhotoButton}
+          onPress={() => props.navigation.navigate("KidProfilePhotos")}
+        >
+          <EntypoIcons name={"plus"} size={30} color={darkBlue} />
+          <Text style={styles.addPhotoText}>ADD PHOTOS</Text>
+        </TouchableOpacity>
         <TouchableOpacity
           style={styles.EditButton}
           onPress={() => handleEditProfile()}
         >
           <Text style={styles.EditText}>Edit Profile</Text>
         </TouchableOpacity>
+        </View>
+        
       )}
       {!isEditProfileVisible && (
         <TouchableOpacity style={styles.EditButton} onPress={() => {editKid()}}>
@@ -473,6 +487,23 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     marginLeft: Dimensions.get("window").width / 7,
+  },
+  addPhotoButton: {
+    marginLeft: Dimensions.get("window").width / 8,
+    marginTop: Dimensions.get("window").height / 60,
+    width: "68%",
+    borderColor: lightGrey2,
+    borderWidth: 2,
+    alignItems: "center",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  addPhotoText: {
+    color: darkBlue,
+    fontWeight: "bold",
+    fontSize: Dimensions.get("window").width / 20,
+    padding: Dimensions.get("window").width / 40,
   },
 });
 

@@ -16,7 +16,7 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const MyKids = (props) => {
-  const { user, setCurrentKidProfile } = useContext(GlobalContext);
+  const { user, setCurrentKidProfile,setKidImages } = useContext(GlobalContext);
 
   const [mykids, setMyKids] = useState([]);
 
@@ -46,6 +46,9 @@ const MyKids = (props) => {
     };
     getMyKids();
   }, []);
+  const setKidPhotos = (profile) =>{
+    setKidImages(profile.photos)
+  }
   const renderData = () => {
     console.log(mykids.length);
     return mykids.map((profile, index) => {
@@ -61,6 +64,7 @@ const MyKids = (props) => {
           <TouchableOpacity
             onPress={() => {
               setCurrentKidProfile(profile);
+              setKidPhotos(profile);
               props.navigation.navigate("KidProfile");
             }}
             style={{ flexDirection: "row" }}
@@ -89,7 +93,7 @@ const MyKids = (props) => {
       );
     });
   };
-
+ 
   return (
     <View>
       <TouchableOpacity

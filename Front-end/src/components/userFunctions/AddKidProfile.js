@@ -15,6 +15,20 @@ import EntypoIcons from "react-native-vector-icons/Entypo";
 import RadioGroup from "react-native-radio-buttons-group";
 import { GlobalContext } from "../context/GlobalContext";
 import apiRoutes from "../apiRoutes";
+import DropdownComponent from "../DropdownComponent";
+
+var days = [];
+
+const months = [];
+
+for (let i = 1; i <= 12; i++) {
+  months.push({ label: String(i), value: String(i) });
+}
+const years = [];
+
+for (let i = 1960; i <= 2005; i++) {
+  years.push({ label: String(i), value: String(i) });
+}
 
 const AddKidProfile = (props) => {
   const [name, setName] = useState("");
@@ -24,6 +38,79 @@ const AddKidProfile = (props) => {
   const [lastKnownLocation, setLastKnownLocation] = useState("");
   const [lostDate, setLostDate] = useState("");
   const [notes, setNotes] = useState("");
+  const [isPhotosValid, setIsPhotosValid] = useState(false);
+  const [day, setDay] = useState("");
+  const [month, setMonth] = useState("");
+  const [year, setYear] = useState("");
+
+  const [lostDay, setLostDay] = useState("");
+  const [lostMonth, setLostMonth] = useState("");
+  const [lostYear, setLostYear] = useState("");
+
+  const [isBirthDateValid, setBirthDateValid] = useState(true);
+
+  const setDays = () => {
+    days = [];
+    if (
+      month == 1 ||
+      month == 3 ||
+      month == 5 ||
+      month == 7 ||
+      month == 8 ||
+      month == 10 ||
+      month == 12
+    ) {
+      for (let i = 1; i <= 31; i++) {
+        days.push({ label: String(i), value: String(i) });
+      }
+    } else if (month == 4 || month == 6 || month == 9 || month == 11) {
+      for (let i = 1; i <= 30; i++) {
+        days.push({ label: String(i), value: String(i) });
+      }
+    } else {
+      for (let i = 1; i <= 28; i++) {
+        days.push({ label: String(i), value: String(i) });
+      }
+    }
+  };
+
+  const setLostDays = () => {
+    days = [];
+    if (
+      lostMonth == 1 ||
+      lostMonth == 3 ||
+      lostMonth == 5 ||
+      lostMonth == 7 ||
+      lostMonth == 8 ||
+      lostMonth == 10 ||
+      lostMonth == 12
+    ) {
+      for (let i = 1; i <= 31; i++) {
+        days.push({ label: String(i), value: String(i) });
+      }
+    } else if (
+      lostMonth == 4 ||
+      lostMonth == 6 ||
+      lostMonth == 9 ||
+      lostMonth == 11
+    ) {
+      for (let i = 1; i <= 30; i++) {
+        days.push({ label: String(i), value: String(i) });
+      }
+    } else {
+      for (let i = 1; i <= 28; i++) {
+        days.push({ label: String(i), value: String(i) });
+      }
+    }
+  };
+  const checkBirthDate = () => {
+    if (day != "" && month != "" && year != "") {
+      setBirthDateValid(true);
+    } else {
+      setBirthDateValid(false);
+    }
+  };
+
   const [radioButtons, setRadioButtons] = useState([
     {
       id: "1", // acts as primary key, should be unique and non-empty string
@@ -58,7 +145,7 @@ const AddKidProfile = (props) => {
       size: 13,
     },
   ]);
-  const { user, kidImages,emptyImages } = useContext(GlobalContext);
+  const { user, kidImages, emptyImages } = useContext(GlobalContext);
 
   function onPressRadioButton(radioButtonsArray) {
     const selectedRadioButton = radioButtonsArray.find(
@@ -71,17 +158,18 @@ const AddKidProfile = (props) => {
   }
   const addMissingKid = async () => {
     const formData = new FormData();
-
+    checkBirthDate();
     formData.append("user", user.id); // ID of the user for the missing kid
     formData.append("name", name);
     formData.append("gender", gender);
-    formData.append("birthdate", birthdate);
+    formData.append("birthdate", year + "-" + month + "-" + day);
     formData.append("last_known_location", lastKnownLocation);
-    formData.append("lost_date", lostDate);
+    formData.append("lost_date", lostYear + "-" + lostMonth + "-" + lostDay);
     formData.append("still_missing", true);
     formData.append("contactNumber", contactNumber);
 
     if (kidImages.length > 0) {
+      setIsPhotosValid(true);
       for (let i = 0; i < kidImages.length; i++) {
         const image = kidImages[i];
         const response = await fetch(image);
@@ -108,23 +196,25 @@ const AddKidProfile = (props) => {
       }
     }
     try {
-      const response = await fetch(apiRoutes.addMissingKid, {
-        method: "POST",
-        body: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      if (response.ok) {
-        // Successful response
-        emptyImages();
-        console.log(kidImages.length);
-        console.log("Missing Kid added successfully");
-        props.navigation.navigate("Home");
-      } else {
-        // Error response
-        const errorData = await response.text();
-        console.log("Failed to add missing kid:", errorData);
+      if (kidImages.length > 0) {
+        const response = await fetch(apiRoutes.addMissingKid, {
+          method: "POST",
+          body: formData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        if (response.ok) {
+          // Successful response
+          emptyImages();
+          console.log(kidImages.length);
+          console.log("Missing Kid added successfully");
+          props.navigation.navigate("Home");
+        } else {
+          // Error response
+          const errorData = await response.text();
+          console.log("Failed to add missing kid:", errorData);
+        }
       }
     } catch (error) {
       console.log("Error:", error.message);
@@ -146,15 +236,6 @@ const AddKidProfile = (props) => {
           />
         </TouchableOpacity>
 
-        <TouchableOpacity>
-          <IonIcons
-            name={"menu"}
-            size={40}
-            color={darkBlue}
-            style={{ top: 33, left: "83%" }}
-          />
-        </TouchableOpacity>
-
         <Text style={styles.addKid}>Add Kid Profile</Text>
 
         <View style={styles.nameField}>
@@ -166,6 +247,16 @@ const AddKidProfile = (props) => {
             onChangeText={(name) => setName(name)}
           ></TextInput>
         </View>
+        {!isPhotosValid && (
+          <Text
+            style={{
+              marginLeft: Dimensions.get("window").width / 3.7,
+              color: "red",
+            }}
+          >
+            *You should add at least one photo*
+          </Text>
+        )}
 
         <TouchableOpacity
           style={styles.addPhotoButton}
@@ -177,12 +268,33 @@ const AddKidProfile = (props) => {
 
         <View style={styles.birthField}>
           <Text style={styles.Text}>Birth date</Text>
-          <TextInput
-            style={styles.field}
-            placeholderTextColor={grey}
-            placeholder="DD/MM/YYYY"
-            onChangeText={(birthdate) => setBirthdate(birthdate)}
-          ></TextInput>
+          <View style={styles.row}>
+            <DropdownComponent
+              data={years}
+              onChange={(item) => {
+                setYear(item.value);
+              }}
+              dropdownStyle={styles.dateDropdown}
+              placeholder={"Year"}
+            ></DropdownComponent>
+            <DropdownComponent
+              data={months}
+              onChange={(item) => {
+                setMonth(item.value);
+                setDays();
+              }}
+              dropdownStyle={styles.dateDropdown}
+              placeholder={"Month"}
+            ></DropdownComponent>
+            <DropdownComponent
+              data={days}
+              onChange={(item) => {
+                setDay(item.value);
+              }}
+              dropdownStyle={styles.dateDropdown}
+              placeholder={"Day"}
+            ></DropdownComponent>
+          </View>
         </View>
 
         <View style={styles.genderField}>
@@ -218,12 +330,33 @@ const AddKidProfile = (props) => {
 
         <View style={styles.lostDateField}>
           <Text style={styles.Text}>Lost date</Text>
-          <TextInput
-            style={styles.field}
-            placeholderTextColor={grey}
-            placeholder="DD/MM/YYYY"
-            onChangeText={(date) => setLostDate(date)}
-          ></TextInput>
+          <View style={styles.row}>
+            <DropdownComponent
+              data={years}
+              onChange={(item) => {
+                setLostYear(item.value);
+              }}
+              dropdownStyle={styles.dateDropdown}
+              placeholder={"Year"}
+            ></DropdownComponent>
+            <DropdownComponent
+              data={months}
+              onChange={(item) => {
+                setLostMonth(item.value);
+                setLostDays();
+              }}
+              dropdownStyle={styles.dateDropdown}
+              placeholder={"Month"}
+            ></DropdownComponent>
+            <DropdownComponent
+              data={days}
+              onChange={(item) => {
+                setLostDay(item.value);
+              }}
+              dropdownStyle={styles.dateDropdown}
+              placeholder={"Day"}
+            ></DropdownComponent>
+          </View>
         </View>
         <View style={styles.NotesField}>
           <Text style={styles.Text}>Notes</Text>
@@ -249,40 +382,40 @@ const styles = StyleSheet.create({
   field: {
     borderRadius: 100,
     backgroundColor: lightGrey,
-    paddingVertical: Dimensions.get('window').height/60,
-    paddingHorizontal: Dimensions.get('window').width/18,
+    paddingVertical: Dimensions.get("window").height / 60,
+    paddingHorizontal: Dimensions.get("window").width / 18,
     width: "85%",
-    fontSize: Dimensions.get('window').width/25,
-    marginVertical: Dimensions.get('window').height/40,
+    fontSize: Dimensions.get("window").width / 25,
+    marginVertical: Dimensions.get("window").height / 40,
   },
   notesField: {
     borderWidth: 2,
     borderColor: lightGrey2,
-    paddingVertical: Dimensions.get('window').height/22,
-    paddingHorizontal: Dimensions.get('window').width/22,
+    paddingVertical: Dimensions.get("window").height / 22,
+    paddingHorizontal: Dimensions.get("window").width / 22,
     width: "75%",
     height: "30%",
-    fontSize: Dimensions.get('window').width/22,
+    fontSize: Dimensions.get("window").width / 22,
   },
   addKid: {
-    fontSize: Dimensions.get('window').width/15,
+    fontSize: Dimensions.get("window").width / 15,
     color: darkBlue,
     fontWeight: "bold",
     textAlign: "center",
-    marginTop: Dimensions.get('window').height/40,
+    marginTop: Dimensions.get("window").height / 40,
   },
   nameField: {
-    marginTop: Dimensions.get('window').height/22,
-    marginLeft: Dimensions.get('window').width/12,
+    marginTop: Dimensions.get("window").height / 22,
+    marginLeft: Dimensions.get("window").width / 12,
   },
   Text: {
-    fontSize: Dimensions.get('window').width/20,
+    fontSize: Dimensions.get("window").width / 20,
     fontWeight: "bold",
     color: darkBlue,
   },
   addPhotoButton: {
-    marginLeft: Dimensions.get('window').width/8,
-    marginTop: Dimensions.get('window').height/60,
+    marginLeft: Dimensions.get("window").width / 8,
+    marginTop: Dimensions.get("window").height / 60,
     width: "68%",
     borderColor: lightGrey2,
     borderWidth: 2,
@@ -294,66 +427,71 @@ const styles = StyleSheet.create({
   addPhotoText: {
     color: darkBlue,
     fontWeight: "bold",
-    fontSize: Dimensions.get('window').width/20,
-    padding: Dimensions.get('window').width/40,
+    fontSize: Dimensions.get("window").width / 20,
+    padding: Dimensions.get("window").width / 40,
   },
   birthField: {
-    marginTop: Dimensions.get('window').height/38,
-    marginLeft: Dimensions.get('window').width/16,
+    marginTop: Dimensions.get("window").height / 38,
+    marginLeft: Dimensions.get("window").width / 16,
   },
   genderField: {
-    marginTop: Dimensions.get('window').height/60,
-    marginLeft: Dimensions.get('window').width/15,
+    marginTop: Dimensions.get("window").height / 60,
+    marginLeft: Dimensions.get("window").width / 15,
   },
   mobileField: {
-    marginTop: Dimensions.get('window').height/60,
-    marginLeft: Dimensions.get('window').width/15,
+    marginTop: Dimensions.get("window").height / 60,
+    marginLeft: Dimensions.get("window").width / 15,
   },
   lastKnownLocationField: {
-    marginTop: Dimensions.get('window').height/70,
-    marginLeft: Dimensions.get('window').width/15,
+    marginTop: Dimensions.get("window").height / 70,
+    marginLeft: Dimensions.get("window").width / 15,
   },
   lostDateField: {
-    marginTop: Dimensions.get('window').height/70,
-    marginLeft: Dimensions.get('window').width/15,
+    marginTop: Dimensions.get("window").height / 70,
+    marginLeft: Dimensions.get("window").width / 15,
   },
   NotesField: {
-    marginTop: Dimensions.get('window').height/70,
-    marginLeft: Dimensions.get('window').width/15,
+    marginTop: Dimensions.get("window").height / 70,
+    marginLeft: Dimensions.get("window").width / 15,
   },
   submitButton: {
     backgroundColor: darkBlue,
     borderRadius: 100,
     alignItems: "center",
     width: "50%",
-    paddingVertical: Dimensions.get('window').height/60,
-    marginLeft: Dimensions.get('window').width/4,
-    marginBottom:Dimensions.get('window').height/100,
-   
-    
+    paddingVertical: Dimensions.get("window").height / 60,
+    marginLeft: Dimensions.get("window").width / 4,
+    marginBottom: Dimensions.get("window").height / 100,
   },
-  // buttonContainer:{
- 
-  //   marginBottom:'7%',
-  // },
+  dateDropdown: {
+    borderRadius: 100,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    width: Dimensions.get("window").width / 4.7,
+    backgroundColor: "rgb(220, 220, 220)",
+    marginVertical: 10,
+    marginRight: Dimensions.get("window").width / 10,
+  },
+  row: {
+    flexDirection: "row",
+  },
   submitText: {
     color: "#FFFFFF",
-    fontSize: Dimensions.get('window').width/22,
+    fontSize: Dimensions.get("window").width / 22,
     fontWeight: "bold",
   },
- 
+
   genderOption: {
     color: darkBlue,
     fontWeight: "bold",
-    fontSize: Dimensions.get('window').width/22,
+    fontSize: Dimensions.get("window").width / 22,
   },
   scrollViewContent: {
     flexGrow: 1,
-    paddingBottom: Dimensions.get('window').height/2,
+    paddingBottom: Dimensions.get("window").height / 2,
   },
   container: {
     flex: 1,
-   
   },
 });
 

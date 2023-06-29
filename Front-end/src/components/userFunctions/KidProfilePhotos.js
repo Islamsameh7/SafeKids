@@ -17,13 +17,21 @@ import { GlobalContext } from "../context/GlobalContext";
 import { Modal } from "react-native-paper";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
-
+import apiRoutes from "../apiRoutes";
 const KidProfilePhotos = (props) => {
   const { setKidImages, kidImages } = useContext(GlobalContext);
   const [currentImg, setCurrentImg] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const navigation = useNavigation();
-
+  
+  useEffect(() => {
+    console.log( "length is"+kidImages.length);
+    for (let i = 0; i < kidImages.length; i++) {
+      const currentImageState = imageList[i].state[1];
+      currentImageState( apiRoutes.mainUrl + kidImages[i]);
+      console.log( "uri is"+kidImages[i])
+    }
+  }, []);
   // Create an array of image objects with their corresponding state
   const imageList = [
     { state: useState(null) },
@@ -108,6 +116,7 @@ const KidProfilePhotos = (props) => {
               color={darkBlue}
               style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
             />
+           
             {image.state[0] && <Image source={{ uri: image.state[0] }} style={styles.photo} />}
           </TouchableOpacity>
 
