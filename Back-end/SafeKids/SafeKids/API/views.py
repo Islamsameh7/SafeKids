@@ -76,7 +76,7 @@ def login(request):
             }
             if user.photo:
                 user_data['photo'] = user.photo.url
-            #messages.success(request,"hello")        
+
             return Response(user_data, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -134,29 +134,6 @@ def password_reset(request, user_id, token):
 
     except CustomUser.DoesNotExist:
         return HttpResponse('User does not exist.', status=404)
-        
-# @csrf_exempt
-# @api_view(['POST'])
-# def forgot_password(request):
-#     email = request.POST['email']
-#     try:
-#         user = CustomUser.objects.get(email=email)
-#         token = user.generate_password_reset_token()
-#         reset_link = request.build_absolute_uri(
-#             f'/reset/{user.pk}/{token}/'
-#         )
-#         send_mail(
-#             'Password Reset',
-#             f'Click the following link to reset your password: {reset_link}',
-#             'from@example.com',
-#             [email],
-#             fail_silently=False,
-#         )
-#         messages.success(request, 'Password reset email sent. Please check your inbox.')
-#         return JsonResponse(messages)
-#     except CustomUser.DoesNotExist:
-#         messages.error(request, 'User with this email does not exist.')
-#     return render(request, 'forgot_password.html')
 
 @api_view(['POST'])
 def edit_user(request):
@@ -280,14 +257,12 @@ def get_my_kids(request):
         id=request.POST.get('user_id'))
     
     kids = []
-   
     
     for kid in missing_kids:
-        photos = Photo.objects.filter(missing_kid=kid)
         kidPhotos = []
         for photo in photos:
             kidPhotos.append(photo.photo.url)
-            
+        photos = Photo.objects.filter(missing_kid=kid)
         photo = photos.first() if photos.exists() else None
         birthdate = date.fromisoformat(kid.birthdate.strftime("%Y-%m-%d"))
         age = 2023 - birthdate.year
@@ -309,7 +284,7 @@ def get_my_kids(request):
             'kid':kid_data,
             'photo':photo.photo.url,
             'photos':kidPhotos,
-            
+
         }
     
         kids.append(profile)
@@ -469,14 +444,14 @@ def get_matching_profiles(request):
 
             profile = {
                 'kid': kid,
-                'photo': photo.photo.url
+                'photo': photo.photo.url,
             }
             profiles.append(profile)
             previous_missing_kid_id = photo.missing_kid.id
 
-    # for i in profiles:
-        # kid = profile['kid']
-        # send_notification(kid['user'], kid['name'], kid['id'], kid_type)
+    for i in profiles:
+        kid = profile['kid']
+        send_notification(kid['user'], kid['name'], kid['id'], kid_type)
 
     return Response(profiles)
 
@@ -485,12 +460,22 @@ def get_matching_profiles(request):
 """
 
 @api_view(['POST'])
-def send_notification(user, name, id, kid_type):
-    message = ''
-    notification = Notification(user=user, message=message, kid_id=id)
+def send_notification(request):
+    user = request.data.get('user')
+    name = request.data.get('name')
+    kid_type = request.data.get('kid_type')
+    kid_id = request.data.get('kid_id')
+    
+    if kid_type == 'found':
+        message = 'Your missing kid ' + str(name) + ' appeared in a match.\n click here to see the match.'
+    else:
+        message = 'The kid you found appeared in a match.\n click here to see the match.'
+        
+    notification = Notification(user=user, message=message, kid_id=kid_id)
     notification.save()
 
 @api_view(['GET'])
 def get_user_notifications(request):
-    notifications = Notification.objects.filter(user=request.user_id)
-    return notifications
+    user = request.data.get('user')
+    notifications = Notification.objects.filter(user=user)
+    return Response(notifications)
