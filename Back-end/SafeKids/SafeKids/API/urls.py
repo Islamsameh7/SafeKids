@@ -18,8 +18,18 @@ urlpatterns = [
     path('logout/', logout, name='logout'),
     path('get_my_kids/', get_my_kids, name='get_my_kids'),
     path('get_matching_profiles/', get_matching_profiles, name='get_matching_profiles'),
+    path('send_notification/', send_notification, name='send_notification'),
+    path('get_user_notifications/', get_user_notifications, name='get_user_notifications'),
+    path('forgot_password/', forgot_password, name='forgot_password'),
     
     path('get_csrf_token/', get_csrf_token, name='get_csrf_token'),
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+# path('forgot-password/', forgot_password, name='forgot_password'),
+# path('password-reset/', auth_views.PasswordResetView.as_view(template_name='password_reset.html'), name='password_reset'),
+# path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='password_reset_done.html'), name='password_reset_done'),
+# path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='password_reset_confirm.html'), name='password_reset_confirm'),
+# path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'), name='password_reset_complete'),

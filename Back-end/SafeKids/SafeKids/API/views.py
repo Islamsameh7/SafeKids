@@ -23,6 +23,13 @@ import pickle
 from django.contrib import messages
 from django.shortcuts import redirect
 from datetime import date
+from django.core.mail import send_mail
+from django.contrib import messages
+from django.shortcuts import render, redirect
+import uuid
+from django.utils import timezone
+from django.template.loader import render_to_string
+from django.conf import settings
 # Create your views here.
 
 
@@ -76,6 +83,80 @@ def login(request):
     except User.DoesNotExist:
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
+def send_forget_password_mail(user):
+    reset_link = f'https://{settings.NGROK_HOST}/reset?userId={user.id}&token={user.password_reset_token}'
+    email_subject = 'Password Reset Request'
+    email_body = f'Please click on the link below to change your password:\n{reset_link}'
+    send_mail(email_subject, email_body, settings.EMAIL_HOST_USER, [user.email])
+    return HttpResponse('Email has been sent. Check your email.', status=200)
+
+@csrf_exempt
+@api_view(['POST'])
+def forgot_password(request):
+    print(request.body)
+    print(request.data.get("email"))
+    email = request.data.get("email")
+    User = get_user_model()
+    users = User.objects.filter(email=email)
+    print(users)
+    if users.exists():
+        user = User.objects.get(email=email)
+        token = str(uuid.uuid4())
+        user.password_reset_token = token
+        user.password_reset_token_expiration = timezone.now() + timezone.timedelta(hours=1)
+        user.save()
+        send_forget_password_mail(user)
+        return HttpResponse('Email has been sent. Check your email.', status=200)
+    else:
+        print(email)
+        return HttpResponse('User with this email does not exist.', status=400)
+
+
+
+@api_view(['POST'])
+def password_reset(request, user_id, token):
+    try:
+        user = CustomUser.objects.get(pk=user_id)
+        if user.password_reset_token == token and user.password_reset_token_expiration > timezone.now():
+            new_password = request.POST['new_password']
+            confirm_password = request.POST['confirm_password']
+            if new_password == confirm_password:
+                user.set_password(new_password)
+                user.password_reset_token = ''
+                user.password_reset_token_expiration = None
+                user.save()
+                return HttpResponse('Your password has been reset successfully.', status=200)
+            
+            else:
+                return HttpResponse('Password does not match.', status=400)
+        else:
+            return HttpResponse('Invalid or expired password reset link.', status=404)
+
+    except CustomUser.DoesNotExist:
+        return HttpResponse('User does not exist.', status=404)
+        
+# @csrf_exempt
+# @api_view(['POST'])
+# def forgot_password(request):
+#     email = request.POST['email']
+#     try:
+#         user = CustomUser.objects.get(email=email)
+#         token = user.generate_password_reset_token()
+#         reset_link = request.build_absolute_uri(
+#             f'/reset/{user.pk}/{token}/'
+#         )
+#         send_mail(
+#             'Password Reset',
+#             f'Click the following link to reset your password: {reset_link}',
+#             'from@example.com',
+#             [email],
+#             fail_silently=False,
+#         )
+#         messages.success(request, 'Password reset email sent. Please check your inbox.')
+#         return JsonResponse(messages)
+#     except CustomUser.DoesNotExist:
+#         messages.error(request, 'User with this email does not exist.')
+#     return render(request, 'forgot_password.html')
 
 @api_view(['POST'])
 def edit_user(request):
@@ -403,12 +484,13 @@ def get_matching_profiles(request):
 """
 """
 
-
+@api_view(['POST'])
 def send_notification(user, name, id, kid_type):
     message = ''
     notification = Notification(user=user, message=message, kid_id=id)
     notification.save()
 
-
+@api_view(['GET'])
 def get_user_notifications(request):
     notifications = Notification.objects.filter(user=request.user_id)
+    return notifications

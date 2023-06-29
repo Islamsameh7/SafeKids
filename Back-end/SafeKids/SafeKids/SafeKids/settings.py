@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-7th(q9xqxpf64s&t0d1=cx=!1!dinz=hq822rz)w6yml8#$0$x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['3222-102-45-56-215.ngrok-free.app', '127.0.0.1','10.0.0.2' 'localhost']
+NGROK_HOST = 'd6b6-102-45-200-91.eu.ngrok.io'
+ALLOWED_HOSTS = [NGROK_HOST, '127.0.0.1','10.0.0.2' 'localhost']
 
 
 # Application definition
@@ -140,3 +141,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+EMAIL_BACKEND = 'sendgrid.SendgridBackend'
+SENDGRID_API_KEY = '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'
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'hamada100169@gmail.com'
+EMAIL_HOST_PASSWORD = '3abdelfatta73abdelfatta7'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'hamada100169@gmail.com'
