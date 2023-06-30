@@ -20,6 +20,7 @@ urlpatterns = [
     path('get_matching_profiles/', get_matching_profiles, name='get_matching_profiles'),
     path('send_notification/', send_notification, name='send_notification'),
     path('get_user_notifications/', get_user_notifications, name='get_user_notifications'),
+    path('read_notification/', read_notification, name='read_notification'),
     path('forgot_password/', forgot_password, name='forgot_password'),
     
     path('get_csrf_token/', get_csrf_token, name='get_csrf_token'),

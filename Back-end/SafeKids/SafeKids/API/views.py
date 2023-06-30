@@ -30,6 +30,7 @@ import uuid
 from django.utils import timezone
 from django.template.loader import render_to_string
 from django.conf import settings
+from django.core import serializers
 # Create your views here.
 
 
@@ -347,7 +348,7 @@ def get_found_kid_details(request, kid_name):
 @api_view(['POST'])
 def get_matching_profiles(request):
     print(request)
-    with open('D:\FCAI fourth year (final year)\SafeKids\SafeKids\FaceNet.pkl', 'rb') as f:
+    with open('D:\FCAI\GRAD Project\SafeKids\Face Recognition Model\FaceNet.pkl', 'rb') as f:
         model_data = pickle.load(f)
 
     mtcnn = model_data['mtcnn']
@@ -453,20 +454,15 @@ def get_matching_profiles(request):
         kid = profile['kid']
         send_notification(kid['user'], kid['name'], kid['id'], kid_type)
 
-    return Response(profiles)
+    return HttpResponse(profiles)
 
-
-"""
-"""
 
 @api_view(['POST'])
 def send_notification(request):
-    
-   # user = CustomUser.objects.get(id = request.data.get('user')) 
-    user = CustomUser.objects.get(id = request.POST.get('user'))
-    name = request.POST.get('name')
-    kid_type = request.POST.get('kid_type')
-    kid_id = request.POST.get('kid_id')
+    user = CustomUser.objects.get(id=request.data.get('user'))
+    name = request.data.get('name')
+    kid_type = request.data.get('kid_type')
+    kid_id = request.data.get('kid_id')
     
     if kid_type == 'found':
         message = 'Your missing kid ' + str(name) + ' appeared in a match.\n click here to see the match.'
@@ -475,11 +471,26 @@ def send_notification(request):
         
     notification = Notification(user=user, message=message, kid_id=kid_id)
     notification.save()
-    print(notification)
-    return HttpResponse(status=200)
+    return Response({'message': 'Notification sent', 'notification' : notification.message}, status=status.HTTP_200_OK)
+
+# @api_view(['GET'])
+# def get_user_notifications(request):
+#     user = CustomUser.objects.get(id=request.data.get('user'))
+#     notifications = Notification.objects.filter(user=user)
+#     return Response(notifications)
 
 @api_view(['GET'])
 def get_user_notifications(request):
-    user = request.data.get('user')
+    user = CustomUser.objects.get(id=request.data.get('user'))
     notifications = Notification.objects.filter(user=user)
-    return Response(notifications)
+    serialized_notifications = serializers.serialize('json', notifications)
+
+    return Response(serialized_notifications, content_type='application/json')
+
+@api_view(['PUT'])
+def read_notification(request):
+    notification = Notification.objects.get(id=request.data.get('id'))
+    notification.is_read = True
+    notification.save()
+
+    return Response({'message': notification.message, 'read' : notification.is_read}, status=status.HTTP_200_OK)
