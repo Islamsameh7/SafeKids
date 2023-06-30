@@ -5,6 +5,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import Ionicons from 'react-native-vector-icons/AntDesign';
 import { blue, navyblue, darkBlue, grey } from "../Constants";
@@ -71,43 +72,43 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   ForgotPassText: {
-    fontSize: 35,
+    fontSize: Dimensions.get("window").height / 23,
     color: darkBlue,
     fontWeight: "bold",
     textAlign: "center",
-    top: 90,
+    marginTop: Dimensions.get("window").height / 9,
   },
   EmailText: {
-    fontSize: 25,
+    fontSize: Dimensions.get("window").height / 32,
     color: darkBlue,
     fontWeight: "bold",
   },
   Email: {
-    top: 190,
+    marginTop: Dimensions.get("window").height / 6,
     alignItems: "center",
   },
   SigninText: {
-    fontSize: 18,
+    fontSize: Dimensions.get("window").height / 45,
     color: darkBlue,
   },
   SendText: {
     color: "#FFFFFF",
-    fontSize: 24,
+    fontSize: Dimensions.get("window").height / 40,
   },
   SendButton: {
     backgroundColor: darkBlue,
     borderRadius: 100,
     alignItems: "center",
-    width: 260,
+    width: Dimensions.get("window").width/2,
     paddingVertical: 7,
-    marginTop: 80,
+    marginTop: Dimensions.get("window").height / 10,
   },
   SignupSection: {
     alignItems: "center",
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
-    top:390,
+    marginTop:20,
   },
 });
 

@@ -461,10 +461,12 @@ def get_matching_profiles(request):
 
 @api_view(['POST'])
 def send_notification(request):
-    user = request.data.get('user')
-    name = request.data.get('name')
-    kid_type = request.data.get('kid_type')
-    kid_id = request.data.get('kid_id')
+    
+   # user = CustomUser.objects.get(id = request.data.get('user')) 
+    user = CustomUser.objects.get(id = request.POST.get('user'))
+    name = request.POST.get('name')
+    kid_type = request.POST.get('kid_type')
+    kid_id = request.POST.get('kid_id')
     
     if kid_type == 'found':
         message = 'Your missing kid ' + str(name) + ' appeared in a match.\n click here to see the match.'
@@ -473,6 +475,8 @@ def send_notification(request):
         
     notification = Notification(user=user, message=message, kid_id=kid_id)
     notification.save()
+    print(notification)
+    return HttpResponse(status=200)
 
 @api_view(['GET'])
 def get_user_notifications(request):
