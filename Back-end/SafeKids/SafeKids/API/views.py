@@ -415,7 +415,8 @@ def get_matching_profiles(request):
                     'kid': kid,
                     'photo': photo.photo.url
                 }
-                profiles.append(profile)
+                if profile not in profiles:
+                    profiles.append(profile)
 
             elif similarity > 0.5:
                 if photo.missing_kid is not None:
@@ -447,7 +448,8 @@ def get_matching_profiles(request):
                     'kid': kid,
                     'photo': photo.photo.url,
                 }
-                profiles.append(profile)
+                if profile not in profiles:
+                    profiles.append(profile)
                 previous_missing_kid_id = photo.missing_kid.id
 
     for i in profiles:
