@@ -26,7 +26,7 @@ for (let i = 1; i <= 12; i++) {
 }
 const years = [];
 
-for (let i = 1960; i <= 2005; i++) {
+for (let i = 1960; i <= 2023; i++) {
   years.push({ label: String(i), value: String(i) });
 }
 
@@ -34,7 +34,7 @@ const AddKidProfile = (props) => {
   const [name, setName] = useState("");
   const [gender, setGender] = useState("");
   const [birthdate, setBirthdate] = useState("");
-  const [contactNumber, setContactNumber] = useState("");
+
   const [lastKnownLocation, setLastKnownLocation] = useState("");
   const [lostDate, setLostDate] = useState("");
   const [notes, setNotes] = useState("");
@@ -166,7 +166,7 @@ const AddKidProfile = (props) => {
     formData.append("last_known_location", lastKnownLocation);
     formData.append("lost_date", lostYear + "-" + lostMonth + "-" + lostDay);
     formData.append("still_missing", true);
-    formData.append("contactNumber", contactNumber);
+    formData.append("contactNumber", user.phonenumber);
 
     if (kidImages.length > 0) {
       setIsPhotosValid(true);
@@ -197,6 +197,7 @@ const AddKidProfile = (props) => {
     }
     try {
       if (kidImages.length > 0) {
+      
         const response = await fetch(apiRoutes.addMissingKid, {
           method: "POST",
           body: formData,
@@ -308,15 +309,7 @@ const AddKidProfile = (props) => {
           />
         </View>
 
-        <View style={styles.mobileField}>
-          <Text style={styles.Text}>Mobile Number</Text>
-          <TextInput
-            style={styles.field}
-            placeholderTextColor={grey}
-            placeholder="01234567891"
-            onChangeText={(number) => setContactNumber(number)}
-          ></TextInput>
-        </View>
+
 
         <View style={styles.lastKnownLocationField}>
           <Text style={styles.Text}>Last Known Location</Text>

@@ -16,7 +16,7 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const MatchingProfiles = (props) => {
-  const { matchingProfiles,setCurrentKidProfile } = useContext(GlobalContext);
+  const { matchingProfiles, setCurrentKidProfile } = useContext(GlobalContext);
 
   const renderData = () => {
     return matchingProfiles.map((profile, index) => {
@@ -72,10 +72,23 @@ const MatchingProfiles = (props) => {
       >
         <Ionicons name={"left"} size={30} color={darkBlue} />
       </TouchableOpacity>
-      <Text style={styles.matchingText}>Matching Profiles</Text>
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <View style={styles.container}>{renderData()}</View>
-      </ScrollView>
+      {matchingProfiles.length > 0 && (
+        <View>
+          <Text style={styles.matchingText}>Matching Profiles</Text>
+          <ScrollView contentContainerStyle={styles.scrollViewContent}>
+            <View style={styles.container}>{renderData()}</View>
+          </ScrollView>
+        </View>
+      )}
+      {
+        (matchingProfiles.length <= 0 && (
+          <Text style={styles.noMatchText}>
+            There are no matches at the moment!{"\n"}we will notify you when
+            there is a match{"\n"}
+            thank you for your efforts
+          </Text>
+        ))
+      }
 
       <TouchableOpacity style={styles.doneButton}>
         <Text style={styles.doneText}>Done</Text>
@@ -131,6 +144,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: Dimensions.get("window").height / 14,
     paddingBottom: Dimensions.get("window").height / 3,
+  },
+  noMatchText: {
+    fontSize: 25,
+    color: darkBlue,
+    fontWeight: "bold",
+    textAlign: "center",
+    top: windowHeight / 7,
   },
 });
 
