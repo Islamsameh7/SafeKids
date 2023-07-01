@@ -21,6 +21,7 @@ const windowHeight = Dimensions.get("window").height;
 
 const UploadPhoto = (props) => {
   const [image, setImage] = useState(null);
+  const [kidId, setKidId] = useState(null);
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const { user,fetchMatchingProfiles } = useContext(GlobalContext);
@@ -83,8 +84,9 @@ const UploadPhoto = (props) => {
     });
   
     if (response.ok) {
-      // Successful response
-      console.log('Found kid added successfully');
+      const kidId = await response.json();
+      setKidId(kidId);
+ 
     } else {
       // Error response
       const errorData = await response.text();
@@ -163,7 +165,8 @@ const UploadPhoto = (props) => {
       <View style={styles.submitContainer}>
         <TouchableOpacity style={styles.submitButton} onPress={() =>{ 
           addFoundKid();
-          fetchMatchingProfiles(image,"upload");
+          console.log(kidId);
+          fetchMatchingProfiles(image,"upload",kidId);
           props.navigation.navigate("Matching")
           } }>
           <Text style={styles.submitText}>Submit</Text>

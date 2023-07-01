@@ -83,6 +83,8 @@ const KidProfile = (props) => {
    
   };
   useEffect(() => {
+    console.log(currentKidProfile.kid.user);
+    console.log(user.id);
     if (currentKidProfile.kid.user == user.id) {
       setIsParent(true);
     }
@@ -387,20 +389,20 @@ const KidProfile = (props) => {
         <View style={styles.content}>
           <Text style={{ color: grey, fontSize: 15 }}>Mobile No:</Text>
           <Text style={{ color: darkBlue, marginLeft: 25, fontSize: 15 }}>
-            {currentKidProfile.kid.parentPhone}
+            {currentKidProfile.kid.contact_phone}
           </Text>
         </View>
 
         <View style={styles.content}>
           <Text style={{ color: grey, fontSize: 15 }}>Email:</Text>
           <Text style={{ color: darkBlue, marginLeft: 20, fontSize: 15 }}>
-            {currentKidProfile.kid.parentEmail}
+            {currentKidProfile.kid.contact_email}
           </Text>
         </View>
       </View>
       
 
-      {isParent && isEditProfileVisible && (
+      {isParent && (
         
         <View>
           

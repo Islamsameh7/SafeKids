@@ -217,9 +217,9 @@ def add_found_kid(request):
         else:
             kid.save()
 
-        return HttpResponse('Found kid added successfully', status=200)
+        return Response(kid.id, status=200)
     else:
-        return HttpResponse(form.errors, status=400)
+        return Response(form.errors, status=400)
 
 
 @api_view(['POST'])
@@ -349,7 +349,7 @@ def get_found_kid_details(request, kid_name):
 @api_view(['POST'])
 def get_matching_profiles(request):
     print(request)
-    with open('D:\FCAI\GRAD Project\SafeKids\Face Recognition Model\FaceNet.pkl', 'rb') as f:
+    with open('D:\FCAI fourth year (final year)\SafeKids\SafeKids\FaceNet.pkl', 'rb') as f:
         model_data = pickle.load(f)
 
     mtcnn = model_data['mtcnn']
@@ -359,7 +359,7 @@ def get_matching_profiles(request):
     image_cropped = mtcnn(image)
     image_embedding = resnet(image_cropped.unsqueeze(0)
                              ).flatten().detach().numpy()
-
+    
     if request.POST.get('type') == 'upload':
         Photos = Photo.objects.filter(missing_kid__isnull=False)
         kid_type = 'found'
@@ -396,8 +396,8 @@ def get_matching_profiles(request):
                     'gender': photo.missing_kid.gender,
                     'similarity': similarity,
                     'user': photo.missing_kid.user.id,
-                    'parentPhone': photo.missing_kid.user.phoneNumber,
-                    'parentEmail': photo.missing_kid.user.email,
+                    'contact_phone': photo.missing_kid.user.phoneNumber,
+                    'contact_email': photo.missing_kid.user.email,
                 }
             else:
                 # kid = photo.found_kid
@@ -428,8 +428,8 @@ def get_matching_profiles(request):
                     'gender': photo.missing_kid.gender,
                     'similarity': similarity,
                     'user': photo.missing_kid.user.id,
-                    'parentPhone': photo.missing_kid.user.phoneNumber,
-                    'parentEmail': photo.missing_kid.user.email,
+                    'contact_phone': photo.missing_kid.user.phoneNumber,
+                    'contact_email': photo.missing_kid.user.email,
                 }
             else:
                 kid = {
@@ -439,7 +439,9 @@ def get_matching_profiles(request):
                     'gender': photo.found_kid.gender,
                     'location': photo.found_kid.location,
                     'similarity': similarity,
-                    'user': photo.missing_kid.user.id
+                    'user': photo.missing_kid.user.id,
+                    'contact_phone': photo.found_kid.user.phoneNumber,
+                    'contact_email': photo.found_kid.user.email,
                 }
 
             profile = {
@@ -449,63 +451,64 @@ def get_matching_profiles(request):
             profiles.append(profile)
             previous_missing_kid_id = photo.missing_kid.id
 
-    for i in profiles:
+    for profile in profiles:
         kid = profile['kid']
-        send_notification(kid['user'], kid['name'], kid['id'], kid_type)
+        
+        send_notification(user = kid['user'], name = kid['name'], kidId = request.POST.get('kid_id'), kidType = kid_type)
 
-    return HttpResponse(profiles)
+    return Response(profiles)
 
 
-@api_view(['POST'])
-def send_notification(request):
-    user = CustomUser.objects.get(id=request.data.get('user'))
-    name = request.data.get('name')
-    kid_type = request.data.get('kid_type')
-    kid_id = request.data.get('kid_id')
+
+def send_notification(user,name,kidId,kidType):
+    user = CustomUser.objects.get(id=user)
+  
     
-    if kid_type == 'found':
-        message = 'Your missing kid ' + str(name) + ' appeared in a match.\n click here to see the match.'
+    if kidType == 'found':
+        message = 'Your missing kid ' + name + ' appeared in a match.\n click here to see the match.'
     else:
         message = 'The kid you found appeared in a match.\n click here to see the match.'
         
-    notification = Notification(user=user, message=message, kid_id=kid_id, kid_type=kid_type)
+    notification = Notification(user=user, message=message, kid_id=kidId, kid_type=kidType)
     notification.save()
     return Response({'message': 'Notification sent', 'notification' : notification.message}, status=status.HTTP_200_OK)
 
-@api_view(['GET'])
+@api_view(['POST'])
 def get_user_notifications(request):
     user = CustomUser.objects.get(id=request.data.get('user'))
     notifications_list = Notification.objects.filter(user=user)
 
     notifications = []
-    for x in notifications_list:
-        time_difference = timezone.now() - x.timestamp
-        if time_difference.total_seconds() < 60:
-            time = int(time_difference.total_seconds())
-            time = f"{time} seconds ago"
-        elif time_difference.total_seconds() < 3600:
-            time = int(time_difference.total_seconds() / 60)
-            time = f"{time} minutes ago"
-        elif time_difference.total_seconds() < 86400:
-            time = int(time_difference.total_seconds() / 3600)
-            time = f"{time} hours ago"
-        else:
-            time = int(time_difference.total_seconds() / 86400)
-            time = f"{time} days ago"
-            
-        notification = {
-            'user' : x.user.id,
-            'message' : x.message,
-            'kid_id' : x.kid_id,
-            'kid_type' : x.kid_type,
-            'timestamp' : time,
-            'is_read' : x.is_read
-        }
-        notifications.append(notification) 
+    for notification in notifications_list:
+        if notification.is_read == False:
+            time_difference = timezone.now() - notification.timestamp
+            if time_difference.total_seconds() < 60:
+                time = int(time_difference.total_seconds())
+                time = f"{time} seconds ago"
+            elif time_difference.total_seconds() < 3600:
+                time = int(time_difference.total_seconds() / 60)
+                time = f"{time} minutes ago"
+            elif time_difference.total_seconds() < 86400:
+                time = int(time_difference.total_seconds() / 3600)
+                time = f"{time} hours ago"
+            else:
+                time = int(time_difference.total_seconds() / 86400)
+                time = f"{time} days ago"
+                
+            notification = {
+                'id': notification.id,
+                'user' : notification.user.id,
+                'message' : notification.message,
+                'kid_id' : notification.kid_id,
+                'kid_type' : notification.kid_type,
+                'timestamp' : time,
+                'is_read' : notification.is_read
+            }
+            notifications.append(notification) 
 
     return Response(notifications, content_type='application/json')
 
-@api_view(['PUT'])
+@api_view(['POST'])
 def read_notification(request):
     notification = Notification.objects.get(id=request.data.get('id'))
     notification.is_read = True
@@ -513,19 +516,22 @@ def read_notification(request):
 
     if notification.kid_type == 'found':
         kid_obj = FoundKid.objects.get(id=notification.kid_id)
-        
+        photo = Photo.objects.get(found_kid_id=notification.kid_id) 
         kid = {
                 'id': kid_obj.id,
                 'name': kid_obj.name,
                 'age': kid_obj.age,
-                'gender': kid_obj.gender,
+                'gender': 'unknown',
                 'location': kid_obj.location,
                 'contact_phone': kid_obj.user.phoneNumber,
                 'contact_email': kid_obj.user.email,
+                'birthdate': 'unknown',
+                'lost_date': 'unknown',
+                'last_known_location': 'unknown',
         }
     else:
         kid_obj = MissingKid.objects.get(id=notification.kid_id)
-
+        photo = Photo.objects.get(missing_kid_id=notification.kid_id) 
         kid = {
                 'id': kid_obj.id,
                 'name': kid_obj.name,
@@ -538,5 +544,10 @@ def read_notification(request):
                 'contact_phone': kid_obj.user.phoneNumber,
                 'contact_email': kid_obj.user.email,
             }
-                
-    return Response({'kid': kid}, status=status.HTTP_200_OK)
+    print("the khara is"+str(photo.photo.url))    
+    profile = {
+                'kid': kid,
+                'photo':photo.photo.url
+            }
+         
+    return Response(profile, status=status.HTTP_200_OK)

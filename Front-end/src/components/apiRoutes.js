@@ -1,4 +1,4 @@
-const API_URL = "https://edc7-102-45-56-215.ngrok-free.app/";
+const API_URL = "https://055b-102-45-56-215.ngrok-free.app/";
 
 
 module.exports = {
@@ -11,6 +11,8 @@ module.exports = {
     addFoundKid: API_URL+"add_found_kid/",
     addMissingKid:API_URL+"add_missing_kid/",
     getMissingKIds:API_URL+"get_missing_kids/",
+    getNotifications:API_URL+"get_user_notifications/",
+    readNotifiation:API_URL+"read_notification/",
     getMatchingProfiles:API_URL+"get_matching_profiles/",
     getMyKids:API_URL+"get_my_kids/",
 }

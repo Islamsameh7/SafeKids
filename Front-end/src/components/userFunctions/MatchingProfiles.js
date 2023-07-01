@@ -66,12 +66,7 @@ const MatchingProfiles = (props) => {
 
   return (
     <View>
-      <TouchableOpacity
-        onPress={() => props.navigation.navigate("Home")}
-        style={{ top: 70, left: 20, position: "absolute" }}
-      >
-        <Ionicons name={"left"} size={30} color={darkBlue} />
-      </TouchableOpacity>
+
       {matchingProfiles.length > 0 && (
         <View>
           <Text style={styles.matchingText}>Matching Profiles</Text>
@@ -90,7 +85,7 @@ const MatchingProfiles = (props) => {
         ))
       }
 
-      <TouchableOpacity style={styles.doneButton}>
+      <TouchableOpacity style={styles.doneButton}  onPress={() => props.navigation.navigate("Home")}>
         <Text style={styles.doneText}>Done</Text>
       </TouchableOpacity>
     </View>
@@ -131,7 +126,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: 170,
     paddingVertical: 5,
-    top: windowHeight / 3,
+    marginTop: windowHeight / 6,
     marginLeft: "30%",
     justifyContent: "center",
   },
