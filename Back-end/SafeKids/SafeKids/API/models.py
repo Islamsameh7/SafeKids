@@ -75,5 +75,6 @@ class Notification(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     message = models.CharField(max_length=255)
     kid_id = models.IntegerField()
+    kid_type = models.CharField(max_length=255, blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)

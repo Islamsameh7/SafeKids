@@ -1,3 +1,4 @@
+import datetime
 from django.forms import ValidationError
 from django.shortcuts import render, redirect
 from django.urls import path
@@ -417,7 +418,6 @@ def get_matching_profiles(request):
 
         elif similarity > 0.5:
             if photo.missing_kid is not None:
-                # kid = photo.missing_kid
                 kid = {
                     'id': photo.missing_kid.id,
                     'name': photo.missing_kid.name,
@@ -432,7 +432,6 @@ def get_matching_profiles(request):
                     'parentEmail': photo.missing_kid.user.email,
                 }
             else:
-                # kid = photo.found_kid
                 kid = {
                     'id': photo.found_kid.id,
                     'name': photo.found_kid.name,
@@ -469,23 +468,42 @@ def send_notification(request):
     else:
         message = 'The kid you found appeared in a match.\n click here to see the match.'
         
-    notification = Notification(user=user, message=message, kid_id=kid_id)
+    notification = Notification(user=user, message=message, kid_id=kid_id, kid_type=kid_type)
     notification.save()
     return Response({'message': 'Notification sent', 'notification' : notification.message}, status=status.HTTP_200_OK)
-
-# @api_view(['GET'])
-# def get_user_notifications(request):
-#     user = CustomUser.objects.get(id=request.data.get('user'))
-#     notifications = Notification.objects.filter(user=user)
-#     return Response(notifications)
 
 @api_view(['GET'])
 def get_user_notifications(request):
     user = CustomUser.objects.get(id=request.data.get('user'))
-    notifications = Notification.objects.filter(user=user)
-    serialized_notifications = serializers.serialize('json', notifications)
+    notifications_list = Notification.objects.filter(user=user)
 
-    return Response(serialized_notifications, content_type='application/json')
+    notifications = []
+    for x in notifications_list:
+        time_difference = timezone.now() - x.timestamp
+        if time_difference.total_seconds() < 60:
+            time = int(time_difference.total_seconds())
+            time = f"{time} seconds ago"
+        elif time_difference.total_seconds() < 3600:
+            time = int(time_difference.total_seconds() / 60)
+            time = f"{time} minutes ago"
+        elif time_difference.total_seconds() < 86400:
+            time = int(time_difference.total_seconds() / 3600)
+            time = f"{time} hours ago"
+        else:
+            time = int(time_difference.total_seconds() / 86400)
+            time = f"{time} days ago"
+            
+        notification = {
+            'user' : x.user.id,
+            'message' : x.message,
+            'kid_id' : x.kid_id,
+            'kid_type' : x.kid_type,
+            'timestamp' : time,
+            'is_read' : x.is_read
+        }
+        notifications.append(notification) 
+
+    return Response(notifications, content_type='application/json')
 
 @api_view(['PUT'])
 def read_notification(request):
@@ -493,4 +511,32 @@ def read_notification(request):
     notification.is_read = True
     notification.save()
 
-    return Response({'message': notification.message, 'read' : notification.is_read}, status=status.HTTP_200_OK)
+    if notification.kid_type == 'found':
+        kid_obj = FoundKid.objects.get(id=notification.kid_id)
+        
+        kid = {
+                'id': kid_obj.id,
+                'name': kid_obj.name,
+                'age': kid_obj.age,
+                'gender': kid_obj.gender,
+                'location': kid_obj.location,
+                'contact_phone': kid_obj.user.phoneNumber,
+                'contact_email': kid_obj.user.email,
+        }
+    else:
+        kid_obj = MissingKid.objects.get(id=notification.kid_id)
+
+        kid = {
+                'id': kid_obj.id,
+                'name': kid_obj.name,
+                'birthdate': kid_obj.birthdate,
+                'lost_date': kid_obj.lost_date,
+                'last_known_location': kid_obj.last_known_location,
+                'notes': kid_obj.notes,
+                'gender': kid_obj.gender,
+                'user': kid_obj.user.id,
+                'contact_phone': kid_obj.user.phoneNumber,
+                'contact_email': kid_obj.user.email,
+            }
+                
+    return Response({'kid': kid}, status=status.HTTP_200_OK)
