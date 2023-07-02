@@ -95,12 +95,9 @@ def send_forget_password_mail(user):
 @csrf_exempt
 @api_view(['POST'])
 def forgot_password(request):
-    print(request.body)
-    print(request.data.get("email"))
     email = request.data.get("email")
     User = get_user_model()
     users = User.objects.filter(email=email)
-    print(users)
     if users.exists():
         user = User.objects.get(email=email)
         token = str(uuid.uuid4())
@@ -110,7 +107,6 @@ def forgot_password(request):
         send_forget_password_mail(user)
         return HttpResponse('Email has been sent. Check your email.', status=200)
     else:
-        print(email)
         return HttpResponse('User with this email does not exist.', status=400)
 
 
@@ -201,8 +197,6 @@ def add_found_kid(request):
     if form.is_valid():
         kid = form.save(commit=False)
         kid.save()
-
-        # Handle photo upload
 
         photo_file = request.FILES.get('photo')
         if photo_file:
@@ -295,7 +289,7 @@ def get_my_kids(request):
 
 
 @api_view(['GET'])
-def get_missing_kids(request):
+def get_missing_kids():
     missing_kids = MissingKid.objects.all()
     data = []
 
@@ -310,12 +304,10 @@ def get_missing_kids(request):
             'still_missing': kid.still_missing,
             'notes': kid.notes,
             'contactNumber': kid.contactNumber,
-
         }
 
         photo = Photo.objects.filter(missing_kid=kid).first()
         if photo:
-            print(photo.photo.url)
             kid_data['photo_url'] = photo.photo.url
         else:
 
@@ -323,7 +315,6 @@ def get_missing_kids(request):
 
         data.append(kid_data)
         
-
     return JsonResponse(data, safe=False)
 
 
@@ -361,7 +352,6 @@ def set_match_kid_profile(photo, similarity):
             'contact_phone': photo.missing_kid.user.phoneNumber,
             'contact_email': photo.missing_kid.user.email,
         }
-        print('missing')
     else:
         kid = {
             'id': photo.found_kid.id,
@@ -375,13 +365,11 @@ def set_match_kid_profile(photo, similarity):
             'contact_email': photo.found_kid.user.email,
 
         }
-        print('found')
 
     return kid
 
 @api_view(['POST'])
 def get_matching_profiles(request):
-    print(request)
     with open('D:\FCAI\GRAD Project\SafeKids\Face Recognition Model\FaceNet.pkl', 'rb') as f:
         model_data = pickle.load(f)
 
@@ -423,7 +411,6 @@ def get_matching_profiles(request):
             db_image_embedding = resnet(db_image_cropped.unsqueeze(0)).flatten().detach().numpy()
 
             similarity = 1 - spatial.distance.cosine(image_embedding, db_image_embedding)
-            print(similarity)
             if similarity > 0.5:
                 if current_kid_id == previous_kid_id:
                     if i == 0 and request.POST.get('type') != 'upload':
@@ -461,7 +448,6 @@ def get_matching_profiles(request):
     new_kid_id = request.POST.get('kid_id')
     for i in profiles:
         kid = i['kid']
-        print(i)
         send_notification(user = kid['user'], name = kid['name'], kidId = new_kid_id, kidType = kid_type)
 
     return Response(profiles)
