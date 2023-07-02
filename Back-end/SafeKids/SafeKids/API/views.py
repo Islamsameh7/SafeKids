@@ -190,7 +190,7 @@ def edit_kid(request):
 def logout(request):
     if request.user.is_authenticated:
         logout(request)
-        return Response({"detail": "Logged out successfully."})
+        return Response({"detail": "Logged out successfully."},status=200)
     return Response({"detail": "User is not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
@@ -246,6 +246,7 @@ def add_missing_kid(request):
         else:
             kid.save()
 
+        return Response(kid.id, status=200)
     else:
         print(form.errors)
         return HttpResponse(form.errors, status=400)
@@ -354,108 +355,120 @@ def get_matching_profiles(request):
 
     mtcnn = model_data['mtcnn']
     resnet = model_data['resnet']
-
-    image = Image.open(request.FILES['photo'])
-    image_cropped = mtcnn(image)
-    image_embedding = resnet(image_cropped.unsqueeze(0)
-                             ).flatten().detach().numpy()
-    
-    if request.POST.get('type') == 'upload':
-        Photos = Photo.objects.filter(missing_kid__isnull=False)
-        kid_type = 'found'
-    else:
-        Photos = Photo.objects.filter(found_kid__isnull=False)
-        kid_type = 'missing'
-
-    bestSimilarity = 0
-
-    profiles = []
-    for i, photo in enumerate(Photos):
-        db_image = Image.open(photo.photo)
-        db_image_cropped = mtcnn(db_image)
-        db_image_embedding = resnet(
-            db_image_cropped.unsqueeze(0)).flatten().detach().numpy()
-        similarity = 1 - \
-            spatial.distance.cosine(image_embedding, db_image_embedding)
-
-        if i == 0:
-            previous_missing_kid_id = photo.missing_kid.id
-
-        if similarity > bestSimilarity and photo.missing_kid.id == previous_missing_kid_id and similarity > 0.5:
-            bestSimilarity = similarity
-
-            if photo.missing_kid is not None:
-                # kid = photo.missing_kid
-                kid = {
-                    'id': photo.missing_kid.id,
-                    'name': photo.missing_kid.name,
-                    'birthdate': photo.missing_kid.birthdate,
-                    'lost_date': photo.missing_kid.lost_date,
-                    'last_known_location': photo.missing_kid.last_known_location,
-                    'notes': photo.missing_kid.notes,
-                    'gender': photo.missing_kid.gender,
-                    'similarity': similarity,
-                    'user': photo.missing_kid.user.id,
-                    'contact_phone': photo.missing_kid.user.phoneNumber,
-                    'contact_email': photo.missing_kid.user.email,
-                }
-            else:
-                # kid = photo.found_kid
-                kid = {
-                    'id': photo.found_kid.id,
-                    'name': photo.found_kid.name,
-                    'age': photo.found_kid.age,
-                    'gender': photo.found_kid.gender,
-                    'location': photo.found_kid.location,
-                    'similarity': similarity
-                }
-
-            profile = {
-                'kid': kid,
-                'photo': photo.photo.url
-            }
-            profiles.append(profile)
-
-        elif similarity > 0.5:
-            if photo.missing_kid is not None:
-                kid = {
-                    'id': photo.missing_kid.id,
-                    'name': photo.missing_kid.name,
-                    'birthdate': photo.missing_kid.birthdate,
-                    'lost_date': photo.missing_kid.lost_date,
-                    'last_known_location': photo.missing_kid.last_known_location,
-                    'notes': photo.missing_kid.notes,
-                    'gender': photo.missing_kid.gender,
-                    'similarity': similarity,
-                    'user': photo.missing_kid.user.id,
-                    'contact_phone': photo.missing_kid.user.phoneNumber,
-                    'contact_email': photo.missing_kid.user.email,
-                }
-            else:
-                kid = {
-                    'id': photo.found_kid.id,
-                    'name': photo.found_kid.name,
-                    'age': photo.found_kid.age,
-                    'gender': photo.found_kid.gender,
-                    'location': photo.found_kid.location,
-                    'similarity': similarity,
-                    'user': photo.missing_kid.user.id,
-                    'contact_phone': photo.found_kid.user.phoneNumber,
-                    'contact_email': photo.found_kid.user.email,
-                }
-
-            profile = {
-                'kid': kid,
-                'photo': photo.photo.url,
-            }
-            profiles.append(profile)
-            previous_missing_kid_id = photo.missing_kid.id
-
-    for profile in profiles:
-        kid = profile['kid']
+    appPhotos = request.FILES.getlist('photos')
+    for appPhoto in appPhotos:
+        image = Image.open(appPhoto)
+        image_cropped = mtcnn(image)
+        image_embedding = resnet(image_cropped.unsqueeze(0)
+                                ).flatten().detach().numpy()
         
-        send_notification(user = kid['user'], name = kid['name'], kidId = request.POST.get('kid_id'), kidType = kid_type)
+        if request.POST.get('type') == 'upload':
+            Photos = Photo.objects.filter(missing_kid__isnull=False)
+            kid_type = 'found'
+        else:
+            Photos = Photo.objects.filter(found_kid__isnull=False)
+            kid_type = 'missing'
+            print("we are hereeeeeeeee")
 
+        bestSimilarity = 0
+
+        profiles = []
+        for i, photo in enumerate(Photos):
+            db_image = Image.open(photo.photo)
+            db_image_cropped = mtcnn(db_image)
+            db_image_embedding = resnet(
+                db_image_cropped.unsqueeze(0)).flatten().detach().numpy()
+            similarity = 1 - \
+                spatial.distance.cosine(image_embedding, db_image_embedding)
+           
+            if i == 0 and request.POST.get('type') == 'upload' :
+                previous_kid_id = photo.missing_kid.id
+            elif i == 0:
+                previous_kid_id = photo.found_kid.id  
+                
+            if  request.POST.get('type') == 'upload':   
+                current_kid_id = photo.missing_kid.id
+            else:
+                current_kid_id = photo.found_kid.id   
+                 
+            if similarity > bestSimilarity and current_kid_id == previous_kid_id and similarity > 0.5:
+                bestSimilarity = similarity
+
+                if photo.missing_kid is not None:
+                    # kid = photo.missing_kid
+                    kid = {
+                        'id': photo.missing_kid.id,
+                        'name': photo.missing_kid.name,
+                        'birthdate': photo.missing_kid.birthdate,
+                        'lost_date': photo.missing_kid.lost_date,
+                        'last_known_location': photo.missing_kid.last_known_location,
+                        'notes': photo.missing_kid.notes,
+                        'gender': photo.missing_kid.gender,
+                        'similarity': similarity,
+                        'user': photo.missing_kid.user.id,
+                        'contact_phone': photo.missing_kid.user.phoneNumber,
+                        'contact_email': photo.missing_kid.user.email,
+                    }
+                else:
+                    # kid = photo.found_kid
+                    kid = {
+                        'id': photo.found_kid.id,
+                        'name': photo.found_kid.name,
+                        'age': photo.found_kid.age,
+                        'gender': photo.found_kid.gender,
+                        'location': photo.found_kid.location,
+                        'similarity': similarity
+                    }
+
+                profile = {
+                    'kid': kid,
+                    'photo': photo.photo.url
+                }
+                profiles.append(profile)
+
+            elif similarity > 0.5:
+                if photo.missing_kid is not None:
+                    kid = {
+                        'id': photo.missing_kid.id,
+                        'name': photo.missing_kid.name,
+                        'birthdate': photo.missing_kid.birthdate,
+                        'lost_date': photo.missing_kid.lost_date,
+                        'last_known_location': photo.missing_kid.last_known_location,
+                        'notes': photo.missing_kid.notes,
+                        'gender': photo.missing_kid.gender,
+                        'similarity': similarity,
+                        'user': photo.missing_kid.user.id,
+                        'contact_phone': photo.missing_kid.user.phoneNumber,
+                        'contact_email': photo.missing_kid.user.email,
+                    }
+                else:
+                    kid = {
+                        'id': photo.found_kid.id,
+                        'name': photo.found_kid.name,
+                        'age': photo.found_kid.age,
+                        'gender': photo.found_kid.gender,
+                        'location': photo.found_kid.location,
+                        'similarity': similarity,
+                        'user': photo.found_kid.user.id,
+                        'contact_phone': photo.found_kid.user.phoneNumber,
+                        'contact_email': photo.found_kid.user.email,
+                    }
+
+                profile = {
+                    'kid': kid,
+                    'photo': photo.photo.url,
+                }
+                profiles.append(profile)
+                if  request.POST.get('type') == 'upload' :
+                    previous_kid_id = photo.missing_kid.id
+                else:
+                    previous_kid_id = photo.found_kid.id  
+
+        for profile in profiles:
+            kid = profile['kid']
+            
+            send_notification(user = kid['user'], name = kid['name'], kidId = request.POST.get('kid_id'), kidType = kid_type)
+        
     return Response(profiles)
 
 
