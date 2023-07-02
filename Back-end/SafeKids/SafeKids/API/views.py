@@ -240,15 +240,15 @@ def add_missing_kid(request):
                     photo.missing_kid = kid
 
                     photo.save()
-                return HttpResponse('Missing kid added successfully', status=200)
+                return Response('Missing kid added successfully', status=200)
             except ValidationError as e:
-                return HttpResponse(str(e), status=400)
+                return Response(str(e), status=400)
         else:
             kid.save()
 
     else:
         print(form.errors)
-        return HttpResponse(form.errors, status=400)
+        return Response(form.errors, status=400)
 
 
 @api_view(['POST'])
@@ -348,7 +348,6 @@ def get_found_kid_details(request, kid_name):
 
 def set_match_kid_profile(photo, similarity):
     if photo.missing_kid is not None:
-        # kid = photo.missing_kid
         kid = {
             'id': photo.missing_kid.id,
             'name': photo.missing_kid.name,
@@ -362,16 +361,22 @@ def set_match_kid_profile(photo, similarity):
             'contact_phone': photo.missing_kid.user.phoneNumber,
             'contact_email': photo.missing_kid.user.email,
         }
+        print('missing')
     else:
-        # kid = photo.found_kid
         kid = {
             'id': photo.found_kid.id,
             'name': photo.found_kid.name,
             'age': photo.found_kid.age,
             'gender': photo.found_kid.gender,
             'location': photo.found_kid.location,
-            'similarity': similarity
+            'similarity': similarity,
+            'user': photo.found_kid.user.id,
+            'contact_phone': photo.found_kid.user.phoneNumber,
+            'contact_email': photo.found_kid.user.email,
+
         }
+        print('found')
+
     return kid
 
 @api_view(['POST'])
@@ -380,51 +385,83 @@ def get_matching_profiles(request):
     with open('D:\FCAI\GRAD Project\SafeKids\Face Recognition Model\FaceNet.pkl', 'rb') as f:
         model_data = pickle.load(f)
 
-    preprocessing = model_data['preprocessing']
-    similarity = model_data['similarity']
+    mtcnn = model_data['mtcnn']
+    resnet = model_data['resnet']
 
     if request.POST.get('type') == 'upload':
         Photos = Photo.objects.filter(missing_kid__isnull=False)
+        Photos = Photos.order_by('missing_kid_id')
         kid_type = 'found'
     else:
         Photos = Photo.objects.filter(found_kid__isnull=False)
+        Photos = Photos.order_by('found_kid_id')
         kid_type = 'missing'
 
     bestSimilarity = 0
 
-    photos = request.POST.getlist('photos')
+    photos_list = request.FILES.getlist('photos')
     profiles = []
-    for photo in photos:
-
-        image_embedding = preprocessing(photo)
-
+    kid = {}
+    profile = {}
+    current_kid_id = 0
+    for photo in photos_list:
+        image = Image.open(photo)
+        image_cropped = mtcnn(image)
+        image_embedding = resnet(image_cropped.unsqueeze(0)).flatten().detach().numpy()
         for i, db_photo in enumerate(Photos):
-            db_image_embedding = preprocessing(db_photo.photo)
-            similarity = similarity(image_embedding, db_image_embedding)
+            if request.POST.get('type') == 'upload':
+                current_kid_id = db_photo.missing_kid.id
+                if i == 0:
+                    previous_kid_id = db_photo.missing_kid.id
+            else:
+                current_kid_id = db_photo.found_kid.id
+                if i == 0:
+                    previous_kid_id = db_photo.found_kid.id
+                    
+            db_image = Image.open(db_photo.photo)
+            db_image_cropped = mtcnn(db_image)
+            db_image_embedding = resnet(db_image_cropped.unsqueeze(0)).flatten().detach().numpy()
 
-            if i == 0:
-                previous_missing_kid_id = db_photo.missing_kid.id
+            similarity = 1 - spatial.distance.cosine(image_embedding, db_image_embedding)
+            print(similarity)
+            if similarity > 0.5:
+                if current_kid_id == previous_kid_id:
+                    if i == 0 and request.POST.get('type') != 'upload':
+                        kid = set_match_kid_profile(db_photo, similarity)
+                        profile = {
+                            'kid': kid,
+                            'photo': db_photo.photo.url,
+                        }
+                        kid_id = kid['id']
+                        is_exist = any(profile['kid']['id'] == kid_id for profile in profiles)
 
-            if similarity > bestSimilarity and db_photo.missing_kid.id == previous_missing_kid_id and similarity > 0.5:
-                bestSimilarity = similarity
+                        if not is_exist:
+                            profiles.append(profile)
+                        
+                    if similarity > bestSimilarity:
+                        bestSimilarity = similarity
+                else:
+                    if bestSimilarity == 0 or request.POST.get('type') != 'upload':
+                        bestSimilarity = similarity
 
-                kid = set_match_kid_profile(db_photo, similarity)
+                    kid = set_match_kid_profile(db_photo, bestSimilarity)
+                    bestSimilarity = similarity
+                    previous_kid_id = current_kid_id
 
-            elif similarity > 0.5:
-                kid = set_match_kid_profile(db_photo, similarity)
+                    profile = {
+                        'kid': kid,
+                        'photo': db_photo.photo.url,
+                    }
+                    kid_id = kid['id']
+                    is_exist = any(profile['kid']['id'] == kid_id for profile in profiles)
 
-                previous_missing_kid_id = db_photo.missing_kid.id
-
-            profile = {
-                'kid': kid,
-                'photo': db_photo.photo.url,
-            }
-            if profile not in profiles:
-                profiles.append(profile)
+                    if not is_exist:
+                        profiles.append(profile)
 
     new_kid_id = request.POST.get('kid_id')
     for i in profiles:
-        kid = profile['kid']
+        kid = i['kid']
+        print(i)
         send_notification(user = kid['user'], name = kid['name'], kidId = new_kid_id, kidType = kid_type)
 
     return Response(profiles)

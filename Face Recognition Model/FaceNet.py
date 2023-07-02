@@ -24,10 +24,7 @@ def similarity(image_embedding, db_image_embedding):
 
 model_data = {
     'mtcnn': mtcnn,
-    'resnet': resnet,
-    'preprocessing': preprocessing,
-    'similarity': similarity,
-
+    'resnet': resnet
 }
 
 with open('Face Recognition Model\FaceNet.pkl', 'wb') as f:
