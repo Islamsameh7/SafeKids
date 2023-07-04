@@ -9,7 +9,6 @@ import {
   Dimensions,
   TextInput,
 } from "react-native";
-import CheckBox from "@react-native-community/checkbox";
 import { darkBlue, grey, lightGrey, lightGrey2 } from "../Constants";
 import Ionicons from "react-native-vector-icons/AntDesign";
 import { useRoute } from "@react-navigation/native";
@@ -185,7 +184,7 @@ const KidProfile = (props) => {
           name={"left"}
           size={30}
           color={darkBlue}
-          style={{ top: 50, left: 20 }}
+          style={{ top: Dimensions.get("window").height / 10, left: Dimensions.get("window").width / 10 }}
         />
       </TouchableOpacity>
 

@@ -378,11 +378,13 @@ def set_match_kid_profile(photo, similarity):
             'contact_email': photo.missing_kid.user.email,
         }
     else:
-        age = 2023 - photo.found_kid.birthdate.year
+        
+        #birthdate = date.fromisoformat(photo.found_kid.birthdate.strftime("%Y-%m-%d"))
+        #age = 2023 - birthdate.year
         kid = {
             'id': photo.found_kid.id,
             'name': photo.found_kid.name,
-            'age': age ,
+            'age': photo.found_kid.age ,
             'gender': photo.found_kid.gender,
             'location': photo.found_kid.location,
             'similarity': similarity,

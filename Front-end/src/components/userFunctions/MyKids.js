@@ -96,14 +96,15 @@ const MyKids = (props) => {
  
   return (
     <View>
-      <TouchableOpacity
+     
+      <Text style={styles.headText}>My Kids</Text>
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+         <TouchableOpacity
         onPress={() => props.navigation.navigate("Home")}
-        style={{ top: 70, left: 20, position: "absolute" }}
+        style={{ top: windowHeight / 14, left: windowWidth / 14, position: "absolute" }}
       >
         <Ionicons name={"left"} size={30} color={darkBlue} />
       </TouchableOpacity>
-      <Text style={styles.headText}>My Kids</Text>
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.container}>{renderData()}</View>
       </ScrollView>
     </View>

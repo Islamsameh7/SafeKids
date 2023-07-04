@@ -217,20 +217,9 @@ const AddKidProfile = (props) => {
           // Successful response
           emptyImages();
           const kidId = await response.json();
-
-          fetchMatchingProfiles(kidImages, "addKid", kidId);
+          fetchMatchingProfiles(kidImages, "addKid", kidId,props);
           console.log("matching profile length is: "+matchingProfiles.length);
-          if (matchingProfiles.length > 0) {
-            props.navigation.navigate("Matching");
-          } else {
-            Alert.alert(
-              "",
-              "Profile Created Successfully and we will let you know when someone finds your kid. ",
-              [{ text: "OK" }],
-              { cancelable: true }
-            );
-            props.navigation.navigate("Home");
-          }
+          
           console.log("Missing Kid added successfully");
         } else {
           // Error response

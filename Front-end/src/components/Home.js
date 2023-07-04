@@ -36,7 +36,7 @@ const Home = (props) => {
     });
 
     if (response.ok) {
-      props.navigation.navigate("Login")
+      props.navigation.navigate("Login");
       logoutContext();
     } else {
       console.log("not ok");
@@ -56,8 +56,13 @@ const Home = (props) => {
           alignItems: "center",
         }}
       >
-        <TouchableOpacity style={{ marginLeft: "5%" }} onPress={() =>{setIsModalVisible(true); }}>
-          <SimpleIcons name={"logout"} size={40} color={darkBlue} />
+        <TouchableOpacity
+          style={{ marginLeft: "5%" }}
+          onPress={() => {
+            setIsModalVisible(true);
+          }}
+        >
+          <SimpleIcons name={"logout"} size={35} color={darkBlue} />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => props.navigation.navigate("Notifications")}
@@ -118,26 +123,53 @@ const Home = (props) => {
           </Text>
         </TouchableOpacity>
       </View>
-      <Modal visible={isModalVisible} animationType="slide">
-        <View style={styles.modalContainer}>
-          <Text>Are you sure you want to logout?</Text>
-          <View style={styles.modalContent}>
-            <TouchableOpacity
-              style={styles.modalButton}
-              onPress={() => logout()}
+
+      <View style={styles.container}>
+        {isModalVisible && (
+          <View style={styles.modalContainer}>
+            <Text
+              style={{
+                fontSize: Dimensions.get("window").width / 18,
+                color: darkBlue,
+                textAlign: "center",
+                marginTop: 20,
+              }}
             >
-              <Text style={styles.modalButtonText}>Yes</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.modalButton}
-              onPress={() =>  setIsModalVisible(false)}
-            >
-              <Text style={styles.modalButtonText}>No</Text>
-            </TouchableOpacity>
-            
+              Are you sure you want to logout?
+            </Text>
+            <View style={styles.modalContent}>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => logout()}
+              >
+                <Text
+                  style={{
+                    fontSize: Dimensions.get("window").width / 18,
+                    color: "red",
+                    textAlign: "center",
+                  }}
+                >
+                  Yes
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => setIsModalVisible(false)}
+              >
+                <Text
+                  style={{
+                    fontSize: Dimensions.get("window").width / 18,
+                    color: darkBlue,
+                    textAlign: "center",
+                  }}
+                >
+                  No
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </Modal>
+        )}
+      </View>
     </View>
   );
 };
@@ -217,26 +249,27 @@ const styles = StyleSheet.create({
     marginTop: Dimensions.get("window").height / 40,
     marginBottom: Dimensions.get("window").height / 45,
   },
+  modalWrapper: {
+    flex: 1,
+    height: Dimensions.get("window").height / 8,
+    width: Dimensions.get("window").width / 6,
+  },
   modalContainer: {
+    bottom: Dimensions.get("window").height / 2,
     alignItems: "center",
     justifyContent: "center",
- 
-    bottom: windowHeight/50,
     backgroundColor: "white",
+    borderWidth: 1,
+    borderRadius: 60,
   },
   modalContent: {
-    padding: 20,
+    padding: 7,
     borderRadius: 10,
   },
   modalButton: {
-    marginBottom: windowHeight/35,
-    padding: 10,
+    marginBottom: windowHeight / 35,
+
     borderRadius: 5,
-  },
-  modalButtonText: {
-    fontSize: 16,
-    color: "black",
-    textAlign: "center",
   },
 });
 

@@ -26,7 +26,7 @@ export const GlobalProvider = ({ children }) => {
     setKidImages([]);
   };
 
-  const fetchMatchingProfiles = async (images,type,kidId) => {
+  const fetchMatchingProfiles = async (images,type,kidId,props) => {
     const formData = new FormData();
     formData.append("type",type);
     console.log(kidId);
@@ -67,6 +67,17 @@ export const GlobalProvider = ({ children }) => {
         const data = await response.json();
         console.log(data)
         setMatchingProfiles(data);
+        if (data.length > 0) {
+          props.navigation.navigate("Matching");
+        } else {
+          Alert.alert(
+            "",
+            "Profile Created Successfully and we will let you know when someone finds your kid. ",
+            [{ text: "OK" }],
+            { cancelable: true }
+          );
+          props.navigation.navigate("Home");
+        }
       } else {
         console.error("Failed to fetch missing kids data");
       }
