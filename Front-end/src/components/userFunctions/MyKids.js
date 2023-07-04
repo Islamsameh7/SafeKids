@@ -90,8 +90,9 @@ const MyKids = (props) => {
       <Text style={styles.dataText}>
         LastKnownLocation: {lastLocation}
       </Text>
+      <Text style={styles.dataText}></Text>
       {stillMissing === true && (
-        <Icon name="check-circle" size={24} color="green" />
+        <><Text style={styles.dataText2}><Icon name="check-circle" size={22} color="green" /> Found</Text></>
       )}
     </View>
   </TouchableOpacity>
@@ -106,7 +107,7 @@ const MyKids = (props) => {
      
       <TouchableOpacity
         onPress={() => props.navigation.navigate("Home")}
-        style={{ top: windowHeight / 14, left: windowWidth / 14, position: "absolute" }}
+        style={{ top: 70, left: 20, position: "absolute" }}
       >
         <Ionicons name={"left"} size={30} color={darkBlue} />
       </TouchableOpacity>
@@ -129,6 +130,13 @@ const styles = StyleSheet.create({
   dataText: {
     fontSize: 14,
     color: darkBlue,
+    fontWeight: "bold",
+    //paddingRight:20,
+    //alignSelf: 'flex-end',
+  },
+  dataText2: {
+    fontSize: 17,
+    color: "rgb(0,100,0)",
     fontWeight: "bold",
     //paddingRight:20,
     //alignSelf: 'flex-end',
