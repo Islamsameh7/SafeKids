@@ -26,25 +26,26 @@ export const GlobalProvider = ({ children }) => {
     setKidImages([]);
   };
 
-  const fetchMatchingProfiles = async (image,type,kidId) => {
+  const fetchMatchingProfiles = async (images,type,kidId) => {
     const formData = new FormData();
+    formData.append("type",type);
+    console.log(kidId);
+    formData.append("kid_id",kidId);
     try {
-      if (image) {
+      console.log(images.length);
+      for (let i = 0; i < images.length; i++) {
+        const image = images[i];
         const response = await fetch(image);
         const blob = await response.blob();
-
         const fileName = image.split("/").pop(); // Extract the file name from the URI
-
         const fileType = blob.type; // Get the MIME type of the file
-        formData.append("type",type);
-        console.log(kidId);
-        formData.append("kid_id",kidId);
+
         if (
           fileType === "image/jpeg" ||
           fileType === "image/png" ||
           fileType === "image/jpg"
         ) {
-          formData.append("photo", {
+          formData.append("photos", {
             uri: image,
             name: fileName,
             type: fileType,
@@ -64,6 +65,7 @@ export const GlobalProvider = ({ children }) => {
 
       if (response.ok) {
         const data = await response.json();
+        console.log(data)
         setMatchingProfiles(data);
       } else {
         console.error("Failed to fetch missing kids data");
@@ -111,10 +113,10 @@ export const GlobalProvider = ({ children }) => {
 
       if (response.ok) {
         const profile = await response.json();
-        console.log('hereeeeeeeeeeee')
-        console.log(profile.kid.name)
+ 
+      
         setCurrentKidProfile(profile);
-        console.log(currentKidProfile.kid.name)
+        console.log('current kid profile id is'+currentKidProfile.kid.id);
       } else {
         console.error("Failed to read notification");
       }

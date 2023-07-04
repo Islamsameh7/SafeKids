@@ -34,13 +34,15 @@ function App(props) {
             headerShown: false,
             contentStyle: {
               backgroundColor: "#FFFFFF",
+              
             },
+            gestureEnabled:false,
           }}
         >
-         
           <Stack.Screen name="GetStarted" component={GetStarted} />
           <Stack.Screen name="Signup" component={Signup} />
           <Stack.Screen name="Login" component={Login} />
+
           <Stack.Screen name="Home" component={Home} />
           <Stack.Screen name="AddKidProfile" component={AddKidProfile} />
           <Stack.Screen name="KidProfilePhotos" component={KidProfilePhotos} />

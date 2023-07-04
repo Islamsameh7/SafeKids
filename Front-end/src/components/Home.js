@@ -1,4 +1,4 @@
-import React, { useState, useContext,useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -6,20 +6,28 @@ import {
   TouchableOpacity,
   Image,
   Dimensions,
+  Modal,
 } from "react-native";
 import Background from "./Background";
 import Btn from "./Btn";
 import { darkBlue, lightBlue } from "./Constants";
 import IonIcons from "react-native-vector-icons/Ionicons";
+import SimpleIcons from "react-native-vector-icons/SimpleLineIcons";
 import FontIcons from "react-native-vector-icons/FontAwesome";
 import AntIcons from "react-native-vector-icons/AntDesign";
 import { GlobalContext } from "./context/GlobalContext";
-const Home = (props) => {
-  const { user,fetchNotifications } = useContext(GlobalContext);
-  const func = async () => {
-    const formData = new FormData();
+import NavBar from "./Navbar";
+import apiRoutes from "./apiRoutes";
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
-    const response = await fetch(apiRoutes.login, {
+const Home = (props) => {
+  const { user, fetchNotifications, logoutContext } = useContext(GlobalContext);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const logout = async () => {
+    const formData = new FormData();
+    formData.append("id", user.id);
+    const response = await fetch(apiRoutes.logout, {
       method: "POST",
       body: formData,
       headers: {
@@ -28,13 +36,16 @@ const Home = (props) => {
     });
 
     if (response.ok) {
+      props.navigation.navigate("Login")
+      logoutContext();
     } else {
+      console.log("not ok");
     }
   };
   useEffect(() => {
-    
-     fetchNotifications();
-      }, []);
+    fetchNotifications();
+  }, []);
+
   return (
     <View>
       <View
@@ -45,8 +56,8 @@ const Home = (props) => {
           alignItems: "center",
         }}
       >
-        <TouchableOpacity style={{ marginLeft: "5%" }} onPress={() => func()}>
-          <IonIcons name={"menu"} size={40} color={darkBlue} />
+        <TouchableOpacity style={{ marginLeft: "5%" }} onPress={() =>{setIsModalVisible(true); }}>
+          <SimpleIcons name={"logout"} size={40} color={darkBlue} />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => props.navigation.navigate("Notifications")}
@@ -101,12 +112,32 @@ const Home = (props) => {
             source={require("../assets/missing-kid.png")}
             style={styles.missing_kid}
           />
-          <Text style={styles.buttonText}>Lost Kids</Text>
+          <Text style={styles.buttonText}>Missing Kids</Text>
           <Text style={styles.buttonDesc3}>
             Go through the list of the lost kids.
           </Text>
         </TouchableOpacity>
       </View>
+      <Modal visible={isModalVisible} animationType="slide">
+        <View style={styles.modalContainer}>
+          <Text>Are you sure you want to logout?</Text>
+          <View style={styles.modalContent}>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => logout()}
+            >
+              <Text style={styles.modalButtonText}>Yes</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() =>  setIsModalVisible(false)}
+            >
+              <Text style={styles.modalButtonText}>No</Text>
+            </TouchableOpacity>
+            
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -156,6 +187,15 @@ const styles = StyleSheet.create({
     paddingTop: Dimensions.get("window").height / 40,
     paddingBottom: Dimensions.get("window").width / 40,
   },
+  logoutIcon: {
+    height: Dimensions.get("window").height / 20,
+    aspectRatio: 1.3,
+    resizeMode: "contain",
+
+    borderRadius: 100,
+    borderColor: darkBlue,
+    marginTop: Dimensions.get("window").height / 80,
+  },
   upload_photo_style: {
     height: Dimensions.get("window").height / 22,
     aspectRatio: 1,
@@ -176,6 +216,27 @@ const styles = StyleSheet.create({
     borderColor: darkBlue,
     marginTop: Dimensions.get("window").height / 40,
     marginBottom: Dimensions.get("window").height / 45,
+  },
+  modalContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+ 
+    bottom: windowHeight/50,
+    backgroundColor: "white",
+  },
+  modalContent: {
+    padding: 20,
+    borderRadius: 10,
+  },
+  modalButton: {
+    marginBottom: windowHeight/35,
+    padding: 10,
+    borderRadius: 5,
+  },
+  modalButtonText: {
+    fontSize: 16,
+    color: "black",
+    textAlign: "center",
   },
 });
 

@@ -36,7 +36,7 @@ const UserProfile = (props) => {
 
   const [contentHeight, setContentHeight] = useState(0);
   const [containerHeight, setContainerHeight] = useState(0);
-  
+
   const editProfilePhoto = () => {
     if (isEditIconVisible) {
       setIsModalVisible(true);
@@ -124,7 +124,6 @@ const UserProfile = (props) => {
       const errorData = await response.text();
       console.log("Failed to Update User:", errorData);
     }
-   
   };
   const handleContentSizeChange = (width, height) => {
     setContentHeight(height);
@@ -137,10 +136,10 @@ const UserProfile = (props) => {
   return (
     <View style={{ flex: 1 }}>
       <ScrollView
-       contentContainerStyle={{ flexGrow: 1 }}
-       onContentSizeChange={handleContentSizeChange}
-       scrollEnabled={contentHeight > containerHeight}
-       >
+        contentContainerStyle={{ flexGrow: 1 }}
+        onContentSizeChange={handleContentSizeChange}
+        scrollEnabled={contentHeight > containerHeight}
+      >
         <View
           onLayout={handleLayout}
           style={{
@@ -180,7 +179,15 @@ const UserProfile = (props) => {
           {/* NAME FIELD */}
           <View style={styles.row}>
             {isNameVisible && (
-              <Text style={styles.infoField}>
+              <Text
+                style={{
+                  flex:1,
+                  marginTop: Dimensions.get("window").height / 22,
+                  marginLeft: Dimensions.get("window").width / 6.7,
+                  fontSize: 15,
+                  color: darkBlue,
+                }}
+              >
                 Name: {"\t"} {"\t"} {user.name}{" "}
               </Text>
             )}
@@ -208,6 +215,8 @@ const UserProfile = (props) => {
               </TouchableOpacity>
             )}
           </View>
+
+          <View style={styles.line} />
 
           {/* DATE FIELD */}
           <View style={styles.row}>
@@ -241,10 +250,20 @@ const UserProfile = (props) => {
             )}
           </View>
 
+          <View style={styles.line} />
+
           {/* MOBILE FIELD */}
           <View style={styles.row}>
             {isMobileVisible && (
-              <Text style={styles.infoField}>
+              <Text
+                style={{
+                  flex:1,
+                  marginTop: Dimensions.get("window").height / 22,
+                  marginLeft: Dimensions.get("window").width / 6.8,
+                  fontSize: 15,
+                  color: darkBlue,
+                }}
+              >
                 Mobile No: {"\t"} {user.phonenumber}
               </Text>
             )}
@@ -273,10 +292,20 @@ const UserProfile = (props) => {
             )}
           </View>
 
+          <View style={styles.line} />
+
           {/* CITY FIELD */}
           <View style={styles.row}>
             {isCityVisible && (
-              <Text style={styles.infoField}>
+              <Text
+                style={{
+                  flex:1,
+                  marginTop: Dimensions.get("window").height / 22,
+                  marginLeft: Dimensions.get("window").width / 6.3,
+                  fontSize: 15,
+                  color: darkBlue,
+                }}
+              >
                 City: {"\t"} {"\t"} {user.city}
               </Text>
             )}
@@ -305,6 +334,7 @@ const UserProfile = (props) => {
             )}
           </View>
         </View>
+        <View style={styles.line} />
 
         <View>
           <TouchableOpacity
@@ -419,14 +449,16 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   infoField: {
+    flex:1,
     marginTop: Dimensions.get("window").height / 22,
+    marginLeft: Dimensions.get("window").width / 7,
     fontSize: 15,
     color: darkBlue,
   },
   nameInputField: {
     flexDirection: "row",
     marginTop: Dimensions.get("window").height / 22,
-    marginLeft: Dimensions.get("window").width / 10,
+    marginRight: Dimensions.get("window").width / 80,
   },
   inputField: {
     flexDirection: "row",
@@ -436,9 +468,17 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
   },
+  line: {
+    borderBottomColor: "black",
+    borderBottomWidth: 1,
+    alignSelf: "stretch",
+    marginTop: Dimensions.get("window").height / 40,
+    marginLeft: Dimensions.get("window").width / 7,
+    width: Dimensions.get("window").width / 1.4,
+  },
   editIcon: {
     marginTop: Dimensions.get("window").height / 22,
-    marginLeft: Dimensions.get("window").width / 20,
+    marginRight: Dimensions.get("window").width / 5,
   },
   modalContainer: {
     alignItems: "center",

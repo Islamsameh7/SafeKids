@@ -9,13 +9,16 @@ import {
   Dimensions,
   TextInput,
 } from "react-native";
-import { darkBlue, grey, lightGrey,lightGrey2 } from "../Constants";
+import CheckBox from "@react-native-community/checkbox";
+import { darkBlue, grey, lightGrey, lightGrey2 } from "../Constants";
 import Ionicons from "react-native-vector-icons/AntDesign";
 import { useRoute } from "@react-navigation/native";
 import { GlobalContext } from "../context/GlobalContext";
 import apiRoutes from "../apiRoutes";
 import DropdownComponent from "../DropdownComponent";
 import EntypoIcons from "react-native-vector-icons/Entypo";
+import { useNavigation } from "@react-navigation/native";
+
 var days = [];
 
 const months = [];
@@ -46,11 +49,21 @@ const KidProfile = (props) => {
   const [lastKnown, setLastKnown] = useState("");
 
   const { user, currentKidProfile } = useContext(GlobalContext);
-  
+  const [stillMissing, setIsStillMissing] = useState(
+    Boolean(currentKidProfile.kid.still_missing)
+  );
+
+  const handleStillMissing = () => {
+    const newStillMissing = !stillMissing;
+    setIsStillMissing(newStillMissing);
+    currentKidProfile.kid.still_missing = newStillMissing;
+    change_id_state(newStillMissing);
+  };
   const [day, setDay] = useState("");
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
 
+  const navigation = useNavigation();
   const setDays = () => {
     days = [];
     if (
@@ -76,15 +89,28 @@ const KidProfile = (props) => {
     }
   };
 
-
   const handleEditProfile = () => {
     setEditIconVisible(!isEditIconVisible);
     setIsEditProfileVisible(!isEditProfileVisible);
-   
+  };
+  const change_id_state = async (stillMissing) => {
+    const formData = new FormData();
+    formData.append("kid_id", currentKidProfile.kid.id);
+    formData.append("still_missing", stillMissing);
+
+    const response = await fetch(apiRoutes.changeKidState, {
+      method: "POST",
+      body: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    if (response.ok) {
+    } else {
+    }
   };
   useEffect(() => {
-    console.log(currentKidProfile.kid.user);
-    console.log(user.id);
     if (currentKidProfile.kid.user == user.id) {
       setIsParent(true);
     }
@@ -94,6 +120,10 @@ const KidProfile = (props) => {
       // Code to clean up any resources or subscriptions
     };
   }, []);
+
+  const goBack = () => {
+    navigation.goBack();
+  };
 
   const editKid = async () => {
     const formData = new FormData();
@@ -150,9 +180,7 @@ const KidProfile = (props) => {
   };
   return (
     <View>
-      <TouchableOpacity
-        onPress={() => props.navigation.navigate("UserProfile")}
-      >
+      <TouchableOpacity onPress={() => goBack()}>
         <Ionicons
           name={"left"}
           size={30}
@@ -224,7 +252,7 @@ const KidProfile = (props) => {
 
         <View style={styles.content}>
           <Text style={{ color: grey, fontSize: 15 }}>Birth date:</Text>
-         
+
           {isBirthDateVisible && (
             <Text
               style={{
@@ -239,19 +267,13 @@ const KidProfile = (props) => {
           {isEditIconVisible && (
             <TouchableOpacity
               onPress={() => setIsBirthDateVisible(!isBirthDateVisible)}
-            
             >
-              <Ionicons
-                name={"edit"}
-                size={25}
-                color={darkBlue}
-              
-              />
+              <Ionicons name={"edit"} size={25} color={darkBlue} />
             </TouchableOpacity>
           )}
         </View>
         {!isBirthDateVisible && (
-            <View style={styles.row}>
+          <View style={styles.row}>
             <DropdownComponent
               data={years}
               onChange={(item) => {
@@ -259,18 +281,18 @@ const KidProfile = (props) => {
               }}
               dropdownStyle={styles.dateDropdown}
               placeholder={"Y"}
-              placeholderStyle={{fontSize:15}}
+              placeholderStyle={{ fontSize: 15 }}
             ></DropdownComponent>
             <DropdownComponent
               data={months}
               onChange={(item) => {
                 setMonth(item.value);
                 setDays();
-                console.log("month is"+item.value);
+                console.log("month is" + item.value);
               }}
               dropdownStyle={styles.dateDropdown}
               placeholder={"M"}
-              placeholderStyle={{fontSize:15}}
+              placeholderStyle={{ fontSize: 15 }}
             ></DropdownComponent>
             <DropdownComponent
               data={days}
@@ -279,10 +301,10 @@ const KidProfile = (props) => {
               }}
               dropdownStyle={styles.dateDropdown}
               placeholder={"D"}
-              placeholderStyle={{fontSize:15}}
+              placeholderStyle={{ fontSize: 15 }}
             ></DropdownComponent>
           </View>
-          )}
+        )}
         <View style={styles.content}>
           <Text style={{ color: grey, fontSize: 15 }}>Gender:</Text>
 
@@ -400,30 +422,64 @@ const KidProfile = (props) => {
           </Text>
         </View>
       </View>
-      
 
-      {isParent && (
-        
+      {isParent && isEditProfileVisible && (
         <View>
-          
-        <TouchableOpacity
-          style={styles.addPhotoButton}
-          onPress={() => props.navigation.navigate("KidProfilePhotos")}
-        >
-          <EntypoIcons name={"plus"} size={30} color={darkBlue} />
-          <Text style={styles.addPhotoText}>ADD PHOTOS</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.EditButton}
-          onPress={() => handleEditProfile()}
-        >
-          <Text style={styles.EditText}>Edit Profile</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.addPhotoButton}
+            onPress={() => props.navigation.navigate("KidProfilePhotos")}
+          >
+            <EntypoIcons name={"plus"} size={30} color={darkBlue} />
+            <Text style={styles.addPhotoText}>ADD PHOTOS</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.EditButton}
+            onPress={() => handleEditProfile()}
+          >
+            <Text style={styles.EditText}>Edit Profile</Text>
+          </TouchableOpacity>
+          <View>
+            <View style={{ flexDirection: "row", bottom: 100, left: 41 }}>
+              <Text
+                style={{ fontSize: 15, fontWeight: "bold", color: darkBlue }}
+              >
+                {stillMissing ? "Found" : "Found"}
+              </Text>
+              <TouchableOpacity
+                onPress={handleStillMissing}
+                style={{
+                  width: 24,
+                  height: 24,
+                  borderRadius: 4,
+                  borderWidth: 2,
+                  borderColor: stillMissing ? "" : "",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  left: 10,
+                }}
+              >
+                {!stillMissing && (
+                  <View
+                    style={{
+                      width: 12,
+                      height: 12,
+                      borderRadius: 2,
+                      backgroundColor: darkBlue,
+                    }}
+                  />
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-        
       )}
       {!isEditProfileVisible && (
-        <TouchableOpacity style={styles.EditButton} onPress={() => {editKid()}}>
+        <TouchableOpacity
+          style={styles.EditButton}
+          onPress={() => {
+            editKid();
+          }}
+        >
           <Text style={styles.EditText}>Submit</Text>
         </TouchableOpacity>
       )}
@@ -481,9 +537,9 @@ const styles = StyleSheet.create({
   dateDropdown: {
     borderRadius: 100,
     paddingHorizontal: 6,
-    width: Dimensions.get("window").width /5.2,
+    width: Dimensions.get("window").width / 5.2,
     backgroundColor: "rgb(220, 220, 220)",
-    
+
     marginRight: Dimensions.get("window").width / 14,
   },
   row: {

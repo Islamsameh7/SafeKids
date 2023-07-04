@@ -21,12 +21,7 @@ const Matching = (props) => {
         source={require("../assets/matching.gif")}
         style={{ width: "100%", height: "100%" }}
       />
-      <TouchableOpacity
-        onPress={() => props.navigation.navigate("UploadPhoto")}
-        style={{ top: 70, left: 20, position: "absolute" }}
-      >
-        <Ionicons name={"left"} size={30} color={darkBlue} />
-      </TouchableOpacity>
+    
     </View>
   );
 };

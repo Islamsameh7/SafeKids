@@ -15,15 +15,14 @@ urlpatterns = [
     path('login/', login, name='login'),
     path('edit_user/', edit_user, name='edit_user'),
     path('edit_kid/', edit_kid, name='edit_kid'),
-    path('logout/', logout, name='logout'),
+    path('user_logout/', user_logout, name='user_logout'),
     path('get_my_kids/', get_my_kids, name='get_my_kids'),
     path('get_matching_profiles/', get_matching_profiles, name='get_matching_profiles'),
     path('send_notification/', send_notification, name='send_notification'),
     path('get_user_notifications/', get_user_notifications, name='get_user_notifications'),
     path('read_notification/', read_notification, name='read_notification'),
     path('forgot_password/', forgot_password, name='forgot_password'),
-    
-    path('get_csrf_token/', get_csrf_token, name='get_csrf_token'),
+    path('change_kid_state/', change_kid_state, name='change_kid_state'),
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

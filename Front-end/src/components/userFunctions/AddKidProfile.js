@@ -7,6 +7,7 @@ import {
   TextInput,
   ScrollView,
   Dimensions,
+  Alert,
 } from "react-native";
 import { darkBlue, grey, lightGrey, lightGrey2 } from "../Constants";
 import AntIcons from "react-native-vector-icons/AntDesign";
@@ -34,7 +35,7 @@ const AddKidProfile = (props) => {
   const [name, setName] = useState("");
   const [gender, setGender] = useState("");
   const [birthdate, setBirthdate] = useState("");
-
+  const [kidId, setKidId] = useState(null);
   const [lastKnownLocation, setLastKnownLocation] = useState("");
   const [lostDate, setLostDate] = useState("");
   const [notes, setNotes] = useState("");
@@ -145,8 +146,16 @@ const AddKidProfile = (props) => {
       size: 13,
     },
   ]);
-  const { user, kidImages, emptyImages } = useContext(GlobalContext);
-
+  const {
+    user,
+    kidImages,
+    emptyImages,
+    fetchMatchingProfiles,
+    matchingProfiles,
+  } = useContext(GlobalContext);
+  useEffect(() => {
+    emptyImages();
+  }, []);
   function onPressRadioButton(radioButtonsArray) {
     const selectedRadioButton = radioButtonsArray.find(
       (button) => button.selected === true
@@ -197,7 +206,6 @@ const AddKidProfile = (props) => {
     }
     try {
       if (kidImages.length > 0) {
-      
         const response = await fetch(apiRoutes.addMissingKid, {
           method: "POST",
           body: formData,
@@ -208,9 +216,22 @@ const AddKidProfile = (props) => {
         if (response.ok) {
           // Successful response
           emptyImages();
-          console.log(kidImages.length);
+          const kidId = await response.json();
+
+          fetchMatchingProfiles(kidImages, "addKid", kidId);
+          console.log("matching profile length is: "+matchingProfiles.length);
+          if (matchingProfiles.length > 0) {
+            props.navigation.navigate("Matching");
+          } else {
+            Alert.alert(
+              "",
+              "Profile Created Successfully and we will let you know when someone finds your kid. ",
+              [{ text: "OK" }],
+              { cancelable: true }
+            );
+            props.navigation.navigate("Home");
+          }
           console.log("Missing Kid added successfully");
-          props.navigation.navigate("Home");
         } else {
           // Error response
           const errorData = await response.text();
@@ -221,9 +242,7 @@ const AddKidProfile = (props) => {
       console.log("Error:", error.message);
     }
   };
-  const showme = () => {
-    console.log(lostDate);
-  };
+
 
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
@@ -261,7 +280,7 @@ const AddKidProfile = (props) => {
 
         <TouchableOpacity
           style={styles.addPhotoButton}
-          onPress={() => props.navigation.navigate("KidProfilePhotos")}
+          onPress={() => {props.navigation.navigate("KidProfilePhotos")}}
         >
           <EntypoIcons name={"plus"} size={30} color={darkBlue} />
           <Text style={styles.addPhotoText}>ADD PHOTOS</Text>
@@ -309,8 +328,6 @@ const AddKidProfile = (props) => {
           />
         </View>
 
-
-
         <View style={styles.lastKnownLocationField}>
           <Text style={styles.Text}>Last Known Location</Text>
           <TextInput
@@ -357,15 +374,18 @@ const AddKidProfile = (props) => {
             style={styles.notesField}
             onChangeText={(notes) => setNotes(notes)}
           ></TextInput>
-        </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
+           <TouchableOpacity
             style={styles.submitButton}
-            onPress={() => addMissingKid()}
+            onPress={() => {
+              addMissingKid();
+            }}
           >
             <Text style={styles.submitText}>Submit</Text>
           </TouchableOpacity>
         </View>
+     
+         
+    
       </View>
     </ScrollView>
   );
@@ -454,7 +474,7 @@ const styles = StyleSheet.create({
     width: "50%",
     paddingVertical: Dimensions.get("window").height / 60,
     marginLeft: Dimensions.get("window").width / 4,
-    marginBottom: Dimensions.get("window").height / 100,
+    marginTop: Dimensions.get("window").height / 10,
   },
   dateDropdown: {
     borderRadius: 100,
@@ -481,7 +501,7 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     flexGrow: 1,
-    paddingBottom: Dimensions.get("window").height / 2,
+    paddingBottom: Dimensions.get("window").height / 8,
   },
   container: {
     flex: 1,

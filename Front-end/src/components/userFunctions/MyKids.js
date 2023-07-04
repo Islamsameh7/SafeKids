@@ -58,7 +58,7 @@ const MyKids = (props) => {
       const lostDate = profile.kid.lost_date;
       const lastLocation = profile.kid.last_known_location;
       const image = profile.photo;
-
+      
       return (
         <View style={styles.card} key={index}>
           <TouchableOpacity

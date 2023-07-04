@@ -32,6 +32,8 @@ from django.utils import timezone
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.core import serializers
+from django.contrib.auth import logout
+
 # Create your views here.
 
 
@@ -179,18 +181,34 @@ def edit_kid(request):
         kid.lost_date = request.POST.get('lostDate')
     if request.POST.get('lastKnownLocation'):
         kid.last_known_location = request.POST.get('lastKnownLocation')
+    if request.POST.get('still_missing'):
+        kid.still_missing = request.POST.get('still_missing')    
 
     kid.save()
 
     return Response(status=200)
 
-
 @api_view(['POST'])
-def logout(request):
-    if request.user.is_authenticated:
+def change_kid_state(request):
+    kid = MissingKid.objects.get(id=request.POST.get('kid_id'))
+
+    still_missing = request.POST.get('still_missing')
+    if still_missing is not None:
+        kid.still_missing = still_missing.lower() == 'true'
+    
+    kid.save()
+
+    return Response(status=200)
+
+    
+@api_view(['POST'])
+def user_logout(request):
+     user = CustomUser.objects.get(id=request.POST.get('id'))
+     print(user.id)
+     if user:
         logout(request)
         return Response({"detail": "Logged out successfully."}, status=200)
-    return Response({"detail": "User is not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
+     return Response({"detail": "User is not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 @api_view(['POST'])
@@ -246,6 +264,8 @@ def add_missing_kid(request):
     else:
         print(form.errors)
         return Response(form.errors, status=400)
+    
+    
 
 
 @api_view(['POST'])
@@ -276,9 +296,10 @@ def get_my_kids(request):
             'last_known_location': kid.last_known_location,
             'still_missing': kid.still_missing,
             'notes': kid.notes,
-            'parentPhone': user.phoneNumber,
-            'parentEmail': user.email,
+            'contact_phone': user.phoneNumber,
+            'contact_email': user.email,
             'user': user.id,
+           
         }
         profile = {
             'kid': kid_data,
@@ -357,10 +378,11 @@ def set_match_kid_profile(photo, similarity):
             'contact_email': photo.missing_kid.user.email,
         }
     else:
+        age = 2023 - photo.found_kid.birthdate.year
         kid = {
             'id': photo.found_kid.id,
             'name': photo.found_kid.name,
-            'age': photo.found_kid.age,
+            'age': age ,
             'gender': photo.found_kid.gender,
             'location': photo.found_kid.location,
             'similarity': similarity,
@@ -378,7 +400,7 @@ def get_matching_profiles(request):
 
     print('request type is' + request.POST.get('type'))
 
-    with open('D:\FCAI fourth year (final year)\SafeKids\SafeKids\FaceNet.pkl', 'rb') as f:
+    with open('D:\FCAI fourth year (final year)\SafeKids\SafeKids\Face Recognition Model\FaceNet.pkl', 'rb') as f:
         model_data = pickle.load(f)
 
     mtcnn = model_data['mtcnn']
@@ -388,7 +410,7 @@ def get_matching_profiles(request):
         Photos = Photo.objects.filter(missing_kid__isnull=False)
         Photos = Photos.order_by('missing_kid_id')
         kid_type = 'found'
-        print('ordered database photos is: ' + str(Photos))
+    
     else:
         Photos = Photo.objects.filter(found_kid__isnull=False)
         Photos = Photos.order_by('found_kid_id')
@@ -397,7 +419,7 @@ def get_matching_profiles(request):
     bestSimilarity = 0
 
     photos_list = request.FILES.getlist('photos')
-    print('incoming photos is: ' + str(photos_list))
+
     profiles = []
     kid = {}
     profile = {}
@@ -424,9 +446,9 @@ def get_matching_profiles(request):
 
             similarity = 1 - \
                 spatial.distance.cosine(image_embedding, db_image_embedding)
-            print('similarity is: ' + str(similarity))
+      
             if similarity > 0.5:
-                print('im in similarity if')
+              
                 if current_kid_id == previous_kid_id:
                     if i == 0 and request.POST.get('type') != 'upload':
 
@@ -440,13 +462,13 @@ def get_matching_profiles(request):
                             profile['kid']['id'] == kid_id for profile in profiles)
 
                         if not is_exist:
-                            print('im in first append')
+                        
                             profiles.append(profile)
 
                     if similarity > bestSimilarity:
                         bestSimilarity = similarity
                 else:
-                    print('im in else')
+              
                     if bestSimilarity == 0 or request.POST.get('type') != 'upload':
                         bestSimilarity = similarity
 
@@ -463,7 +485,7 @@ def get_matching_profiles(request):
                                    == kid_id for profile in profiles)
 
                     if not is_exist:
-                        print('im in second append')
+                   
                         profiles.append(profile)
 
         kid = set_match_kid_profile(db_photo, bestSimilarity)
@@ -475,9 +497,9 @@ def get_matching_profiles(request):
         is_exist = any(profile['kid']['id'] == kid_id for profile in profiles)
 
         if not is_exist:
-            print('im in second append')
+    
             profiles.append(profile)
-    print('profiles is'+str(profiles))
+
     new_kid_id = request.POST.get('kid_id')
     for i in profiles:
         kid = i['kid']

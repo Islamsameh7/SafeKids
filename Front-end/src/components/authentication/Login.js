@@ -58,7 +58,7 @@ const Login = (props) => {
     } else {
       // Error response
       const errorData = await response.text();
-      showAlert("Wrong Credintials! Try again.");
+      showAlert("Wrong Credentials! Try again.");
       console.log('Failed to Login:', errorData);
     }
   }
