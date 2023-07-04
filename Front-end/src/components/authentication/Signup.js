@@ -224,8 +224,8 @@ const Signup = (props) => {
           </Text>
           <TextInput
             style={styles.field}
-            placeholderTextColor={grey}
-            placeholder="John Doe"
+            placeholderTextColor="rgba(128, 128, 128, 1)"
+            placeholder="eg.. Ahmed Khaled"
             onChangeText={(text) => setName(text)}
           ></TextInput>
           <View style={styles.row}>
@@ -256,7 +256,7 @@ const Signup = (props) => {
 
           <TextInput
             style={styles.field}
-            placeholderTextColor={grey}
+            placeholderTextColor="rgba(128, 128, 128, 1)"
             placeholder="example@website.com"
             onChangeText={(text) => setEmail(text)}
             keyboardType={"email-address"}
@@ -290,7 +290,7 @@ const Signup = (props) => {
           </View>
           <TextInput
             style={styles.field}
-            placeholderTextColor={grey}
+            placeholderTextColor="rgba(128, 128, 128, 1)"
             placeholder="********"
             onChangeText={(text) => setPassword(text)}
             secureTextEntry={true}
@@ -372,7 +372,7 @@ const Signup = (props) => {
           </View>
           <TextInput
             style={styles.field}
-            placeholderTextColor={grey}
+            placeholderTextColor="rgba(128, 128, 128, 1)"
             placeholder="Contact Number"
             onChangeText={(text) => setMobileNumber(text)}
             keyboardType={"numeric"}

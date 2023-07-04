@@ -127,7 +127,7 @@ const Login = (props) => {
           <TextInput
             value={email}
             style={styles.field}
-            placeholderTextColor={grey}
+            placeholderTextColor="rgba(128, 128, 128, 1)"
             placeholder="example@website.com"
             onChangeText={(text) => setEmail(text)}
             keyboardType={"email-address"}
@@ -148,7 +148,7 @@ const Login = (props) => {
           <TextInput
             value={password}
             style={styles.field}
-            placeholderTextColor={grey}
+            placeholderTextColor="rgba(128, 128, 128, 1)"
             placeholder="******"
             onChangeText={(text) => setPassword(text)}
             secureTextEntry={true}

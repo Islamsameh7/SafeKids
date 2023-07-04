@@ -12,11 +12,13 @@ import { GlobalContext } from "../context/GlobalContext";
 import Ionicons from "react-native-vector-icons/AntDesign";
 import { darkBlue, lightBlue } from "../Constants";
 import apiRoutes from "../apiRoutes";
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const MyKids = (props) => {
-  const { user, setCurrentKidProfile,setKidImages } = useContext(GlobalContext);
+  const { user, setCurrentKidProfile,setKidImages, stillMissing } = useContext(GlobalContext);
 
   const [mykids, setMyKids] = useState([]);
 
@@ -58,53 +60,57 @@ const MyKids = (props) => {
       const lostDate = profile.kid.lost_date;
       const lastLocation = profile.kid.last_known_location;
       const image = profile.photo;
+      const stillMissing = profile.kid.still_missing
       
       return (
         <View style={styles.card} key={index}>
-          <TouchableOpacity
-            onPress={() => {
-              setCurrentKidProfile(profile);
-              setKidPhotos(profile);
-              props.navigation.navigate("KidProfile");
-            }}
-            style={{ flexDirection: "row" }}
-          >
-            <Image
-              source={{ uri: apiRoutes.mainUrl + image }}
-              style={{
-                width: windowWidth / 3,
-                height: windowHeight / 7,
-                borderRadius: 30,
-                justifyContent: "center",
-                marginRight: windowWidth / 100,
-              }}
-            />
-            <View>
-              <Text style={styles.dataText}>Name: {name}</Text>
-              <Text style={styles.dataText}>Age: {age}</Text>
-              <Text style={styles.dataText}>Gender: {gender}</Text>
-              <Text style={styles.dataText}>LostDate: {lostDate}</Text>
-              <Text style={styles.dataText}>
-                LastKnownLocation: {lastLocation}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+  <TouchableOpacity
+    onPress={() => {
+      setCurrentKidProfile(profile);
+      setKidPhotos(profile);
+      props.navigation.navigate("KidProfile");
+    }}
+    style={{ flexDirection: "row" }}
+  >
+    <Image
+      source={{ uri: apiRoutes.mainUrl + image }}
+      style={{
+        width: windowWidth / 3,
+        height: windowHeight / 7,
+        borderRadius: 30,
+        justifyContent: "center",
+        marginRight: windowWidth / 100,
+      }}
+    />
+    <View>
+      <Text style={styles.dataText}>Name: {name}</Text>
+      <Text style={styles.dataText}>Age: {age}</Text>
+      <Text style={styles.dataText}>Gender: {gender}</Text>
+      <Text style={styles.dataText}>LostDate: {lostDate}</Text>
+      <Text style={styles.dataText}>
+        LastKnownLocation: {lastLocation}
+      </Text>
+      {stillMissing === true && (
+        <Icon name="check-circle" size={24} color="green" />
+      )}
+    </View>
+  </TouchableOpacity>
+</View>
+
       );
     });
   };
  
   return (
     <View>
-     
       <Text style={styles.headText}>My Kids</Text>
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
-         <TouchableOpacity
+      <TouchableOpacity
         onPress={() => props.navigation.navigate("Home")}
         style={{ top: windowHeight / 14, left: windowWidth / 14, position: "absolute" }}
       >
         <Ionicons name={"left"} size={30} color={darkBlue} />
       </TouchableOpacity>
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.container}>{renderData()}</View>
       </ScrollView>
     </View>

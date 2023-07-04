@@ -12,6 +12,9 @@ export const GlobalProvider = ({ children }) => {
     kid: {},
     photo: '',
   });
+  const [stillMissing, setIsStillMissing] = useState(
+    Boolean(currentKidProfile.kid.still_missing)
+  );
 
   const loginContext = (userData) => {
     setUser(userData);

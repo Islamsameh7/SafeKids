@@ -196,7 +196,7 @@ const UserProfile = (props) => {
                 <Text style={styles.Text}>Name:</Text>
                 <TextInput
                   style={styles.field}
-                  placeholderTextColor={grey}
+                  placeholderTextColor="rgba(128, 128, 128, 1)"
                   // placeholder="Jiara Martins"
                   onChangeText={(name) => setName(name)}
                 ></TextInput>
@@ -230,7 +230,7 @@ const UserProfile = (props) => {
                 <Text style={styles.Text}>BirthDate:</Text>
                 <TextInput
                   style={styles.field}
-                  placeholderTextColor={grey}
+                  placeholderTextColor="rgba(128, 128, 128, 1)"
                   // placeholder="Jiara Martins"
                   onChangeText={(date) => setBirthDate(date)}
                 ></TextInput>
@@ -272,7 +272,7 @@ const UserProfile = (props) => {
                 <Text style={styles.Text}>Mobile No:</Text>
                 <TextInput
                   style={styles.field}
-                  placeholderTextColor={grey}
+                  placeholderTextColor="rgba(128, 128, 128, 1)"
                   // placeholder="Jiara Martins"
                   onChangeText={(mobile) => setPhoneNumber(mobile)}
                 ></TextInput>
@@ -314,7 +314,7 @@ const UserProfile = (props) => {
                 <Text style={styles.Text}>City:</Text>
                 <TextInput
                   style={styles.field}
-                  placeholderTextColor={grey}
+                  placeholderTextColor="rgba(128, 128, 128, 1)"
                   // placeholder="Jiara Martins"
                   onChangeText={(city) => setCity(city)}
                 ></TextInput>
