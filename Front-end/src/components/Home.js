@@ -75,7 +75,7 @@ const Home = (props) => {
         </TouchableOpacity>
       </View>
       <Text style={styles.helloText}>Hello,</Text>
-      <Text style={styles.userText}>{user.name}</Text>
+      <Text style={styles.userText}>{user.name.toUpperCase()}</Text>
       <View style={{ alignItems: "center", marginTop: "5%" }}>
         <TouchableOpacity
           onPress={() => props.navigation.navigate("AddKidProfile")}
