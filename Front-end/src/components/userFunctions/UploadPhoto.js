@@ -7,6 +7,9 @@ import {
   TouchableOpacity,
   Dimensions,
   Image,
+  Keyboard,
+  TouchableWithoutFeedback,
+  ScrollView
 } from "react-native";
 import Ionicons from "react-native-vector-icons/AntDesign";
 import EntypoIcons from "react-native-vector-icons/Entypo";
@@ -14,16 +17,21 @@ import { lightBlue, navyblue, lightGrey, darkBlue, grey } from "../Constants";
 import * as ImagePicker from "expo-image-picker";
 import apiRoutes from "../apiRoutes";
 import { GlobalContext } from "../context/GlobalContext";
-
+import DropdownComponent from "../DropdownComponent";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-
+const genderChoice = [
+  { label: "Female", value: "female" },
+  { label: "Male", value: "male" },
+];
 const UploadPhoto = (props) => {
   var kidID = null;
   const [image, setImage] = useState(null);
   //const [kidId, setKidId] = useState(null);
   const [name, setName] = useState("");
+  const [gender, setGender] = useState("");
+  const [age, setAge] = useState("");
   const [location, setLocation] = useState("");
   const { user,fetchMatchingProfiles } = useContext(GlobalContext);
 
@@ -56,8 +64,8 @@ const UploadPhoto = (props) => {
     const formData = new FormData();
     formData.append('user', user.id); // ID of the user for the found kid
     formData.append('name', name);
-    formData.append('gender', '');
-    formData.append('birthdate', '');
+    formData.append('gender', gender);
+    formData.append('age', age);
     formData.append('location', location);
   
     if (image) {
@@ -100,7 +108,9 @@ const UploadPhoto = (props) => {
   };
   
   return (
-    <View>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+       <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <View>
       <TouchableOpacity onPress={() => props.navigation.navigate("Home")}>
         <Ionicons
           name={"left"}
@@ -114,6 +124,34 @@ const UploadPhoto = (props) => {
       <View style={styles.container}>
         <Text style={styles.nameText}>Name (Optional)</Text>
         <TextInput style={styles.field} onChangeText={(name) => setName(name)}></TextInput>
+      </View>
+      <View style={styles.container}>
+       
+        <Text
+                style={{
+                  color: darkBlue,
+                  marginRight: Dimensions.get("window").width / 2.1,
+                  fontSize: 17,
+                  fontWeight: "bold",
+                  
+                  marginTop: Dimensions.get("window").height / 200,
+                }}
+              >
+                Gender (Optional)
+              </Text>
+
+              <DropdownComponent
+                data={genderChoice}
+                onChange={(item) => {
+                  setGender(item.value);
+                }}
+                dropdownStyle={styles.dropdown}
+                placeholder={"select one..."}
+              ></DropdownComponent>
+      </View>
+      <View style={styles.container}>
+        <Text style={styles.nameText}>Age (Optional)</Text>
+        <TextInput style={styles.field} keyboardType={"numeric"} onChangeText={(age) => setAge(age)}></TextInput>
       </View>
 
       <View style={styles.container}>
@@ -177,6 +215,9 @@ const UploadPhoto = (props) => {
         </TouchableOpacity>
       </View>
     </View>
+    </ScrollView>
+    </TouchableWithoutFeedback>
+    
   );
 };
 
@@ -260,6 +301,17 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderColor: "white",
   },
+  dropdown: {
+    borderRadius: 100,
+   
+    backgroundColor: "rgb(220, 220, 220)",
+   
+    marginRight: Dimensions.get("window").width / 85,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    width: windowWidth/1.24,
+    fontSize: 17,
+  },
   FillText: {
     fontSize: 25,
     color: darkBlue,
@@ -296,6 +348,11 @@ const styles = StyleSheet.create({
   submitContainer: {
     alignItems: "center",
     marginTop: windowHeight/25,
+  },
+  scrollViewContent: {
+    alignItems: "center",
+    paddingTop: Dimensions.get("window").height / 30,
+    paddingBottom: Dimensions.get("window").height / 10,
   },
 });
 

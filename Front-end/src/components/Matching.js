@@ -10,7 +10,7 @@ const Matching = (props) => {
   const navigation = useNavigation();
   useEffect(() => {
     const navigateToNextScreen = setTimeout(() => {
-      navigation.navigate("MatchingProfiles"); // Replace 'NextScreen' with the name of the screen you want to navigate to
+      props.navigation.navigate("MatchingProfiles") // Replace 'NextScreen' with the name of the screen you want to navigate to
     }, 10000); // Replace 3000 with the desired delay in milliseconds
 
     return () => clearTimeout(navigateToNextScreen);

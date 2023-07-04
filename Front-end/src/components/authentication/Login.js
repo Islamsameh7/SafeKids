@@ -9,12 +9,14 @@ import {
   ImageBackground,
   Dimensions,
   Alert,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import Background from "../Background";
 import apiRoutes from "../apiRoutes";
 import { post } from "../apiCalls";
 import Btn from "../Btn";
-import { darkBlue, navyblue,grey } from "../Constants";
+import { darkBlue, navyblue, grey } from "../Constants";
 import { GlobalContext } from "../context/GlobalContext";
 
 const Login = (props) => {
@@ -23,65 +25,52 @@ const Login = (props) => {
   const { loginContext } = useContext(GlobalContext);
 
   const showAlert = (message) => {
-    Alert.alert(
-      '',
-       message,
-      [
-        { text: 'OK' }
-      ],
-      { cancelable: true }
-    );
+    Alert.alert("", message, [{ text: "OK" }], { cancelable: true });
   };
 
   const login = async () => {
     const formData = new FormData();
 
-
-    formData.append('email', email);
-    formData.append('password', password);
-   
+    formData.append("email", email);
+    formData.append("password", password);
 
     const response = await fetch(apiRoutes.login, {
-      method: 'POST',
+      method: "POST",
       body: formData,
       headers: {
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
     });
-  
+
     if (response.ok) {
       const userData = await response.json();
-    
-      loginContext(userData)
+
+      loginContext(userData);
       props.navigation.navigate("Home");
-      
     } else {
       // Error response
       const errorData = await response.text();
       showAlert("Wrong Credentials! Try again.");
-      console.log('Failed to Login:', errorData);
+      console.log("Failed to Login:", errorData);
     }
-  }
-  
-  
+  };
 
   return (
- 
-      
-      
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={{ alignItems: "center", width: 460 }}>
-        <View><ImageBackground
-        source={require("../../assets/loginImage.jpg")}
-        style={{
-          width: 420,
-          height: 450,
-          
-          marginRight:40,
-        }}
-        blurRadius={5}
-      />
-      </View>
-      
+        <View>
+          <ImageBackground
+            source={require("../../assets/loginImage.jpg")}
+            style={{
+              width: 420,
+              height: 450,
+
+              marginRight: 40,
+            }}
+            blurRadius={5}
+          />
+        </View>
+
         <View
           style={{
             backgroundColor: "white",
@@ -90,7 +79,7 @@ const Login = (props) => {
             borderTopRightRadius: 140,
             paddingTop: 50,
             alignItems: "center",
-            bottom:125,
+            bottom: 125,
           }}
         >
           <Text
@@ -154,35 +143,42 @@ const Login = (props) => {
             secureTextEntry={true}
           ></TextInput>
 
-          <TouchableOpacity style={styles.loginButton} onPress={login}> 
+          <TouchableOpacity style={styles.loginButton} onPress={login}>
             <Text style={styles.loginText}>Log in</Text>
           </TouchableOpacity>
 
-          
-
-         
-            
-            <TouchableOpacity
-              onPress={() => props.navigation.navigate("ForgotPassword")}
+          <TouchableOpacity
+            onPress={() => props.navigation.navigate("ForgotPassword")}
+          >
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "bold",
+                marginTop: 25,
+                marginRight: 50,
+                color: darkBlue,
+              }}
             >
-              <Text style={{ fontSize: 16, fontWeight: "bold",marginTop:25,marginRight:50,color:darkBlue }}>
               Forgot Password?
             </Text>
-            </TouchableOpacity>
+          </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => props.navigation.navigate("Signup")}
+          <TouchableOpacity onPress={() => props.navigation.navigate("Signup")}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "bold",
+                marginTop: 5,
+                marginRight: 50,
+                color: darkBlue,
+              }}
             >
-              <Text
-                style={{ fontSize: 16, fontWeight: "bold",marginTop:5,marginRight:50,color:darkBlue }}
-              >
-                Signup
-              </Text>
-            </TouchableOpacity>
-        
+              Signup
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
-
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -204,7 +200,7 @@ const styles = StyleSheet.create({
     width: 260,
     paddingVertical: 11,
     marginTop: 25,
-    marginRight:60,
+    marginRight: 60,
   },
   loginText: {
     color: "#FFFFFF",

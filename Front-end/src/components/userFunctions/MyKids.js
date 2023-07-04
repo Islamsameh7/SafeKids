@@ -18,34 +18,12 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const MyKids = (props) => {
-  const { user, setCurrentKidProfile,setKidImages, stillMissing } = useContext(GlobalContext);
+  const { user, setCurrentKidProfile,setKidImages, stillMissing,mykids,getMyKids } = useContext(GlobalContext);
 
-  const [mykids, setMyKids] = useState([]);
+
 
   useEffect(() => {
-    const getMyKids = async () => {
-      const formData = new FormData();
-
-      formData.append("user_id", user.id);
-
-      const response = await fetch(apiRoutes.getMyKids, {
-        method: "POST",
-        body: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      if (response.ok) {
-        const kidData = await response.json();
-        setMyKids(kidData);
-      } else {
-        // Error response
-        const errorData = await response.text();
-       
-        console.log("Failed to get data:", errorData);
-      }
-    };
+   
     getMyKids();
   }, []);
   const setKidPhotos = (profile) =>{
@@ -91,7 +69,7 @@ const MyKids = (props) => {
         LastKnownLocation: {lastLocation}
       </Text>
       <Text style={styles.dataText}></Text>
-      {stillMissing === true && (
+      {!stillMissing === true && (
         <><Text style={styles.dataText2}><Icon name="check-circle" size={22} color="green" /> Found</Text></>
       )}
     </View>
@@ -105,13 +83,14 @@ const MyKids = (props) => {
   return (
     <View>
      
+    
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <TouchableOpacity
         onPress={() => props.navigation.navigate("Home")}
-        style={{ top: 70, left: 20, position: "absolute" }}
+        style={{ top: windowHeight / 9, left: windowWidth / 14, position: "absolute" }}
       >
         <Ionicons name={"left"} size={30} color={darkBlue} />
       </TouchableOpacity>
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <Text style={styles.headText}>My Kids</Text>
         <View style={styles.container}>{renderData()}</View>
       </ScrollView>
@@ -157,8 +136,8 @@ const styles = StyleSheet.create({
 
   scrollViewContent: {
     alignItems: "center",
-    paddingTop: Dimensions.get("window").height / 14,
-    paddingBottom: Dimensions.get("window").height / 3,
+  
+    paddingBottom: Dimensions.get("window").height / 5,
   },
 });
 

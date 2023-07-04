@@ -8,6 +8,9 @@ import {
   TouchableOpacity,
   Dimensions,
   Alert,
+  ScrollView,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/AntDesign";
 import { navyblue, darkBlue, grey } from "../Constants";
@@ -48,6 +51,7 @@ const showAlert = (message) => {
 const Signup = (props) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [nationalID, setNationalID] = useState("");
   const [password, setPassword] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
@@ -58,6 +62,7 @@ const Signup = (props) => {
   const [year, setYear] = useState("");
 
   const [isEmailValid, setEmailValid] = useState(true);
+  const [isNationalIDValid, setIsNationalIDValid] = useState(true);
   const [isPasswordValid, setPasswordValid] = useState(true);
   const [isPhoneValid, setPhoneValid] = useState(true);
   const [isBirthDateValid, setBirthDateValid] = useState(true);
@@ -90,7 +95,6 @@ const Signup = (props) => {
   const checkBirthDate = () => {
     if (day != "" && month != "" && year != "") {
       setBirthDateValid(true);
-  
     } else {
       setBirthDateValid(false);
     }
@@ -100,7 +104,7 @@ const Signup = (props) => {
     const formData = new FormData();
     checkBirthDate();
     formData.append("name", name);
-
+    formData.append("national_id", nationalID);
     formData.append("email", email);
     formData.append("password", password);
     formData.append("birthdate", year + "-" + month + "-" + day);
@@ -112,9 +116,14 @@ const Signup = (props) => {
     validateEmail();
     validateMobile();
     validatePassword();
-   
-
-    if (isEmailValid && isPasswordValid && isPhoneValid && isBirthDateValid) {
+    validateNationalID();
+    if (
+      isEmailValid &&
+      isPasswordValid &&
+      isPhoneValid &&
+      isBirthDateValid &&
+      isNationalIDValid
+    ) {
       console.log(formData);
       const response = await fetch(apiRoutes.register, {
         method: "POST",
@@ -146,6 +155,15 @@ const Signup = (props) => {
       setEmailValid(true);
     }
   };
+  const validateNationalID = () => {
+    const nationalIDRegex =
+      /^(2|3)([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])(01|02|03|04|11|12|13|14|15|16|17|18|19|21|22|23|24|25|26|27|28|29|31|32|33|34|35|88)([13579]{4}|[02468]{4})([1-9])$/;
+    if (nationalID === "" || !nationalIDRegex.test(nationalID)) {
+      setIsNationalIDValid(false);
+    } else {
+      setIsNationalIDValid(true);
+    }
+  };
 
   const validatePassword = () => {
     if (password === "" || password.length < 8) {
@@ -164,275 +182,321 @@ const Signup = (props) => {
     }
   };
   return (
-    <View style={{ backgroundColor: darkBlue }}>
-      <TouchableOpacity onPress={() => props.navigation.navigate("GetStarted")}>
-        <Ionicons
-          name={"left"}
-          size={30}
-          color={"white"}
-          style={{
-            marginTop: Dimensions.get("window").height / 20,
-            left: Dimensions.get("window").width / 20,
-          }}
-        />
-      </TouchableOpacity>
-      <View
-        style={{
-          alignItems: "center",
-          width: Dimensions.get("window").width / 0.9,
-        }}
-      >
-        <View style={styles.pageLayout}>
-          <Text style={styles.createAccText}>Create new {"\n"} Account</Text>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <View style={{ backgroundColor: darkBlue }}>
+        <TouchableOpacity
+          onPress={() => props.navigation.navigate("GetStarted")}
+        >
+          <Ionicons
+            name={"left"}
+            size={30}
+            color={"white"}
+            style={{
+              marginTop: Dimensions.get("window").height / 20,
+              left: Dimensions.get("window").width / 20,
+            }}
+          />
+        </TouchableOpacity>
+      
           <View
             style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
+              alignItems: "center",
+              width: Dimensions.get("window").width / 0.9,
             }}
           >
-            <Text style={{ fontSize: 16, color: darkBlue }}>
-              Already Registered?{" "}
-            </Text>
-            <TouchableOpacity
-              onPress={() => props.navigation.navigate("Login")}
-            >
+            <View style={styles.pageLayout}>
+              <Text style={styles.createAccText}>
+                Create new {"\n"} Account
+              </Text>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                }}
+              >
+                <Text style={{ fontSize: 16, color: darkBlue }}>
+                  Already Registered?{" "}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => props.navigation.navigate("Login")}
+                >
+                  <Text
+                    style={{
+                      color: darkBlue,
+                      fontWeight: "bold",
+                      fontSize: 16,
+                      textDecorationLine: "underline",
+                    }}
+                  >
+                    Login
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
               <Text
                 style={{
                   color: darkBlue,
+                  marginRight: Dimensions.get("window").width / 1.22,
+                  fontSize: 15,
                   fontWeight: "bold",
-                  fontSize: 16,
-                  textDecorationLine: "underline",
+                  letterSpacing: 2,
+                  marginTop: Dimensions.get("window").height / 40,
                 }}
               >
-                Login
+                NAME
               </Text>
-            </TouchableOpacity>
-          </View>
+              <TextInput
+                style={styles.field}
+                placeholderTextColor="rgba(128, 128, 128, 1)"
+                placeholder="eg.. Ahmed Khaled"
+                onChangeText={(text) => setName(text)}
+              ></TextInput>
+              <View style={styles.row}>
+                <Text
+                  style={{
+                    color: darkBlue,
+                    flex: 1,
+                    alignItems: "flex-start",
+                    left: Dimensions.get("window").width / 9.6,
+                    fontSize: 15,
+                    fontWeight: "bold",
+                    letterSpacing: 2,
+                  }}
+                >
+                  EMAIL
+                </Text>
+                {!isEmailValid && (
+                  <Text
+                    style={{
+                      marginRight: Dimensions.get("window").width / 4.2,
+                      color: "red",
+                    }}
+                  >
+                    *Please enter a valid email address*
+                  </Text>
+                )}
+              </View>
 
-          <Text
-            style={{
-              color: darkBlue,
-              marginRight: Dimensions.get("window").width / 1.22,
-              fontSize: 15,
-              fontWeight: "bold",
-              letterSpacing: 2,
-              marginTop: Dimensions.get("window").height / 40,
-            }}
-          >
-            NAME
-          </Text>
-          <TextInput
-            style={styles.field}
-            placeholderTextColor="rgba(128, 128, 128, 1)"
-            placeholder="eg.. Ahmed Khaled"
-            onChangeText={(text) => setName(text)}
-          ></TextInput>
-          <View style={styles.row}>
-            <Text
-              style={{
-                color: darkBlue,
-                flex: 1,
-                alignItems: "flex-start",
-                left: Dimensions.get("window").width / 9.6,
-                fontSize: 15,
-                fontWeight: "bold",
-                letterSpacing: 2,
-              }}
-            >
-              EMAIL
-            </Text>
-            {!isEmailValid && (
+              <TextInput
+                style={styles.field}
+                placeholderTextColor="rgba(128, 128, 128, 1)"
+                placeholder="example@website.com"
+                onChangeText={(text) => setEmail(text)}
+                keyboardType={"email-address"}
+              ></TextInput>
+
+              <View style={styles.row}>
+                <Text
+                  style={{
+                    color: darkBlue,
+                    flex: 1,
+                    alignItems: "flex-start",
+                    left: Dimensions.get("window").width / 9.6,
+                    fontSize: 15,
+                    fontWeight: "bold",
+                    letterSpacing: 2,
+                  }}
+                >
+                  NATIONAL ID
+                </Text>
+                {!isNationalIDValid && (
+                  <Text
+                    style={{
+                      marginRight: Dimensions.get("window").width / 4.2,
+                      color: "red",
+                    }}
+                  >
+                    *Please enter a valid National ID*
+                  </Text>
+                )}
+              </View>
+
+              <TextInput
+                style={styles.field}
+                placeholderTextColor="rgba(128, 128, 128, 1)"
+                placeholder="Type Your National Id (14 numbers)"
+                onChangeText={(text) => setNationalID(text)}
+                keyboardType={"numeric"}
+              ></TextInput>
+
+              <View style={styles.row}>
+                <Text
+                  style={{
+                    color: darkBlue,
+                    flex: 1,
+                    alignItems: "flex-start",
+                    left: Dimensions.get("window").width / 9.6,
+                    fontSize: 15,
+                    fontWeight: "bold",
+                    letterSpacing: 2,
+                    marginTop: Dimensions.get("window").height / 200,
+                  }}
+                >
+                  PASSWORD
+                </Text>
+                {!isPasswordValid && (
+                  <Text
+                    style={{
+                      marginRight: Dimensions.get("window").width / 6.4,
+                      color: "red",
+                    }}
+                  >
+                    *Password Must be at least 8 characters*
+                  </Text>
+                )}
+              </View>
+              <TextInput
+                style={styles.field}
+                placeholderTextColor="rgba(128, 128, 128, 1)"
+                placeholder="********"
+                onChangeText={(text) => setPassword(text)}
+                secureTextEntry={true}
+              ></TextInput>
               <Text
                 style={{
-                  marginRight: Dimensions.get("window").width / 4.2,
-                  color: "red",
+                  color: darkBlue,
+                  marginRight: Dimensions.get("window").width / 1.5,
+                  fontSize: 15,
+                  fontWeight: "bold",
+                  letterSpacing: 2,
+                  marginTop: Dimensions.get("window").height / 200,
                 }}
               >
-                *Please enter a valid email address*
+                BIRTH DATE
               </Text>
-            )}
-          </View>
+              {!isBirthDateValid && (
+                <Text
+                  style={{
+                    marginRight: Dimensions.get("window").width / 6.4,
+                    color: "red",
+                  }}
+                >
+                  *Birtdate not valid*
+                </Text>
+              )}
+              <View style={styles.row}>
+                <DropdownComponent
+                  data={years}
+                  onChange={(item) => {
+                    setYear(item.value);
+                  }}
+                  dropdownStyle={styles.dateDropdown}
+                  placeholder={"Year"}
+                ></DropdownComponent>
+                <DropdownComponent
+                  data={months}
+                  onChange={(item) => {
+                    setMonth(item.value);
+                    setDays();
+                  }}
+                  dropdownStyle={styles.dateDropdown}
+                  placeholder={"Month"}
+                ></DropdownComponent>
+                <DropdownComponent
+                  data={days}
+                  onChange={(item) => {
+                    setDay(item.value);
+                  }}
+                  dropdownStyle={styles.dateDropdown}
+                  placeholder={"Day"}
+                ></DropdownComponent>
+              </View>
 
-          <TextInput
-            style={styles.field}
-            placeholderTextColor="rgba(128, 128, 128, 1)"
-            placeholder="example@website.com"
-            onChangeText={(text) => setEmail(text)}
-            keyboardType={"email-address"}
-          ></TextInput>
-
-          <View style={styles.row}>
-            <Text
-              style={{
-                color: darkBlue,
-                flex: 1,
-                alignItems: "flex-start",
-                left: Dimensions.get("window").width / 9.6,
-                fontSize: 15,
-                fontWeight: "bold",
-                letterSpacing: 2,
-                marginTop: Dimensions.get("window").height / 200,
-              }}
-            >
-              PASSWORD
-            </Text>
-            {!isPasswordValid && (
+              <View style={styles.row}>
+                <Text
+                  style={{
+                    color: darkBlue,
+                    flex: 1,
+                    left: Dimensions.get("window").width / 10,
+                    fontSize: 15,
+                    fontWeight: "bold",
+                    letterSpacing: 2,
+                    marginTop: Dimensions.get("window").height / 200,
+                  }}
+                >
+                  MOBILE NUMBER
+                </Text>
+                {!isPhoneValid && (
+                  <Text
+                    style={{
+                      marginRight: Dimensions.get("window").width / 3.4,
+                      color: "red",
+                    }}
+                  >
+                    *invalid phone number*
+                  </Text>
+                )}
+              </View>
+              <TextInput
+                style={styles.field}
+                placeholderTextColor="rgba(128, 128, 128, 1)"
+                placeholder="Contact Number"
+                onChangeText={(text) => setMobileNumber(text)}
+                keyboardType={"numeric"}
+              ></TextInput>
               <Text
                 style={{
-                  marginRight: Dimensions.get("window").width / 6.4,
-                  color: "red",
+                  color: darkBlue,
+                  marginRight: Dimensions.get("window").width / 1.34,
+                  fontSize: 15,
+                  fontWeight: "bold",
+                  letterSpacing: 2,
+                  marginTop: Dimensions.get("window").height / 200,
                 }}
               >
-                *Password Must be at least 8 characters*
+                GENDER
               </Text>
-            )}
-          </View>
-          <TextInput
-            style={styles.field}
-            placeholderTextColor="rgba(128, 128, 128, 1)"
-            placeholder="********"
-            onChangeText={(text) => setPassword(text)}
-            secureTextEntry={true}
-          ></TextInput>
-          <Text
-            style={{
-              color: darkBlue,
-              marginRight: Dimensions.get("window").width / 1.5,
-              fontSize: 15,
-              fontWeight: "bold",
-              letterSpacing: 2,
-              marginTop: Dimensions.get("window").height / 200,
-            }}
-          >
-            BIRTH DATE
-          </Text>
-          {!isBirthDateValid && (
+
+              <DropdownComponent
+                data={genderChoice}
+                onChange={(item) => {
+                  setGender(item.value);
+                }}
+                dropdownStyle={styles.dropdown}
+                placeholder={"select one..."}
+              ></DropdownComponent>
               <Text
                 style={{
-                  marginRight: Dimensions.get("window").width / 6.4,
-                  color: "red",
+                  color: darkBlue,
+                  marginRight: Dimensions.get("window").width / 1.24,
+                  fontSize: 15,
+                  fontWeight: "bold",
+                  letterSpacing: 2,
+                  marginTop: Dimensions.get("window").height / 200,
                 }}
               >
-                *Birtdate not valid*
+                CITY
               </Text>
-            )}
-          <View style={styles.row}>
-            <DropdownComponent
-              data={years}
-              onChange={(item) => {
-                setYear(item.value);
-              }}
-              dropdownStyle={styles.dateDropdown}
-              placeholder={"Year"}
-            ></DropdownComponent>
-            <DropdownComponent
-              data={months}
-              onChange={(item) => {
-                setMonth(item.value);
-                setDays();
-              }}
-              dropdownStyle={styles.dateDropdown}
-              placeholder={"Month"}
-            ></DropdownComponent>
-            <DropdownComponent
-              data={days}
-              onChange={(item) => {
-                setDay(item.value);
-              }}
-              dropdownStyle={styles.dateDropdown}
-              placeholder={"Day"}
-            ></DropdownComponent>
-          </View>
 
-          <View style={styles.row}>
-            <Text
-              style={{
-                color: darkBlue,
-                flex: 1,
-                left: Dimensions.get("window").width / 10,
-                fontSize: 15,
-                fontWeight: "bold",
-                letterSpacing: 2,
-                marginTop: Dimensions.get("window").height / 200,
-              }}
-            >
-              MOBILE NUMBER
-            </Text>
-            {!isPhoneValid && (
-              <Text
-                style={{
-                  marginRight: Dimensions.get("window").width / 3.4,
-                  color: "red",
+              <DropdownComponent
+                data={cityChoice}
+                onChange={(item) => {
+                  setCity(item.value);
                 }}
+                dropdownStyle={styles.dropdown}
+                placeholder={"select one..."}
+              ></DropdownComponent>
+
+              <TouchableOpacity
+                onPress={() => {
+                  register();
+                }}
+                style={styles.signupButton}
               >
-                *invalid phone number*
-              </Text>
-            )}
+                <Text
+                  style={{ color: "white", fontSize: 23, fontWeight: "bold" }}
+                >
+                  Sign up
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-          <TextInput
-            style={styles.field}
-            placeholderTextColor="rgba(128, 128, 128, 1)"
-            placeholder="Contact Number"
-            onChangeText={(text) => setMobileNumber(text)}
-            keyboardType={"numeric"}
-          ></TextInput>
-          <Text
-            style={{
-              color: darkBlue,
-              marginRight: Dimensions.get("window").width / 1.34,
-              fontSize: 15,
-              fontWeight: "bold",
-              letterSpacing: 2,
-              marginTop: Dimensions.get("window").height / 200,
-            }}
-          >
-            GENDER
-          </Text>
 
-          <DropdownComponent
-            data={genderChoice}
-            onChange={(item) => {
-              setGender(item.value);
-            }}
-            dropdownStyle={styles.dropdown}
-            placeholder={"select one..."}
-          ></DropdownComponent>
-          <Text
-            style={{
-              color: darkBlue,
-              marginRight: Dimensions.get("window").width / 1.24,
-              fontSize: 15,
-              fontWeight: "bold",
-              letterSpacing: 2,
-              marginTop: Dimensions.get("window").height / 200,
-            }}
-          >
-            CITY
-          </Text>
-
-          <DropdownComponent
-            data={cityChoice}
-            onChange={(item) => {
-              setCity(item.value);
-            }}
-            dropdownStyle={styles.dropdown}
-            placeholder={"select one..."}
-          ></DropdownComponent>
-
-          <TouchableOpacity
-            onPress={() => {
-              register();
-            }}
-            style={styles.signupButton}
-          >
-            <Text style={{ color: "white", fontSize: 23, fontWeight: "bold" }}>
-              Sign up
-            </Text>
-          </TouchableOpacity>
-        </View>
       </View>
-    </View>
+      </ScrollView>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -446,6 +510,11 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(220,220, 220)",
     marginVertical: 7,
     marginRight: Dimensions.get("window").width / 10,
+  },
+  scrollViewContent: {
+    alignItems: "center",
+    paddingTop: Dimensions.get("window").height / 14,
+    paddingBottom: Dimensions.get("window").height / 10,
   },
   createAccText: {
     color: darkBlue,

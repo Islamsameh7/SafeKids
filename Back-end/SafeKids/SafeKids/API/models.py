@@ -23,9 +23,9 @@ class CustomUser(AbstractUser):
     photo = models.ImageField(upload_to='user_photos', blank=True, null=True)
     password_reset_token = models.CharField(max_length=255, blank=True, null=True)
     password_reset_token_expiration = models.DateTimeField(blank=True, null=True)
-
+    national_id = models.CharField(null= False,max_length=14)
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name', 'phoneNumber', 'gender', 'birthdate', 'city']
+    REQUIRED_FIELDS = ['name', 'phoneNumber', 'gender', 'birthdate', 'city','national_id']
 
 
 class AbstractKid(models.Model):
@@ -48,7 +48,7 @@ class Kid(AbstractKid):
 
 
 class FoundKid(AbstractKid):
-    location = models.CharField(max_length=255)
+    location = models.CharField(max_length=255,null=False)
     name = models.CharField(max_length=100, blank=True)
     gender = models.CharField(max_length=6, choices=AbstractKid.GENDER_CHOICES, blank=True,null=True)
     age = models.IntegerField(blank=True, null=True)
