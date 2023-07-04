@@ -36,7 +36,7 @@ function App(props) {
               backgroundColor: "#FFFFFF",
               
             },
-            gestureEnabled:false,
+            // gestureEnabled:false,
           }}
         >
           <Stack.Screen name="GetStarted" component={GetStarted} />

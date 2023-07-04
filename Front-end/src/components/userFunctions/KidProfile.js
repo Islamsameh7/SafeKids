@@ -48,10 +48,8 @@ const KidProfile = (props) => {
   const [lostDate, setLostDate] = useState("");
   const [lastKnown, setLastKnown] = useState("");
 
-  const { user, currentKidProfile } = useContext(GlobalContext);
-  const [stillMissing, setIsStillMissing] = useState(
-    Boolean(currentKidProfile.kid.still_missing)
-  );
+  const { user, currentKidProfile, stillMissing, setIsStillMissing } = useContext(GlobalContext);
+  
 
   const handleStillMissing = () => {
     const newStillMissing = !stillMissing;
@@ -219,7 +217,7 @@ const KidProfile = (props) => {
           {!isNameVisible && (
             <TextInput
               style={styles.field}
-              placeholderTextColor={grey}
+              placeholderTextColor="rgba(128, 128, 128, 1)"
               // placeholder="Jiara Martins"
               onChangeText={(name) => {
                 setName(name);
@@ -324,7 +322,7 @@ const KidProfile = (props) => {
           {!isLostDateVisible && (
             <TextInput
               style={styles.field}
-              placeholderTextColor={grey}
+              placeholderTextColor="rgba(128, 128, 128, 1)"
               // placeholder="Jiara Martins"
               onChangeText={(date) => {
                 setLostDate(date);
@@ -364,7 +362,7 @@ const KidProfile = (props) => {
           {!isLastKnownVisible && (
             <TextInput
               style={styles.field}
-              placeholderTextColor={grey}
+              placeholderTextColor="rgba(128, 128, 128, 1)"
               onChangeText={(location) => {
                 setLastKnown(location);
                 currentKidProfile.kid.last_known_location = location;

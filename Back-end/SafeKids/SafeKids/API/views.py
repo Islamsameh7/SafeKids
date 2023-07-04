@@ -315,7 +315,7 @@ def get_my_kids(request):
 
 @api_view(['GET'])
 def get_missing_kids(request):
-    missing_kids = MissingKid.objects.all()
+    missing_kids = MissingKid.objects.filter(still_missing=False)
     data = []
 
     for kid in missing_kids:
@@ -407,12 +407,12 @@ def get_matching_profiles(request):
     resnet = model_data['resnet']
 
     if request.POST.get('type') == 'upload':
-        Photos = Photo.objects.filter(missing_kid__isnull=False)
+        Photos = Photo.objects.filter(missing_kid__isnull=False, missing_kid__still_missing=True)
         Photos = Photos.order_by('missing_kid_id')
         kid_type = 'found'
     
     else:
-        Photos = Photo.objects.filter(found_kid__isnull=False)
+        Photos = Photo.objects.filter(found_kid__isnull=False, found_kid__still_missing=True)
         Photos = Photos.order_by('found_kid_id')
         kid_type = 'missing'
 

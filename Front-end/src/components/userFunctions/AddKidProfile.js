@@ -262,8 +262,8 @@ const AddKidProfile = (props) => {
           <Text style={styles.Text}>Full Name</Text>
           <TextInput
             style={styles.field}
-            placeholderTextColor={grey}
-            placeholder="Jiara Martins"
+            placeholderTextColor="rgba(128, 128, 128, 1)"
+            placeholder="eg.. Jiara Martins"
             onChangeText={(name) => setName(name)}
           ></TextInput>
         </View>
@@ -332,8 +332,8 @@ const AddKidProfile = (props) => {
           <Text style={styles.Text}>Last Known Location</Text>
           <TextInput
             style={styles.field}
-            placeholderTextColor={grey}
-            placeholder="cairo-hadayekElKobba"
+            placeholderTextColor="rgba(128, 128, 128, 1)"
+            placeholder="eg.. Cairo - Nasr City"
             onChangeText={(location) => setLastKnownLocation(location)}
           ></TextInput>
         </View>

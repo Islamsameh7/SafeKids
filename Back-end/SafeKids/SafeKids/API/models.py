@@ -57,7 +57,7 @@ class MissingKid(AbstractKid):
 
     lost_date = models.DateField(null=False, blank=True)
     last_known_location = models.CharField(max_length=255)
-    still_missing = models.BooleanField()
+    still_missing = models.BooleanField(default=True)
     birthdate = models.DateField(null=False, blank=False)
     notes = models.CharField(max_length=1000,blank=True, null = True)
     contactNumber = models.CharField(max_length=20)
