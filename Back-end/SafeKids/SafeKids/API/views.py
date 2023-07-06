@@ -53,7 +53,23 @@ def register(request):
         serializer.save()
         return HttpResponse('user registered successfully', status=200)
 
-    return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['POST'])
+def register(request):
+    serializer = CustomUserSerializer(data=request.data)
+    if serializer.is_valid():
+        password = serializer.validated_data['password']
+        hashed_password = make_password(password)
+        serializer.validated_data['password'] = hashed_password
+        serializer.save()
+        return JsonResponse('user registered successfully', status=200,safe=False)
+
+    error_messages = {}
+    for field, errors in serializer.errors.items():
+        error_messages[field] = [str(error) for error in errors]
+
+    return JsonResponse(error_messages, status=status.HTTP_400_BAD_REQUEST,safe=False)
+
+
 
 
 @api_view(['POST'])
@@ -315,7 +331,7 @@ def get_my_kids(request):
 
 @api_view(['GET'])
 def get_missing_kids(request):
-    missing_kids = MissingKid.objects.filter(still_missing=False)
+    missing_kids = MissingKid.objects.filter(still_missing=True)
     data = []
 
     for kid in missing_kids:
@@ -414,7 +430,7 @@ def get_matching_profiles(request):
         kid_type = 'found'
     
     else:
-        Photos = Photo.objects.filter(found_kid__isnull=False, found_kid__still_missing=True)
+        Photos = Photo.objects.filter(found_kid__isnull=False)
         Photos = Photos.order_by('found_kid_id')
         kid_type = 'missing'
 
@@ -448,12 +464,14 @@ def get_matching_profiles(request):
 
             similarity = 1 - \
                 spatial.distance.cosine(image_embedding, db_image_embedding)
-      
-            if similarity > 0.5:
+            print("database image is: "+str(db_photo))
+            print("similarity is: "+str(similarity))
+            if similarity > 0.65:
               
                 if current_kid_id == previous_kid_id:
+                    print("first if")
                     if i == 0 and request.POST.get('type') != 'upload':
-
+                        print("first if if")
                         kid = set_match_kid_profile(db_photo, similarity)
                         profile = {
                             'kid': kid,
@@ -466,7 +484,8 @@ def get_matching_profiles(request):
                         if not is_exist:
                         
                             profiles.append(profile)
-
+                            print("first if if if")
+                    
                     if similarity > bestSimilarity:
                         bestSimilarity = similarity
                 else:
@@ -477,7 +496,7 @@ def get_matching_profiles(request):
                     kid = set_match_kid_profile(db_photo, bestSimilarity)
                     bestSimilarity = similarity
                     previous_kid_id = current_kid_id
-
+                    print("first else ")
                     profile = {
                         'kid': kid,
                         'photo': db_photo.photo.url,
@@ -487,20 +506,21 @@ def get_matching_profiles(request):
                                    == kid_id for profile in profiles)
 
                     if not is_exist:
-                   
+                        print("here2")
                         profiles.append(profile)
+        if len(Photos) > 0 and similarity > 0.65:
+            
+            kid = set_match_kid_profile(db_photo, bestSimilarity)
+            profile = {
+                'kid': kid,
+                'photo': db_photo.photo.url,
+            }
+            kid_id = kid['id']
+            is_exist = any(profile['kid']['id'] == kid_id for profile in profiles)
 
-        kid = set_match_kid_profile(db_photo, bestSimilarity)
-        profile = {
-            'kid': kid,
-            'photo': db_photo.photo.url,
-        }
-        kid_id = kid['id']
-        is_exist = any(profile['kid']['id'] == kid_id for profile in profiles)
-
-        if not is_exist:
-    
-            profiles.append(profile)
+            if not is_exist:
+        
+                profiles.append(profile)
 
     new_kid_id = request.POST.get('kid_id')
     for i in profiles:
@@ -575,13 +595,13 @@ def read_notification(request):
             'id': kid_obj.id,
             'name': kid_obj.name,
             'age': kid_obj.age,
-            'gender': 'unknown',
+            'gender': kid_obj.gender,
             'location': kid_obj.location,
             'contact_phone': kid_obj.user.phoneNumber,
             'contact_email': kid_obj.user.email,
-            'birthdate': 'unknown',
-            'lost_date': 'unknown',
-            'last_known_location': 'unknown',
+            'birthdate': kid_obj.birthdate,
+            'lost_date': '',
+            'last_known_location': kid_obj.location,
         }
     else:
         kid_obj = MissingKid.objects.get(id=notification.kid_id)

@@ -98,7 +98,7 @@ const UploadPhoto = (props) => {
       const images = [];
       images.push(image);
 
-      fetchMatchingProfiles(images,"upload",kidId);
+      fetchMatchingProfiles(images,"upload",kidId,props);
  
     } else {
       // Error response
@@ -237,13 +237,13 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
   uploadedContainer: {
-    marginTop: 15,
+
     height: windowHeight / 2.7,
     alignItems: "center",
   },
   container: {
     top: windowHeight / 6,
-    marginBottom: 35,
+    marginBottom: 20,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
   },
   submitContainer: {
     alignItems: "center",
-    marginTop: windowHeight/25,
+
   },
   scrollViewContent: {
     alignItems: "center",

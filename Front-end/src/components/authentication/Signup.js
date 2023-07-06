@@ -53,7 +53,6 @@ const Signup = (props) => {
   const [email, setEmail] = useState("");
   const [nationalID, setNationalID] = useState("");
   const [password, setPassword] = useState("");
-  const [birthDate, setBirthDate] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [gender, setGender] = useState("");
   const [city, setCity] = useState("");
@@ -61,13 +60,20 @@ const Signup = (props) => {
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
 
+  const [isNameValid, setIsNameValid] = useState(true);
   const [isEmailValid, setEmailValid] = useState(true);
   const [isNationalIDValid, setIsNationalIDValid] = useState(true);
   const [isPasswordValid, setPasswordValid] = useState(true);
   const [isPhoneValid, setPhoneValid] = useState(true);
   const [isBirthDateValid, setBirthDateValid] = useState(true);
-  const [error, setError] = useState("");
+  const [isGenderValid, setIsGenderValid] = useState(true);
+  const [isCityValid, setIsCityValid] = useState(true);
 
+  const [emailExists, setEmailExists] = useState(false);
+  const [phoneExists, setPhoneExists] = useState(false);
+  const [nationalIdExists, setNationalIdExists] = useState(false);
+
+  const [dateArr, setDateArr] = useState([]);
   const setDays = () => {
     days = [];
     if (
@@ -92,17 +98,11 @@ const Signup = (props) => {
       }
     }
   };
-  const checkBirthDate = () => {
-    if (day != "" && month != "" && year != "") {
-      setBirthDateValid(true);
-    } else {
-      setBirthDateValid(false);
-    }
-  };
 
+ 
   const register = async () => {
     const formData = new FormData();
-    checkBirthDate();
+
     formData.append("name", name);
     formData.append("national_id", nationalID);
     formData.append("email", email);
@@ -110,13 +110,18 @@ const Signup = (props) => {
     formData.append("birthdate", year + "-" + month + "-" + day);
     formData.append("phoneNumber", mobileNumber);
     formData.append("city", city);
-    formData.append("username", name);
+    formData.append("username", email);
     formData.append("gender", gender);
 
-    validateEmail();
-    validateMobile();
-    validatePassword();
-    validateNationalID();
+    validateBirthdate();
+    validateName(name);
+    validateEmail(email);
+    validateMobile(mobileNumber);
+    validatePassword(password);
+    validateNationalID(nationalID);
+    validateCity(city);
+    validateGender(gender);
+
     if (
       isEmailValid &&
       isPasswordValid &&
@@ -124,7 +129,6 @@ const Signup = (props) => {
       isBirthDateValid &&
       isNationalIDValid
     ) {
-      console.log(formData);
       const response = await fetch(apiRoutes.register, {
         method: "POST",
         body: formData,
@@ -138,16 +142,40 @@ const Signup = (props) => {
         const responseData = await response.text();
         console.log("User Registered Successfully:", responseData);
         showAlert("Registered Successfully");
-        props.navigation.navigate("Login");
+        props.navigation.navigate("GetStarted");
       } else {
         // Error response
-        const errorData = await response.text();
-        console.log("Failed to register user:", errorData);
+        const responseData = await response.json();
+
+        Object.keys(responseData).forEach((field) => {
+          const errors = responseData[field];
+          console.log(`Field: ${field}`);
+
+          if (Object.keys(responseData).length <= 4) {
+            errors.forEach((error) => {
+              
+              if (field == "email" && isEmailValid) {
+              
+                setEmailExists(true);
+              }
+              if (field == "phoneNumber" && isPhoneValid) {
+                setPhoneExists(true);
+              }
+              if (field == "national_id" && isNationalIDValid) {
+                setNationalIdExists(true);
+              }
+            });
+          }
+
+          console.log(
+            "Failed to register user: " + Object.keys(responseData).length
+          );
+        });
       }
     }
   };
 
-  const validateEmail = () => {
+  const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (email === "" || !emailRegex.test(email)) {
       setEmailValid(false);
@@ -155,7 +183,7 @@ const Signup = (props) => {
       setEmailValid(true);
     }
   };
-  const validateNationalID = () => {
+  const validateNationalID = (nationalID) => {
     const nationalIDRegex =
       /^(2|3)([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])(01|02|03|04|11|12|13|14|15|16|17|18|19|21|22|23|24|25|26|27|28|29|31|32|33|34|35|88)([13579]{4}|[02468]{4})([1-9])$/;
     if (nationalID === "" || !nationalIDRegex.test(nationalID)) {
@@ -165,7 +193,7 @@ const Signup = (props) => {
     }
   };
 
-  const validatePassword = () => {
+  const validatePassword = (password) => {
     if (password === "" || password.length < 8) {
       setPasswordValid(false);
     } else {
@@ -173,7 +201,7 @@ const Signup = (props) => {
     }
   };
 
-  const validateMobile = () => {
+  const validateMobile = (mobileNumber) => {
     const mobileRegex = /^(011|010|012)\d{8}$/;
     if (mobileNumber === "" || !mobileRegex.test(mobileNumber)) {
       setPhoneValid(false);
@@ -181,24 +209,62 @@ const Signup = (props) => {
       setPhoneValid(true);
     }
   };
+  const checkBirthDate = (str) => {
+    setDateArr((prevArray) => [...prevArray, ...str]);
+    if (day != "" && month != "" && year != "") {
+      setBirthDateValid(true);
+    } else if (dateArr.length == 2) {
+      setBirthDateValid(true);
+    } else {
+      setBirthDateValid(false);
+    }
+  };
+  const validateBirthdate = () => {
+    if (day != "" && month != "" && year != "") {
+      setBirthDateValid(true);
+    } else {
+      setBirthDateValid(false);
+    }
+  };
+  const validateName = (name) => {
+    if (name != "") {
+      setIsNameValid(true);
+    } else {
+      setIsNameValid(false);
+    }
+  };
+  const validateGender = (gender) => {
+    if (gender != "") {
+      setIsGenderValid(true);
+    } else {
+      setIsGenderValid(false);
+    }
+  };
+  const validateCity = (city) => {
+    if (city != "") {
+      setIsCityValid(true);
+    } else {
+      setIsCityValid(false);
+    }
+  };
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <ScrollView contentContainerStyle={styles.scrollViewContent}>
-      <View style={{ backgroundColor: darkBlue }}>
-        <TouchableOpacity
-          onPress={() => props.navigation.navigate("GetStarted")}
-        >
-          <Ionicons
-            name={"left"}
-            size={30}
-            color={"white"}
-            style={{
-              marginTop: Dimensions.get("window").height / 20,
-              left: Dimensions.get("window").width / 20,
-            }}
-          />
-        </TouchableOpacity>
-      
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        <View style={{ backgroundColor: darkBlue }}>
+          <TouchableOpacity
+            onPress={() => props.navigation.navigate("GetStarted")}
+          >
+            <Ionicons
+              name={"left"}
+              size={30}
+              color={"white"}
+              style={{
+                marginTop: Dimensions.get("window").height / 20,
+                left: Dimensions.get("window").width / 10,
+              }}
+            />
+          </TouchableOpacity>
+
           <View
             style={{
               alignItems: "center",
@@ -234,24 +300,42 @@ const Signup = (props) => {
                   </Text>
                 </TouchableOpacity>
               </View>
+              <View style={styles.row}>
+                <Text
+                  style={{
+                    color: darkBlue,
+                    flex: 1,
+                    alignItems: "flex-start",
+                    left: Dimensions.get("window").width / 9.6,
+                    fontSize: 15,
+                    fontWeight: "bold",
+                    letterSpacing: 2,
+                    marginTop: Dimensions.get("window").height / 40,
+                  }}
+                >
+                  NAME
+                </Text>
+                {!isNameValid && (
+                  <Text
+                    style={{
+                      marginRight: Dimensions.get("window").width / 2.3,
+                      marginTop: Dimensions.get("window").height / 40,
+                      color: "red",
+                    }}
+                  >
+                    *Name Is Required*
+                  </Text>
+                )}
+              </View>
 
-              <Text
-                style={{
-                  color: darkBlue,
-                  marginRight: Dimensions.get("window").width / 1.22,
-                  fontSize: 15,
-                  fontWeight: "bold",
-                  letterSpacing: 2,
-                  marginTop: Dimensions.get("window").height / 40,
-                }}
-              >
-                NAME
-              </Text>
               <TextInput
                 style={styles.field}
                 placeholderTextColor="rgba(128, 128, 128, 1)"
                 placeholder="eg.. Ahmed Khaled"
-                onChangeText={(text) => setName(text)}
+                onChangeText={(text) => {
+                  setName(text);
+                  validateName(text);
+                }}
               ></TextInput>
               <View style={styles.row}>
                 <Text
@@ -277,13 +361,27 @@ const Signup = (props) => {
                     *Please enter a valid email address*
                   </Text>
                 )}
+                {emailExists && isEmailValid && (
+                  <Text
+                    style={{
+                      marginRight: Dimensions.get("window").width / 4.2,
+                      color: "red",
+                    }}
+                  >
+                    *Email Address Already Exists*
+                  </Text>
+                )}
               </View>
 
               <TextInput
                 style={styles.field}
                 placeholderTextColor="rgba(128, 128, 128, 1)"
                 placeholder="example@website.com"
-                onChangeText={(text) => setEmail(text)}
+                onChangeText={(text) => {
+                  setEmail(text);
+                  validateEmail(text);
+                  setEmailExists(false);
+                }}
                 keyboardType={"email-address"}
               ></TextInput>
 
@@ -311,13 +409,27 @@ const Signup = (props) => {
                     *Please enter a valid National ID*
                   </Text>
                 )}
+                {isNationalIDValid && nationalIdExists && (
+                  <Text
+                    style={{
+                      marginRight: Dimensions.get("window").width / 4.2,
+                      color: "red",
+                    }}
+                  >
+                    *This National Id Already Exists*
+                  </Text>
+                )}
               </View>
 
               <TextInput
                 style={styles.field}
                 placeholderTextColor="rgba(128, 128, 128, 1)"
                 placeholder="Type Your National Id (14 numbers)"
-                onChangeText={(text) => setNationalID(text)}
+                onChangeText={(text) => {
+                  setNationalID(text);
+                  validateNationalID(text);
+                  setNationalIdExists(false);
+                }}
                 keyboardType={"numeric"}
               ></TextInput>
 
@@ -351,7 +463,10 @@ const Signup = (props) => {
                 style={styles.field}
                 placeholderTextColor="rgba(128, 128, 128, 1)"
                 placeholder="********"
-                onChangeText={(text) => setPassword(text)}
+                onChangeText={(text) => {
+                  setPassword(text);
+                  validatePassword(text);
+                }}
                 secureTextEntry={true}
               ></TextInput>
               <Text
@@ -373,7 +488,7 @@ const Signup = (props) => {
                     color: "red",
                   }}
                 >
-                  *Birtdate not valid*
+                  *Birthdate not valid*
                 </Text>
               )}
               <View style={styles.row}>
@@ -381,6 +496,7 @@ const Signup = (props) => {
                   data={years}
                   onChange={(item) => {
                     setYear(item.value);
+                    checkBirthDate("y");
                   }}
                   dropdownStyle={styles.dateDropdown}
                   placeholder={"Year"}
@@ -390,6 +506,7 @@ const Signup = (props) => {
                   onChange={(item) => {
                     setMonth(item.value);
                     setDays();
+                    checkBirthDate("m");
                   }}
                   dropdownStyle={styles.dateDropdown}
                   placeholder={"Month"}
@@ -398,6 +515,7 @@ const Signup = (props) => {
                   data={days}
                   onChange={(item) => {
                     setDay(item.value);
+                    checkBirthDate("d");
                   }}
                   dropdownStyle={styles.dateDropdown}
                   placeholder={"Day"}
@@ -425,7 +543,17 @@ const Signup = (props) => {
                       color: "red",
                     }}
                   >
-                    *invalid phone number*
+                    *Invalid phone number*
+                  </Text>
+                )}
+                {isPhoneValid && phoneExists && (
+                  <Text
+                    style={{
+                      marginRight: Dimensions.get("window").width / 4.2,
+                      color: "red",
+                    }}
+                  >
+                    *This Phone Number Already Exists*
                   </Text>
                 )}
               </View>
@@ -433,34 +561,55 @@ const Signup = (props) => {
                 style={styles.field}
                 placeholderTextColor="rgba(128, 128, 128, 1)"
                 placeholder="Contact Number"
-                onChangeText={(text) => setMobileNumber(text)}
+                onChangeText={(text) => {
+                  setMobileNumber(text);
+                  validateMobile(text);
+                  setPhoneExists(false);
+                }}
                 keyboardType={"numeric"}
               ></TextInput>
-              <Text
-                style={{
-                  color: darkBlue,
-                  marginRight: Dimensions.get("window").width / 1.34,
-                  fontSize: 15,
-                  fontWeight: "bold",
-                  letterSpacing: 2,
-                  marginTop: Dimensions.get("window").height / 200,
-                }}
-              >
-                GENDER
-              </Text>
-
+              <View style={styles.row}>
+                <Text
+                  style={{
+                    color: darkBlue,
+                    flex: 1,
+                    alignItems: "flex-start",
+                    left: Dimensions.get("window").width / 9.6,
+                    fontSize: 15,
+                    fontWeight: "bold",
+                    letterSpacing: 2,
+                    marginTop: Dimensions.get("window").height / 200,
+                  }}
+                >
+                  GENDER
+                </Text>
+                {!isGenderValid && (
+                  <Text
+                    style={{
+                      marginRight: Dimensions.get("window").width / 2.3,
+                      color: "red",
+                    }}
+                  >
+                    *Gender Is Required*
+                  </Text>
+                )}
+              </View>
               <DropdownComponent
                 data={genderChoice}
                 onChange={(item) => {
                   setGender(item.value);
+                  validateGender(item.value);
                 }}
                 dropdownStyle={styles.dropdown}
                 placeholder={"select one..."}
               ></DropdownComponent>
+              <View style={styles.row}>
               <Text
                 style={{
                   color: darkBlue,
-                  marginRight: Dimensions.get("window").width / 1.24,
+                  flex: 1,
+                  alignItems: "flex-start",
+                  left: Dimensions.get("window").width / 9.6,
                   fontSize: 15,
                   fontWeight: "bold",
                   letterSpacing: 2,
@@ -469,11 +618,23 @@ const Signup = (props) => {
               >
                 CITY
               </Text>
-
+              {!isCityValid && (
+                <Text
+                  style={{
+                    marginRight: Dimensions.get("window").width / 2.3,
+                    color: "red",
+                  }}
+                >
+                  *City Is Required*
+                </Text>
+              )}
+              </View>
+              
               <DropdownComponent
                 data={cityChoice}
                 onChange={(item) => {
                   setCity(item.value);
+                  validateCity(item.value);
                 }}
                 dropdownStyle={styles.dropdown}
                 placeholder={"select one..."}
@@ -493,8 +654,7 @@ const Signup = (props) => {
               </TouchableOpacity>
             </View>
           </View>
-
-      </View>
+        </View>
       </ScrollView>
     </TouchableWithoutFeedback>
   );
@@ -513,7 +673,7 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     alignItems: "center",
-    paddingTop: Dimensions.get("window").height / 14,
+
     paddingBottom: Dimensions.get("window").height / 10,
   },
   createAccText: {

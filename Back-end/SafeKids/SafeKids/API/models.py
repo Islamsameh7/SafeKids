@@ -16,14 +16,14 @@ class CustomUser(AbstractUser):
     last_name = None
     name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
-    phoneNumber = models.CharField(max_length=20)
+    phoneNumber = models.CharField(max_length=20,unique=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     birthdate = models.DateField(null=False, blank=True)
     city = models.CharField(max_length=255)
     photo = models.ImageField(upload_to='user_photos', blank=True, null=True)
     password_reset_token = models.CharField(max_length=255, blank=True, null=True)
     password_reset_token_expiration = models.DateTimeField(blank=True, null=True)
-    national_id = models.CharField(null= False,max_length=14)
+    national_id = models.CharField(null= False,max_length=14,unique=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name', 'phoneNumber', 'gender', 'birthdate', 'city','national_id']
 

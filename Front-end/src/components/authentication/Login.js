@@ -12,6 +12,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
+
 import Background from "../Background";
 import apiRoutes from "../apiRoutes";
 import { post } from "../apiCalls";
@@ -56,6 +57,7 @@ const Login = (props) => {
   };
 
   return (
+    
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={{ alignItems: "center", width: 460 }}>
         <View>
@@ -147,28 +149,14 @@ const Login = (props) => {
             <Text style={styles.loginText}>Log in</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => props.navigation.navigate("ForgotPassword")}
-          >
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "bold",
-                marginTop: 25,
-                marginRight: 50,
-                color: darkBlue,
-              }}
-            >
-              Forgot Password?
-            </Text>
-          </TouchableOpacity>
+          
 
           <TouchableOpacity onPress={() => props.navigation.navigate("Signup")}>
             <Text
               style={{
                 fontSize: 16,
                 fontWeight: "bold",
-                marginTop: 5,
+                marginTop: 10,
                 marginRight: 50,
                 color: darkBlue,
               }}

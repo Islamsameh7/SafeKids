@@ -52,6 +52,7 @@ const KidProfile = (props) => {
     Boolean(currentKidProfile.kid.still_missing)
   );
 
+
   const handleStillMissing = () => {
     const newStillMissing = !stillMissing;
     setIsStillMissing(newStillMissing);

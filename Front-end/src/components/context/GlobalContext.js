@@ -1,5 +1,5 @@
 import React, { createContext, useState } from "react";
-
+import {Alert} from "react-native"
 import apiRoutes from "../apiRoutes";
 export const GlobalContext = createContext();
 
@@ -91,18 +91,25 @@ export const GlobalProvider = ({ children }) => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+        console.log("data length is: "+data.length);
         setMatchingProfiles(data);
         if (data.length > 0) {
           props.navigation.navigate("Matching");
         } else {
-          Alert.alert(
-            "",
-            "Profile Created Successfully and we will let you know when someone finds your kid. ",
-            [{ text: "OK" }],
-            { cancelable: true }
-          );
-          props.navigation.navigate("Home");
+          if(type =='upload'){
+            props.navigation.navigate("MatchingProfiles");
+          }
+          else{
+            Alert.alert(
+              "",
+              "Profile Created Successfully and we will let you know when someone finds the kid. ",
+              [{ text: "OK" }],
+              { cancelable: true }
+            );
+            props.navigation.navigate("Home");
+          }
+          
+          
         }
       } else {
         console.error("Failed to fetch missing kids data");

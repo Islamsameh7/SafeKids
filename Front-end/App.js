@@ -7,9 +7,6 @@ import GetStarted from "./src/components/GetStarted";
 import Signup from "./src/components/authentication/Signup";
 import Login from "./src/components/authentication/Login";
 import Home from "./src/components/Home";
-import ForgotPassword from "./src/components/authentication/ForgotPassword";
-import Verification from "./src/components/authentication/Verification";
-import NewPassword from "./src/components/authentication/NewPassword";
 import AddKidProfile from "./src/components/userFunctions/AddKidProfile";
 import KidProfilePhotos from "./src/components/userFunctions/KidProfilePhotos";
 import UploadPhoto from "./src/components/userFunctions/UploadPhoto";
@@ -49,9 +46,6 @@ function App(props) {
           <Stack.Screen name="UploadPhoto" component={UploadPhoto} />
           <Stack.Screen name="Matching" component={Matching} />
           <Stack.Screen name="MatchingProfiles" component={MatchingProfiles} />
-          <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
-          <Stack.Screen name="Verification" component={Verification} />
-          <Stack.Screen name="NewPassword" component={NewPassword} />
           <Stack.Screen name="AboutUs" component={AboutUs} />
           <Stack.Screen name="MyKids" component={MyKids} />
           <Stack.Screen name="MissingKids" component={MissingKids} />

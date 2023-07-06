@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext,useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -17,66 +17,69 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const Notifications = (props) => {
-  const { notifications,readNotifiation } = useContext(GlobalContext);
-
+  const { notifications, readNotifiation,fetchNotifications } = useContext(GlobalContext);
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
   const renderData = () => {
     return notifications.map((notification, index) => {
-     
       const userId = notification.user;
       const message = notification.message;
       const kid_id = notification.kid_id;
       const kid_type = notification.kid_type;
       const timestamp = notification.timestamp;
       const is_read = notification.is_read;
-
-      
+      console.log(is_read);
       return (
-        <TouchableOpacity onPress={() => {
-            readNotifiation(notification.id);
-            props.navigation.navigate("KidProfile");
-        }}>
-          <View
-            style={{
-              marginTop: windowHeight / 25,
-              flexDirection: "row",
-              marginLeft: windowWidth / 10,
-              borderBottomWidth:0.2,
+    
+          <TouchableOpacity
+            onPress={() => {
+              readNotifiation(notification.id);
+              props.navigation.navigate("KidProfile");
             }}
-            
           >
-            <Image
-              source={require("../assets/settings.png")}
-              style={{ width: 35, height: 35, borderRadius: 15 }}
-            ></Image>
-            <View style={{ marginLeft: "2%", marginTop: "1%" }} key={index}>
-              <Text
-                style={{ color: darkBlue, fontSize: 14, fontWeight: "bold" }}
-              >
-                Safe Kids
+            <View
+              style={{
+                marginTop: windowHeight / 25,
+                flexDirection: "row",
+                marginLeft: windowWidth / 10,
+                borderBottomWidth: 0.2,
+              }}
+            >
+              <Image
+                source={require("../assets/settings.png")}
+                style={{ width: 35, height: 35, borderRadius: 15 }}
+              ></Image>
+              <View style={{ marginLeft: "2%", marginTop: "1%" }} key={index}>
+                <Text
+                  style={{ color: darkBlue, fontSize: 14, fontWeight: "bold" }}
+                >
+                  Safe Kids
+                  <Text
+                    style={{
+                      color: darkBlue,
+                      fontSize: 12,
+                      fontWeight: "normal",
+                    }}
+                  >
+                    {" "}
+                    {message}
+                  </Text>
+                </Text>
                 <Text
                   style={{
-                    color: darkBlue,
+                    color: grey,
                     fontSize: 12,
                     fontWeight: "normal",
+                    marginLeft: "50%",
                   }}
                 >
-                  {" "}
-                  {message}
+                  {timestamp}
                 </Text>
-              </Text>
-              <Text
-                style={{
-                  color: grey,
-                  fontSize: 12,
-                  fontWeight: "normal",
-                  marginLeft: "50%",
-                }}
-              >
-                {timestamp}
-              </Text>
+              </View>
             </View>
-          </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        
       );
     });
   };
@@ -112,8 +115,8 @@ const Notifications = (props) => {
 
       <Text style={Styles.notificationsText}>Notifications</Text>
       <ScrollView contentContainerStyle={Styles.scrollViewContent}>
-            <View style={Styles.container}>{renderData()}</View>
-          </ScrollView>
+        <View style={Styles.container}>{renderData()}</View>
+      </ScrollView>
     </View>
   );
 };
@@ -122,7 +125,7 @@ const Styles = StyleSheet.create({
   notificationsText: {
     //paddingLeft: "8%",
     paddingLeft: "8%",
-    paddingTop:"8%",
+    paddingTop: "8%",
     flexDirection: "row",
     color: darkBlue,
     fontSize: 22,
@@ -139,7 +142,6 @@ const Styles = StyleSheet.create({
   container: {
     alignItems: "center",
     justifyContent: "center",
-  
   },
   scrollViewContent: {
     alignItems: "center",
