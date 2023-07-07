@@ -18,17 +18,19 @@ const windowHeight = Dimensions.get("window").height;
 const MatchingProfiles = (props) => {
   const { matchingProfiles, setCurrentKidProfile } = useContext(GlobalContext);
 
+
   const renderData = () => {
     return matchingProfiles.map((profile, index) => {
       const accuracy = Math.round(profile.kid.similarity * 100);
       const name = profile.kid.name;
-
+    
       const gender = profile.kid.gender;
       const lostDate = profile.kid.lost_date;
       const lastLocation = profile.kid.last_known_location;
       const image = profile.photo;
-
-      console.log(image);
+       
+   
+ 
       return (
         <View style={styles.card} key={index}>
           <TouchableOpacity
@@ -49,6 +51,7 @@ const MatchingProfiles = (props) => {
               }}
             />
             <View>
+              
               <Text style={styles.dataText}>Similarity: {accuracy}%</Text>
               <Text style={styles.dataText}>Name: {name}</Text>
     

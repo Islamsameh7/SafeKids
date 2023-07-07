@@ -47,6 +47,8 @@ const KidProfile = (props) => {
   const [lostDate, setLostDate] = useState("");
   const [lastKnown, setLastKnown] = useState("");
 
+  
+
   const { user, currentKidProfile ,getMyKids} = useContext(GlobalContext);
   const [stillMissing, setIsStillMissing] = useState(
     Boolean(currentKidProfile.kid.still_missing)
@@ -112,6 +114,7 @@ const KidProfile = (props) => {
   };
   useEffect(() => {
     if (currentKidProfile.kid.user == user.id) {
+      console.log("current kid user is and the logged user is : "+ currentKidProfile.kid.user)
       setIsParent(true);
     }
 

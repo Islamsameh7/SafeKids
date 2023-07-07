@@ -33,10 +33,11 @@ const UploadPhoto = (props) => {
   const [gender, setGender] = useState("");
   const [age, setAge] = useState("");
   const [location, setLocation] = useState("");
-  const { user,fetchMatchingProfiles } = useContext(GlobalContext);
+  const { user,fetchMatchingProfiles,setMatchingProfiles } = useContext(GlobalContext);
 
 
   const uploadPhoto = async () => {
+   
     let _image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -61,6 +62,7 @@ const UploadPhoto = (props) => {
     }
   };
   const addFoundKid = async () => {
+    props.navigation.navigate("Matching");
     const formData = new FormData();
     formData.append('user', user.id); // ID of the user for the found kid
     formData.append('name', name);
@@ -97,7 +99,7 @@ const UploadPhoto = (props) => {
    
       const images = [];
       images.push(image);
-
+   
       fetchMatchingProfiles(images,"upload",kidId,props);
  
     } else {
@@ -209,7 +211,7 @@ const UploadPhoto = (props) => {
         <TouchableOpacity style={styles.submitButton} onPress={() =>{ 
           addFoundKid();
           
-          props.navigation.navigate("Matching")
+      
           } }>
           <Text style={styles.submitText}>Submit</Text>
         </TouchableOpacity>

@@ -17,8 +17,12 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const Notifications = (props) => {
-  const { notifications, readNotifiation,fetchNotifications } = useContext(GlobalContext);
+  const { notifications, readNotifiation,fetchNotifications,setCurrentKidProfile } = useContext(GlobalContext);
   useEffect(() => {
+    setCurrentKidProfile({
+      kid: {},
+      photo: "",
+    });
     fetchNotifications();
   }, []);
   const renderData = () => {
@@ -35,6 +39,7 @@ const Notifications = (props) => {
           <TouchableOpacity
             onPress={() => {
               readNotifiation(notification.id);
+
               props.navigation.navigate("KidProfile");
             }}
           >

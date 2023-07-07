@@ -1,9 +1,10 @@
 import React, { createContext, useState } from "react";
-import {Alert} from "react-native"
+import { Alert } from "react-native";
 import apiRoutes from "../apiRoutes";
 export const GlobalContext = createContext();
 
 export const GlobalProvider = ({ children }) => {
+  const [response, setResponse] = useState(false);
   const [user, setUser] = useState(null);
   const [kidImages, setKidImages] = useState([]);
   const [matchingProfiles, setMatchingProfiles] = useState([]);
@@ -12,6 +13,7 @@ export const GlobalProvider = ({ children }) => {
     kid: {},
     photo: "",
   });
+  const [type, setType] = useState("");
   const [stillMissing, setIsStillMissing] = useState(
     Boolean(currentKidProfile.kid.still_missing)
   );
@@ -53,6 +55,8 @@ export const GlobalProvider = ({ children }) => {
     }
   };
   const fetchMatchingProfiles = async (images, type, kidId, props) => {
+    setType(type);
+
     const formData = new FormData();
     formData.append("type", type);
     console.log(kidId);
@@ -91,26 +95,9 @@ export const GlobalProvider = ({ children }) => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("data length is: "+data.length);
+        console.log("data length is: " + data.length);
         setMatchingProfiles(data);
-        if (data.length > 0) {
-          props.navigation.navigate("Matching");
-        } else {
-          if(type =='upload'){
-            props.navigation.navigate("MatchingProfiles");
-          }
-          else{
-            Alert.alert(
-              "",
-              "Profile Created Successfully and we will let you know when someone finds the kid. ",
-              [{ text: "OK" }],
-              { cancelable: true }
-            );
-            props.navigation.navigate("Home");
-          }
-          
-          
-        }
+        setResponse(true);
       } else {
         console.error("Failed to fetch missing kids data");
       }
@@ -155,7 +142,7 @@ export const GlobalProvider = ({ children }) => {
         const profile = await response.json();
 
         setCurrentKidProfile(profile);
-        console.log("current kid profile id is" + currentKidProfile.kid.id);
+        console.log("current kid user id is" + profile.kid.user);
       } else {
         console.error("Failed to read notification");
       }
@@ -186,6 +173,10 @@ export const GlobalProvider = ({ children }) => {
         setMyKids,
         mykids,
         getMyKids,
+        response,
+        setResponse,
+        type,
+        setType,
       }}
     >
       {children}

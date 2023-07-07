@@ -152,6 +152,7 @@ const AddKidProfile = (props) => {
     emptyImages,
     fetchMatchingProfiles,
     matchingProfiles,
+    setMatchingProfiles,
   } = useContext(GlobalContext);
   useEffect(() => {
     emptyImages();
@@ -166,6 +167,7 @@ const AddKidProfile = (props) => {
     setRadioButtons(radioButtonsArray);
   }
   const addMissingKid = async () => {
+    props.navigation.navigate("Matching");
     const formData = new FormData();
     checkBirthDate();
     formData.append("user", user.id); // ID of the user for the missing kid
@@ -217,6 +219,7 @@ const AddKidProfile = (props) => {
           // Successful response
           emptyImages();
           const kidId = await response.json();
+          
           fetchMatchingProfiles(kidImages, "addKid", kidId,props);
           console.log("matching profile length is: "+matchingProfiles.length);
           
